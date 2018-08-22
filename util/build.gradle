@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'de.deltaeight'
+version '0.1-alpha'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+
+    // Test framework
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+}
+
+test {
+    useJUnitPlatform()
+}

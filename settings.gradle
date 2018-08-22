@@ -1,0 +1,4 @@
+rootProject.name = 'LibArtNet'
+
+include 'lib'
+include 'util'
