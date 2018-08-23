@@ -44,7 +44,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     private OemCode oemCode;
     private int ubeaVersion;
     private ArtPollReply.IndicatorState indicatorState;
-    private ArtPollReply.PortAdressingAuthority portAdressingAuthority;
+    private ArtPollReply.PortAddressingAuthority portAddressingAuthority;
     private boolean bootedFromRom;
     private boolean rdmSupport;
     private boolean ubeaPresent;
@@ -77,7 +77,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
         oemCode = OemCode.UNKNOWN;
         indicatorState = ArtPollReply.IndicatorState.Unknown;
-        portAdressingAuthority = ArtPollReply.PortAdressingAuthority.Unknown;
+        portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
         estaManufacturer = "D8";
         shortName = "LibArtNet";
         longName = "LibArtNet";
@@ -123,8 +123,9 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
             bytes[20] = (byte) (oemCode.getProduct().getProductCode() >> 8);
             bytes[21] = (byte) oemCode.getProduct().getProductCode();
 
+            bytes[22] = (byte) ubeaVersion;
             bytes[23] |= indicatorState.getValue() << 6;
-            bytes[23] |= portAdressingAuthority.getValue() << 4;
+            bytes[23] |= portAddressingAuthority.getValue() << 4;
 
             if (bootedFromRom) {
                 bytes[23] |= 0b00000100;
@@ -217,7 +218,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
             }
 
             artPollReply = new ArtPollReply(getIpAddress(), getNodeVersion(), getNetAddress(), getSubnetAddress(),
-                    getOemCode(), getUbeaVersion(), getIndicatorState(), getPortAdressingAuthority(), isBootedFromRom(),
+                    getOemCode(), getUbeaVersion(), getIndicatorState(), getPortAddressingAuthority(), isBootedFromRom(),
                     supportsRdm(), isUbeaPresent(), getEstaManufacturer(), getShortName(), getLongName(),
                     getNodeReport(), getPortTypes(), getInputStatuses(), getOutputStatuses(),
                     getInputUniverseAddresses(), getOutputUniverseAddresses(), getMacrosActive(), getRemotesActive(),
@@ -328,7 +329,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
     public synchronized void setUbeaVersion(int ubeaVersion) {
         if (this.ubeaVersion != ubeaVersion) {
-            if (0 > ubeaVersion || ubeaVersion > 257) {
+            if (0 > ubeaVersion || ubeaVersion > 255) {
                 throw new IllegalArgumentException("Illegal UBEA version!");
             }
             this.ubeaVersion = ubeaVersion;
@@ -362,24 +363,24 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return this;
     }
 
-    public ArtPollReply.PortAdressingAuthority getPortAdressingAuthority() {
-        return portAdressingAuthority;
+    public ArtPollReply.PortAddressingAuthority getPortAddressingAuthority() {
+        return portAddressingAuthority;
     }
 
-    public synchronized void setPortAdressingAuthority(ArtPollReply.PortAdressingAuthority portAdressingAuthority) {
+    public synchronized void setPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
 
-        if (portAdressingAuthority == null) {
-            portAdressingAuthority = ArtPollReply.PortAdressingAuthority.Unknown;
+        if (portAddressingAuthority == null) {
+            portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
         }
 
-        if (this.portAdressingAuthority != portAdressingAuthority) {
-            this.portAdressingAuthority = portAdressingAuthority;
+        if (this.portAddressingAuthority != portAddressingAuthority) {
+            this.portAddressingAuthority = portAddressingAuthority;
             changed = true;
         }
     }
 
-    public ArtPollReplyBuilder withPortAdressingAuthority(ArtPollReply.PortAdressingAuthority portAdressingAuthority) {
-        setPortAdressingAuthority(portAdressingAuthority);
+    public ArtPollReplyBuilder withPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
+        setPortAddressingAuthority(portAddressingAuthority);
         return this;
     }
 

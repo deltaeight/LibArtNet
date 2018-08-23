@@ -35,7 +35,7 @@ public class ArtPollReply extends ArtNetPacket {
     private final OemCode oemCode;
     private final int ubeaVersion;
     private final IndicatorState indicatorState;
-    private final PortAdressingAuthority portAdressingAuthority;
+    private final PortAddressingAuthority portAddressingAuthority;
     private final boolean bootedFromRom;
     private final boolean rdmSupport;
     private final boolean ubeaPresent;
@@ -67,7 +67,7 @@ public class ArtPollReply extends ArtNetPacket {
                         OemCode oemCode,
                         int ubeaVersion,
                         IndicatorState indicatorState,
-                        PortAdressingAuthority portAdressingAuthority,
+                        PortAddressingAuthority portAddressingAuthority,
                         boolean bootedFromRom,
                         boolean rdmSupport,
                         boolean ubeaPresent,
@@ -102,7 +102,7 @@ public class ArtPollReply extends ArtNetPacket {
         this.oemCode = oemCode;
         this.ubeaVersion = ubeaVersion;
         this.indicatorState = indicatorState;
-        this.portAdressingAuthority = portAdressingAuthority;
+        this.portAddressingAuthority = portAddressingAuthority;
         this.bootedFromRom = bootedFromRom;
         this.rdmSupport = rdmSupport;
         this.ubeaPresent = ubeaPresent;
@@ -156,8 +156,8 @@ public class ArtPollReply extends ArtNetPacket {
         return indicatorState;
     }
 
-    public PortAdressingAuthority getPortAdressingAuthority() {
-        return portAdressingAuthority;
+    public PortAddressingAuthority getPortAddressingAuthority() {
+        return portAddressingAuthority;
     }
 
     public boolean isBootedFromRom() {
@@ -270,7 +270,7 @@ public class ArtPollReply extends ArtNetPacket {
         }
     }
 
-    public enum PortAdressingAuthority {
+    public enum PortAddressingAuthority {
 
         Unknown(0b00000000),
         FrontPanel(0b00000001),
@@ -279,7 +279,7 @@ public class ArtPollReply extends ArtNetPacket {
 
         private final byte value;
 
-        PortAdressingAuthority(int value) {
+        PortAddressingAuthority(int value) {
             this.value = (byte) value;
         }
 

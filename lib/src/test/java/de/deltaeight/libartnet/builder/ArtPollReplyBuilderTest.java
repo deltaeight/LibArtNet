@@ -22,6 +22,7 @@
 package de.deltaeight.libartnet.builder;
 
 import de.deltaeight.libartnet.enums.OemCode;
+import de.deltaeight.libartnet.packet.ArtPollReply;
 import org.junit.jupiter.api.Test;
 
 import java.net.Inet4Address;
@@ -288,6 +289,224 @@ class ArtPollReplyBuilderTest {
 
         assertSame(builder, builder.withOemCode(null));
         assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void ubeaVersion() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x2A, 0x00, DEFAULT_ESTA_MAN_BYTES,
+                DEFAULT_NAMES, DEFAULT_NAMES, new int[0], 0x00, new int[4], new int[4], new int[4], new int[4],
+                new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
+                0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals(0, builder.getUbeaVersion());
+
+        builder.setUbeaVersion(42);
+        assertEquals(42, builder.getUbeaVersion());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setUbeaVersion(0);
+        assertEquals(0, builder.getUbeaVersion());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withUbeaVersion(42));
+        assertEquals(42, builder.getUbeaVersion());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withUbeaVersion(0));
+        assertEquals(0, builder.getUbeaVersion());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setUbeaVersion(-1));
+        assertThrows(IllegalArgumentException.class, () -> builder.withUbeaVersion(256));
+    }
+
+    @Test
+    void indicatorState() {
+
+        byte[][] expectedData = {
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b01000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b10000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b11000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00)
+        };
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+
+        for (int i = 0; i < 4; i++) {
+
+            ArtPollReply.IndicatorState currentState = ArtPollReply.IndicatorState.values()[i];
+            byte[] expectedDatum = expectedData[i];
+
+            builder.setIndicatorState(currentState);
+            assertSame(currentState, builder.getIndicatorState());
+            assertArrayEquals(expectedDatum, builder.build().getBytes());
+
+            builder.setIndicatorState(null);
+            assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+            assertSame(builder, builder.withIndicatorState(currentState));
+            assertSame(currentState, builder.getIndicatorState());
+            assertArrayEquals(expectedDatum, builder.build().getBytes());
+
+            assertSame(builder, builder.withIndicatorState(null));
+            assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        }
+    }
+
+    @Test
+    void portAddressingAuthority() {
+
+        byte[][] expectedData = {
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b00010000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b00100000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                        0x00, 0b00110000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                        0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00)
+        };
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+
+        for (int i = 0; i < 4; i++) {
+
+            ArtPollReply.PortAddressingAuthority currentState = ArtPollReply.PortAddressingAuthority.values()[i];
+            byte[] expectedDatum = expectedData[i];
+
+            builder.setPortAddressingAuthority(currentState);
+            assertSame(currentState, builder.getPortAddressingAuthority());
+            assertArrayEquals(expectedDatum, builder.build().getBytes());
+
+            builder.setPortAddressingAuthority(null);
+            assertSame(ArtPollReply.PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
+            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+            assertSame(builder, builder.withPortAddressingAuthority(currentState));
+            assertSame(currentState, builder.getPortAddressingAuthority());
+            assertArrayEquals(expectedDatum, builder.build().getBytes());
+
+            assertSame(builder, builder.withPortAddressingAuthority(null));
+            assertSame(ArtPollReply.PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
+            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        }
+    }
+
+    @Test
+    void bootedFromRom() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0b00000100, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertFalse(builder.isBootedFromRom());
+
+        builder.setBootedFromRom(true);
+        assertTrue(builder.isBootedFromRom());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setBootedFromRom(false);
+        assertFalse(builder.isBootedFromRom());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withBootedFromRom(true));
+        assertTrue(builder.isBootedFromRom());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withBootedFromRom(false));
+        assertFalse(builder.isBootedFromRom());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void rdmSupport() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0b00000010, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertFalse(builder.supportsRdm());
+
+        builder.setRdmSupport(true);
+        assertTrue(builder.supportsRdm());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setRdmSupport(false);
+        assertFalse(builder.supportsRdm());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withRdmSupport(true));
+        assertTrue(builder.supportsRdm());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withRdmSupport(false));
+        assertFalse(builder.supportsRdm());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void ubeaPresent() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0b00000001, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertFalse(builder.isUbeaPresent());
+
+        builder.setUbeaPresent(true);
+        assertTrue(builder.isUbeaPresent());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setUbeaPresent(false);
+        assertFalse(builder.isUbeaPresent());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withUbeaPresent(true));
+        assertTrue(builder.isUbeaPresent());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withUbeaPresent(false));
+        assertFalse(builder.isUbeaPresent());
         assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
     }
 }
