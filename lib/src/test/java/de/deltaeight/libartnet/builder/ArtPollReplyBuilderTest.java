@@ -21,6 +21,7 @@
 
 package de.deltaeight.libartnet.builder;
 
+import de.deltaeight.libartnet.enums.OemCode;
 import org.junit.jupiter.api.Test;
 
 import java.net.Inet4Address;
@@ -258,5 +259,35 @@ class ArtPollReplyBuilderTest {
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSubnetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSubnetAddress(16));
+    }
+
+    @Test
+    void oemCode() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                new int[]{0x00, 0x00}, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES,
+                DEFAULT_NAMES, DEFAULT_NAMES, new int[0], 0x00, new int[4], new int[4], new int[4], new int[4],
+                new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
+                0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+
+        builder.setOemCode(OemCode.OemDMXHub);
+        assertSame(OemCode.OemDMXHub, builder.getOemCode());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setOemCode(null);
+        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withOemCode(OemCode.OemDMXHub));
+        assertSame(OemCode.OemDMXHub, builder.getOemCode());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withOemCode(null));
+        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
     }
 }
