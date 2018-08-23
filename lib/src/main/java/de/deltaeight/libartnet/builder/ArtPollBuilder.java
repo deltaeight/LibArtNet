@@ -37,7 +37,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
     private Priority priority;
 
     private boolean changed;
-    private byte[] bytes;
+    private ArtPoll artPoll;
 
     public ArtPollBuilder() {
         priority = Priority.Low;
@@ -68,11 +68,13 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
 
             bytes[13] = priority.getValue();
 
-            this.bytes = bytes;
+            artPoll = new ArtPoll(vlcTransmissionDisabled(), unicastDiagnosticMessages(), sendDiagnosticMessages(),
+                    sendArtPollReplyOnChanges(), getPriority(), bytes.clone());
+
             changed = false;
         }
-        return new ArtPoll(vlcTransmissionDisabled(), unicastDiagnosticMessages(), sendDiagnosticMessages(),
-                sendArtPollReplyOnChanges(), getPriority(), bytes.clone());
+
+        return artPoll;
     }
 
     public boolean vlcTransmissionDisabled() {

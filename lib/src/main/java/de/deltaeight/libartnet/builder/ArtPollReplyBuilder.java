@@ -41,7 +41,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     private int nodeVersion;
     private int netAddress;
     private int subnetAddress;
-    private OemCode oemCode = OemCode.UNKNOWN;
+    private OemCode oemCode;
     private int ubeaVersion;
     private ArtPollReply.IndicatorState indicatorState;
     private ArtPollReply.PortAdressingAuthority portAdressingAuthority;
@@ -71,10 +71,11 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     private boolean squawking;
 
     private boolean changed;
-    private byte[] bytes;
+    private ArtPollReply artPollReply;
 
     public ArtPollReplyBuilder() {
 
+        oemCode = OemCode.UNKNOWN;
         indicatorState = ArtPollReply.IndicatorState.Unknown;
         portAdressingAuthority = ArtPollReply.PortAdressingAuthority.Unknown;
         estaManufacturer = "D8";
@@ -91,6 +92,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         outputUniverseAddresses = new int[4];
         macrosActive = new boolean[8];
         remotesActive = new boolean[8];
+        equipmentStyle = EquipmentStyle.Config;
         macAddress = new byte[6];
 
         changed = true;
@@ -214,17 +216,19 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
                 bytes[212] |= 0b00100000;
             }
 
-            this.bytes = bytes;
+            artPollReply = new ArtPollReply(getIpAddress(), getNodeVersion(), getNetAddress(), getSubnetAddress(),
+                    getOemCode(), getUbeaVersion(), getIndicatorState(), getPortAdressingAuthority(), isBootedFromRom(),
+                    supportsRdm(), isUbeaPresent(), getEstaManufacturer(), getShortName(), getLongName(),
+                    getNodeReport(), getPortTypes(), getInputStatuses(), getOutputStatuses(),
+                    getInputUniverseAddresses(), getOutputUniverseAddresses(), getMacrosActive(), getRemotesActive(),
+                    getEquipmentStyle(), getMacAddress(), getBindIndex(), supportsWebBrowserConfiguration(),
+                    ipIsDhcpConfigured(), supportsDhcp(), supportsLongPortAddresses(), canSwitchToSACN(), isSquawking(),
+                    bytes.clone());
+
             changed = false;
         }
 
-        return new ArtPollReply(getIpAddress(), getNodeVersion(), getNetAddress(), getSubnetAddress(), getOemCode(),
-                getUbeaVersion(), getIndicatorState(), getPortAdressingAuthority(), isBootedFromRom(), supportsRdm(),
-                isUbeaPresent(), getEstaManufacturer(), getShortName(), getLongName(), getNodeReport(), getPortTypes(),
-                getInputStatuses(), getOutputStatuses(), getInputUniverseAddresses(), getOutputUniverseAddresses(),
-                getMacrosActive(), getRemotesActive(), getEquipmentStyle(), getMacAddress(), getBindIndex(),
-                supportsWebBrowserConfiguration(), ipIsDhcpConfigured(), supportsDhcp(), supportsLongPortAddresses(),
-                canSwitchToSACN(), isSquawking(), bytes.clone());
+        return artPollReply;
     }
 
     public Inet4Address getIpAddress() {
