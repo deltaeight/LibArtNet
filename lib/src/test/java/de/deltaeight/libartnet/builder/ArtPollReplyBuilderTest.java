@@ -23,7 +23,11 @@ package de.deltaeight.libartnet.builder;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArtPollReplyBuilderTest {
 
@@ -32,30 +36,35 @@ class ArtPollReplyBuilderTest {
     private static final int[] DEFAULT_NAMES = new int[]{0x4C, 0x69, 0x62, 0x41, 0x72, 0x74, 0x4E, 0x65, 0x74};
     private static final int DEFAULT_EQUIPMENT_STYLE = 0x05;
 
-    private byte[] getExpectedData(int[] ipAddress,
-                                   int[] nodeFirmwareVersion,
-                                   int netSwitch,
-                                   int subSwitch,
-                                   int[] oemBytes,
-                                   int ubeaVersion,
-                                   int status1,
-                                   int[] estaManBytes,
-                                   int[] shortName,
-                                   int[] longName,
-                                   int[] nodeReport,
-                                   int numPorts,
-                                   int[] portTypes,
-                                   int[] inputStatuses,
-                                   int[] outputStatuses,
-                                   int[] inputUniverseAddresses,
-                                   int[] outputUniverseAddresses,
-                                   int macrosActive,
-                                   int remotesActive,
-                                   int equipmentStyle,
-                                   int[] macAddress,
-                                   int[] bindIp,
-                                   int bindIndex,
-                                   int status2) {
+    private static final byte[] DEFAULT_PACKET = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+            DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+            new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+            0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+    private static byte[] getExpectedData(byte[] ipAddress,
+                                          int[] nodeFirmwareVersion,
+                                          int netSwitch,
+                                          int subSwitch,
+                                          int[] oemBytes,
+                                          int ubeaVersion,
+                                          int status1,
+                                          int[] estaManBytes,
+                                          int[] shortName,
+                                          int[] longName,
+                                          int[] nodeReport,
+                                          int numPorts,
+                                          int[] portTypes,
+                                          int[] inputStatuses,
+                                          int[] outputStatuses,
+                                          int[] inputUniverseAddresses,
+                                          int[] outputUniverseAddresses,
+                                          int macrosActive,
+                                          int remotesActive,
+                                          int equipmentStyle,
+                                          int[] macAddress,
+                                          int[] bindIp,
+                                          int bindIndex,
+                                          int status2) {
 
         int[] tmp = new int[239];
 
@@ -64,7 +73,12 @@ class ArtPollReplyBuilderTest {
                 0x00, 0x21,                                     // OpCode
         }, 0, tmp, 0, 10);
 
-        System.arraycopy(ipAddress, 0, tmp, 10, 4);
+        int[] tmpIpAddress = new int[4];
+        for (int i = 0; i < tmpIpAddress.length; i++) {
+            tmpIpAddress[i] = ipAddress[i];
+        }
+
+        System.arraycopy(tmpIpAddress, 0, tmp, 10, 4);
         System.arraycopy(new int[]{0x36, 0x19}, 0, tmp, 14, 2); // Port
         System.arraycopy(nodeFirmwareVersion, 0, tmp, 16, 2);
 
@@ -116,10 +130,133 @@ class ArtPollReplyBuilderTest {
 
     @Test
     void build() {
-        assertArrayEquals(getExpectedData(new int[4], new int[4], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
-                0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
-                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
-                new ArtPollReplyBuilder().build().getBytes());
+        assertArrayEquals(DEFAULT_PACKET, new ArtPollReplyBuilder().build().getBytes());
+    }
+
+    @Test
+    void ipAddress() throws UnknownHostException {
+
+        Inet4Address testAddress = (Inet4Address) InetAddress.getByAddress(new byte[]{0x7F, 0x00, 0x00, 0x00});
+        byte[] expectedData = getExpectedData(testAddress.getAddress(), new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertNull(builder.getIpAddress());
+
+        builder.setIpAddress(testAddress);
+        assertEquals(testAddress, builder.getIpAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setIpAddress(null);
+        assertNull(builder.getIpAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withIpAddress(testAddress));
+        assertEquals(testAddress, builder.getIpAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withIpAddress(null));
+        assertNull(builder.getIpAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void nodeVersion() {
+
+        int[] nodeVersion = new int[2];
+        nodeVersion[0] = 666 >> 8;
+        nodeVersion[1] = 666;
+
+        byte[] expectedData = getExpectedData(new byte[4], nodeVersion, 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals(0, builder.getNodeVersion());
+
+        builder.setNodeVersion(666);
+        assertEquals(666, builder.getNodeVersion());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setNodeVersion(0);
+        assertEquals(0, builder.getNodeVersion());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withNodeVersion(666));
+        assertEquals(666, builder.getNodeVersion());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withNodeVersion(0));
+        assertEquals(0, builder.getNodeVersion());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void netAddress() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x2A, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals(0, builder.getNetAddress());
+
+        builder.setNetAddress(42);
+        assertEquals(42, builder.getNetAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setNetAddress(0);
+        assertEquals(0, builder.getNetAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withNetAddress(42));
+        assertEquals(42, builder.getNetAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withNetAddress(0));
+        assertEquals(0, builder.getNetAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setNetAddress(-1));
+        assertThrows(IllegalArgumentException.class, () -> builder.withNetAddress(128));
+    }
+    
+    @Test
+    void subnetAddress() {
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x0D,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals(0, builder.getSubnetAddress());
+
+        builder.setSubnetAddress(13);
+        assertEquals(13, builder.getSubnetAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setSubnetAddress(0);
+        assertEquals(0, builder.getSubnetAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withSubnetAddress(13));
+        assertEquals(13, builder.getSubnetAddress());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withSubnetAddress(0));
+        assertEquals(0, builder.getSubnetAddress());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setSubnetAddress(-1));
+        assertThrows(IllegalArgumentException.class, () -> builder.withSubnetAddress(16));
     }
 }
