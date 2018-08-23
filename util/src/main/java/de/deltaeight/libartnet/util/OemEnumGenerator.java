@@ -97,7 +97,8 @@ public class OemEnumGenerator {
             boolean supportsRdm = matcher.group(8).equalsIgnoreCase("y")
                     || matcher.group(8).equalsIgnoreCase("yes");
 
-            return matcher.group(1) + "(new Product(" + Integer.parseInt(matcher.group(2), 16) + ", \""
+            return matcher.group(1) + "(new Product(0x"
+                    + String.format("%04X", Integer.parseInt(matcher.group(2), 16)) + ", \""
                     + matcher.group(3) + "\", \"" + matcher.group(4) + "\", " + Integer.parseInt(matcher.group(5)) + ", "
                     + Integer.parseInt(matcher.group(6)) + ", " + dmxPortsPhysical + ", " + supportsRdm + ", \""
                     + matcher.group(9) + "\", \"" + matcher.group(10) + "\"))";
