@@ -6,7 +6,8 @@ variables:
 cache:
   key: $CI_PROJECT_NAME
   paths:
-  - .gradle/
+  - .gradle/wrapper/
+  - .gradle/caches/
 
 test:
   stage: test
