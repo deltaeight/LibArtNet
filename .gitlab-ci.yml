@@ -4,7 +4,7 @@ test:
   stage: test
   script:
   - ls -la
-  - if [ -d "$DIRECTORY" ]; then
+  - if [ -d ".gradle" ]; then
       cd .gradle;
       ls -la;
       cd ..;
