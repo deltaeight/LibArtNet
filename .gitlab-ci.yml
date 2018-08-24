@@ -4,9 +4,9 @@ test:
   stage: test
   script:
   - if [ -d "$DIRECTORY" ]; then
-      cd .gradle
-      ls -la
-      cd ..
+      cd .gradle;
+      ls -la;
+      cd ..;
     fi
   - ./gradlew check
   cache:
