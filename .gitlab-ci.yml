@@ -4,5 +4,6 @@ test:
   stage: test
   script: ./gradlew check
   cache:
+    key: test
     paths:
     - .gradle/
