@@ -32,8 +32,7 @@ import java.util.Arrays;
 
 public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
-    public static final int BIND_INDEX_DISABLED = 0;
-    public static final int BIND_INDEX_ROOT = 1;
+    public static final EquipmentStyle DEFAULT_EQUIPMENT_STYLE = EquipmentStyle.Config;
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpPollReply.getBytesLittleEndian();
 
@@ -92,7 +91,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         outputUniverseAddresses = new int[4];
         macrosActive = new boolean[8];
         remotesActive = new boolean[8];
-        equipmentStyle = EquipmentStyle.Config;
+        equipmentStyle = DEFAULT_EQUIPMENT_STYLE;
         macAddress = new byte[6];
 
         changed = true;
@@ -676,7 +675,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     public synchronized void setEquipmentStyle(EquipmentStyle equipmentStyle) {
 
         if (equipmentStyle == null) {
-            equipmentStyle = EquipmentStyle.Node;
+            equipmentStyle = DEFAULT_EQUIPMENT_STYLE;
         }
 
         if (this.equipmentStyle != equipmentStyle) {
@@ -710,6 +709,11 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
+    public ArtPollReplyBuilder withMacAddress(byte[] macAddress) {
+        setMacAddress(macAddress);
+        return this;
+    }
+
     public Inet4Address getBindIp() {
         return bindIp;
     }
@@ -738,6 +742,11 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
             this.bindIndex = bindIndex;
             changed = true;
         }
+    }
+
+    public ArtPollReplyBuilder withBindIndex(int bindIndex) {
+        setBindIndex(bindIndex);
+        return this;
     }
 
     public boolean supportsWebBrowserConfiguration() {
