@@ -2,9 +2,10 @@ image: gradle:jdk8
 
 test:
   stage: test
-  script: ./gradlew check
+  script:
+  - ls -la
+  - ./gradlew check
   cache:
     key: test
     paths:
-    - ls -la
     - .gradle/
