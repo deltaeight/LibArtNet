@@ -3,9 +3,7 @@ image: gradle:jdk8
 test:
   stage: test
   script:
-  - cd gradle
   - ls -la
-  - cd ..
   - ./gradlew check
   cache:
     key: test
