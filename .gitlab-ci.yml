@@ -3,3 +3,6 @@ image: gradle:jdk8
 test:
   stage: test
   script: ./gradlew check
+  cache:
+    paths:
+    - .gradle/
