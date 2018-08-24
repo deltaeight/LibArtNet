@@ -44,6 +44,7 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
 
     public ArtDmxBuilder() {
         data = new byte[512];
+        changed = true;
     }
 
     @Override
@@ -172,6 +173,10 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
     public ArtDmxBuilder withNetAddress(int netAddress) {
         setNetAddress(netAddress);
         return this;
+    }
+
+    public int getDataSize() {
+        return dataSize;
     }
 
     public byte[] getData() {
