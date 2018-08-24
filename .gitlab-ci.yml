@@ -1,5 +1,13 @@
 image: gradle:jdk8
 
+variables:
+  GRADLE_USER_HOME: $CI_PROJECT_DIR/.gradle
+
+cache:
+  key: $CI_PROJECT_NAME
+  paths:
+  - .gradle/
+
 test:
   stage: test
   script:
@@ -10,7 +18,3 @@ test:
       cd ..;
     fi
   - ./gradlew check
-  cache:
-    key: test
-    paths:
-    - .gradle/
