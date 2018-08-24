@@ -45,7 +45,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
     }
 
     @Override
-    public synchronized ArtPoll build() {
+    public ArtPoll build() {
         if(changed) {
 
             byte[] bytes = new byte[14];
@@ -81,7 +81,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         return disableVlcTransmission;
     }
 
-    public synchronized void setDisableVlcTransmission(boolean disableVlcTransmission) {
+    public void setDisableVlcTransmission(boolean disableVlcTransmission) {
         if(this.disableVlcTransmission != disableVlcTransmission) {
             this.disableVlcTransmission = disableVlcTransmission;
             changed = true;
@@ -97,7 +97,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         return unicastDiagnosticMessages;
     }
 
-    public synchronized void setUnicastDiagnosticMessages(boolean unicastDiagnosticMessages) {
+    public void setUnicastDiagnosticMessages(boolean unicastDiagnosticMessages) {
         if(this.unicastDiagnosticMessages != unicastDiagnosticMessages) {
             this.unicastDiagnosticMessages = unicastDiagnosticMessages;
             changed = true;
@@ -113,7 +113,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         return sendDiagnosticMessages;
     }
 
-    public synchronized void setSendDiagnosticMessages(boolean sendDiagnosticMessages) {
+    public void setSendDiagnosticMessages(boolean sendDiagnosticMessages) {
         if(this.sendDiagnosticMessages != sendDiagnosticMessages) {
             this.sendDiagnosticMessages = sendDiagnosticMessages;
             changed = true;
@@ -129,7 +129,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         return sendArtPollReplyOnChanges;
     }
 
-    public synchronized void setSendArtPollReplyOnChanges(boolean sendArtPollReplyOnChanges) {
+    public void setSendArtPollReplyOnChanges(boolean sendArtPollReplyOnChanges) {
         if(this.sendArtPollReplyOnChanges != sendArtPollReplyOnChanges) {
             this.sendArtPollReplyOnChanges = sendArtPollReplyOnChanges;
             changed = true;
@@ -145,7 +145,7 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         return priority;
     }
 
-    public synchronized void setPriority(Priority priority) {
+    public void setPriority(Priority priority) {
 
         if(priority == null) {
             priority = Priority.Low;

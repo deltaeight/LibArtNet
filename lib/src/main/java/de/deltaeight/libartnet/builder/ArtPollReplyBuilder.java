@@ -98,7 +98,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     }
 
     @Override
-    public synchronized ArtPollReply build() {
+    public ArtPollReply build() {
 
         if (changed) {
 
@@ -235,7 +235,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return ipAddress;
     }
 
-    public synchronized void setIpAddress(Inet4Address ipAddress) {
+    public void setIpAddress(Inet4Address ipAddress) {
         if (this.ipAddress != ipAddress || this.ipAddress != null && !this.ipAddress.equals(ipAddress)) {
             this.ipAddress = ipAddress;
             changed = true;
@@ -251,7 +251,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return nodeVersion;
     }
 
-    public synchronized void setNodeVersion(int nodeVersion) {
+    public void setNodeVersion(int nodeVersion) {
         if (this.nodeVersion != nodeVersion) {
             this.nodeVersion = nodeVersion;
             changed = true;
@@ -267,7 +267,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return netAddress;
     }
 
-    public synchronized void setNetAddress(int netAddress) {
+    public void setNetAddress(int netAddress) {
         if (this.netAddress != netAddress) {
             if (0 > netAddress || netAddress > 127) {
                 throw new IllegalArgumentException("Illegal net address!");
@@ -286,7 +286,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return subnetAddress;
     }
 
-    public synchronized void setSubnetAddress(int subnetAddress) {
+    public void setSubnetAddress(int subnetAddress) {
         if (this.subnetAddress != subnetAddress) {
             if (0 > subnetAddress || subnetAddress > 15) {
                 throw new IllegalArgumentException("Illegal subnet address!");
@@ -305,7 +305,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return oemCode;
     }
 
-    public synchronized void setOemCode(OemCode oemCode) {
+    public void setOemCode(OemCode oemCode) {
 
         if (oemCode == null) {
             oemCode = OemCode.UNKNOWN;
@@ -326,7 +326,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return ubeaVersion;
     }
 
-    public synchronized void setUbeaVersion(int ubeaVersion) {
+    public void setUbeaVersion(int ubeaVersion) {
         if (this.ubeaVersion != ubeaVersion) {
             if (0 > ubeaVersion || ubeaVersion > 255) {
                 throw new IllegalArgumentException("Illegal UBEA version!");
@@ -345,7 +345,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return indicatorState;
     }
 
-    public synchronized void setIndicatorState(ArtPollReply.IndicatorState indicatorState) {
+    public void setIndicatorState(ArtPollReply.IndicatorState indicatorState) {
 
         if (indicatorState == null) {
             indicatorState = ArtPollReply.IndicatorState.Unknown;
@@ -366,7 +366,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return portAddressingAuthority;
     }
 
-    public synchronized void setPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
+    public void setPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
 
         if (portAddressingAuthority == null) {
             portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
@@ -387,7 +387,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return bootedFromRom;
     }
 
-    public synchronized void setBootedFromRom(boolean bootedFromRom) {
+    public void setBootedFromRom(boolean bootedFromRom) {
         if (this.bootedFromRom != bootedFromRom) {
             this.bootedFromRom = bootedFromRom;
             changed = true;
@@ -403,7 +403,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return rdmSupport;
     }
 
-    public synchronized void setRdmSupport(boolean rdmSupport) {
+    public void setRdmSupport(boolean rdmSupport) {
         if (this.rdmSupport != rdmSupport) {
             this.rdmSupport = rdmSupport;
             changed = true;
@@ -419,7 +419,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return ubeaPresent;
     }
 
-    public synchronized void setUbeaPresent(boolean ubeaPresent) {
+    public void setUbeaPresent(boolean ubeaPresent) {
         if (this.ubeaPresent != ubeaPresent) {
             this.ubeaPresent = ubeaPresent;
             changed = true;
@@ -435,7 +435,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return estaManufacturer;
     }
 
-    public synchronized void setEstaManufacturer(String estaManufacturer) {
+    public void setEstaManufacturer(String estaManufacturer) {
         if (!this.estaManufacturer.equals(estaManufacturer)) {
             if (estaManufacturer == null) {
                 estaManufacturer = "";
@@ -454,7 +454,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return shortName;
     }
 
-    public synchronized void setShortName(String shortName) {
+    public void setShortName(String shortName) {
         if (!this.shortName.equals(shortName)) {
             if (shortName == null) {
                 shortName = "";
@@ -473,7 +473,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return longName;
     }
 
-    public synchronized void setLongName(String longName) {
+    public void setLongName(String longName) {
         if (!this.longName.equals(longName)) {
             if (longName == null) {
                 longName = "";
@@ -492,7 +492,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return nodeReport;
     }
 
-    public synchronized void setNodeReport(String nodeReport) {
+    public void setNodeReport(String nodeReport) {
         if (!this.nodeReport.equals(nodeReport)) {
             if(nodeReport == null) {
                 nodeReport = "";
@@ -515,7 +515,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return portTypes[index];
     }
 
-    public synchronized void setPortType(int index, ArtPollReply.PortType portType) {
+    public void setPortType(int index, ArtPollReply.PortType portType) {
 
         if (portType == null) {
             portType = ArtPollReply.PortType.DEFAULT;
@@ -540,7 +540,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return inputStatuses[index];
     }
 
-    public synchronized void setInputStatus(int index, ArtPollReply.InputStatus inputStatus) {
+    public void setInputStatus(int index, ArtPollReply.InputStatus inputStatus) {
 
         if (inputStatus == null) {
             inputStatus = ArtPollReply.InputStatus.DEFAULT;
@@ -565,7 +565,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return outputStatuses[index];
     }
 
-    public synchronized void setOutputStatus(int index, ArtPollReply.OutputStatus outputStatus) {
+    public void setOutputStatus(int index, ArtPollReply.OutputStatus outputStatus) {
 
         if (outputStatus == null) {
             outputStatus = ArtPollReply.OutputStatus.DEFAULT;
@@ -590,7 +590,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return inputUniverseAddresses[index];
     }
 
-    public synchronized void setInputUniverseAddress(int index, int inputUniverseAddress) {
+    public void setInputUniverseAddress(int index, int inputUniverseAddress) {
         if (inputUniverseAddresses[index] != inputUniverseAddress) {
             if (0 > inputUniverseAddress || inputUniverseAddress > 15) {
                 throw new IllegalArgumentException("Illegal universe address!");
@@ -613,7 +613,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return outputUniverseAddresses[index];
     }
 
-    public synchronized void setOutputUniverseAddress(int index, int outputUniverseAddress) {
+    public void setOutputUniverseAddress(int index, int outputUniverseAddress) {
         if (outputUniverseAddresses[index] != outputUniverseAddress) {
             if (0 > outputUniverseAddress || outputUniverseAddress > 15) {
                 throw new IllegalArgumentException("Illegal universe address!");
@@ -672,7 +672,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return equipmentStyle;
     }
 
-    public synchronized void setEquipmentStyle(EquipmentStyle equipmentStyle) {
+    public void setEquipmentStyle(EquipmentStyle equipmentStyle) {
 
         if (equipmentStyle == null) {
             equipmentStyle = DEFAULT_EQUIPMENT_STYLE;
@@ -693,7 +693,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return macAddress.clone();
     }
 
-    public synchronized void setMacAddress(byte[] macAddress) {
+    public void setMacAddress(byte[] macAddress) {
 
         if (macAddress == null) {
             macAddress = new byte[6];
@@ -718,7 +718,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return bindIp;
     }
 
-    public synchronized void setBindIp(Inet4Address bindIp) {
+    public void setBindIp(Inet4Address bindIp) {
         if (this.bindIp != bindIp || this.bindIp != null && !this.bindIp.equals(bindIp)) {
             this.bindIp = bindIp;
             changed = true;
@@ -734,7 +734,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return bindIndex;
     }
 
-    public synchronized void setBindIndex(int bindIndex) {
+    public void setBindIndex(int bindIndex) {
         if (this.bindIndex != bindIndex) {
             if (0 > bindIndex || bindIndex > 255) {
                 throw new IllegalArgumentException("Illegal bind index!");
@@ -753,7 +753,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return webBrowserConfigurationSupport;
     }
 
-    public synchronized void setWebBrowserConfigurationSupport(boolean webBrowserConfigurationSupport) {
+    public void setWebBrowserConfigurationSupport(boolean webBrowserConfigurationSupport) {
         if (this.webBrowserConfigurationSupport != webBrowserConfigurationSupport) {
             this.webBrowserConfigurationSupport = webBrowserConfigurationSupport;
             changed = true;
@@ -769,7 +769,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return ipIsDhcpConfigured;
     }
 
-    public synchronized void setIpIsDhcpConfigured(boolean ipIsDhcpConfigured) {
+    public void setIpIsDhcpConfigured(boolean ipIsDhcpConfigured) {
         if (this.ipIsDhcpConfigured != ipIsDhcpConfigured) {
             this.ipIsDhcpConfigured = ipIsDhcpConfigured;
             changed = true;
@@ -785,7 +785,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return dhcpSupport;
     }
 
-    public synchronized void setDhcpSupport(boolean dhcpSupport) {
+    public void setDhcpSupport(boolean dhcpSupport) {
         if (this.dhcpSupport != dhcpSupport) {
             this.dhcpSupport = dhcpSupport;
             changed = true;
@@ -801,7 +801,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return longPortAddressSupport;
     }
 
-    public synchronized void setLongPortAddressSupport(boolean longPortAddressSupport) {
+    public void setLongPortAddressSupport(boolean longPortAddressSupport) {
         if (this.longPortAddressSupport != longPortAddressSupport) {
             this.longPortAddressSupport = longPortAddressSupport;
             changed = true;
@@ -817,7 +817,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return canSwitchToSACN;
     }
 
-    public synchronized void setCanSwitchToSACN(boolean canSwitchToSACN) {
+    public void setCanSwitchToSACN(boolean canSwitchToSACN) {
         if (this.canSwitchToSACN != canSwitchToSACN) {
             this.canSwitchToSACN = canSwitchToSACN;
             changed = true;
@@ -833,7 +833,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         return squawking;
     }
 
-    public synchronized void setSquawking(boolean squawking) {
+    public void setSquawking(boolean squawking) {
         if (this.squawking != squawking) {
             this.squawking = squawking;
             changed = true;
