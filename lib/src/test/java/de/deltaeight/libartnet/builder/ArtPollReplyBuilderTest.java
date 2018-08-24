@@ -35,12 +35,12 @@ class ArtPollReplyBuilderTest {
 
     private static final int[] DEFAULT_ESTA_MAN_BYTES = new int[]{0x38, 0x44};
     private static final int[] DEFAULT_OEM_BYTES = new int[]{0x7F, 0xFF};
-    private static final int[] DEFAULT_NAMES = new int[]{0x4C, 0x69, 0x62, 0x41, 0x72, 0x74, 0x4E, 0x65, 0x74};
+    private static final byte[] DEFAULT_NAMES = new byte[]{0x4C, 0x69, 0x62, 0x41, 0x72, 0x74, 0x4E, 0x65, 0x74};
     private static final int DEFAULT_EQUIPMENT_STYLE = 0x05;
 
     private static final byte[] DEFAULT_PACKET = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
             DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-            new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+            new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
             0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
     private static byte[] getExpectedData(byte[] ipAddress,
@@ -51,9 +51,9 @@ class ArtPollReplyBuilderTest {
                                           int ubeaVersion,
                                           int status1,
                                           int[] estaManBytes,
-                                          int[] shortName,
-                                          int[] longName,
-                                          int[] nodeReport,
+                                          byte[] shortName,
+                                          byte[] longName,
+                                          byte[] nodeReport,
                                           int numPorts,
                                           int[] portTypes,
                                           int[] inputStatuses,
@@ -93,9 +93,6 @@ class ArtPollReplyBuilderTest {
         tmp[23] = status1;
 
         System.arraycopy(estaManBytes, 0, tmp, 24, 2);
-        System.arraycopy(shortName, 0, tmp, 26, Math.min(shortName.length, 18));
-        System.arraycopy(longName, 0, tmp, 44, Math.min(longName.length, 64));
-        System.arraycopy(nodeReport, 0, tmp, 108, Math.min(nodeReport.length, 64));
 
         tmp[172] = 0x00;     // NumPortsHi
         tmp[173] = numPorts;
@@ -127,6 +124,10 @@ class ArtPollReplyBuilderTest {
             result[i] = (byte) tmp[i];
         }
 
+        System.arraycopy(shortName, 0, result, 26, Math.min(shortName.length, 18));
+        System.arraycopy(longName, 0, result, 44, Math.min(longName.length, 64));
+        System.arraycopy(nodeReport, 0, result, 108, Math.min(nodeReport.length, 64));
+
         return result;
     }
 
@@ -141,7 +142,7 @@ class ArtPollReplyBuilderTest {
         Inet4Address testAddress = (Inet4Address) InetAddress.getByAddress(new byte[]{0x7F, 0x00, 0x00, 0x00});
         byte[] expectedData = getExpectedData(testAddress.getAddress(), new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
@@ -174,7 +175,7 @@ class ArtPollReplyBuilderTest {
 
         byte[] expectedData = getExpectedData(new byte[4], nodeVersion, 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
@@ -203,7 +204,7 @@ class ArtPollReplyBuilderTest {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x2A, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
@@ -235,7 +236,7 @@ class ArtPollReplyBuilderTest {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x0D,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new int[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
@@ -267,7 +268,7 @@ class ArtPollReplyBuilderTest {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 new int[]{0x00, 0x00}, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES,
-                DEFAULT_NAMES, DEFAULT_NAMES, new int[0], 0x00, new int[4], new int[4], new int[4], new int[4],
+                DEFAULT_NAMES, DEFAULT_NAMES, new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4],
                 new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
                 0x00, 0x00);
 
@@ -297,7 +298,7 @@ class ArtPollReplyBuilderTest {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x2A, 0x00, DEFAULT_ESTA_MAN_BYTES,
-                DEFAULT_NAMES, DEFAULT_NAMES, new int[0], 0x00, new int[4], new int[4], new int[4], new int[4],
+                DEFAULT_NAMES, DEFAULT_NAMES, new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4],
                 new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
                 0x00, 0x00);
 
@@ -330,19 +331,19 @@ class ArtPollReplyBuilderTest {
 
         byte[][] expectedData = {
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b01000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b01000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b10000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b10000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b11000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b11000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00)
         };
@@ -379,19 +380,19 @@ class ArtPollReplyBuilderTest {
 
         byte[][] expectedData = {
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b00000000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b00010000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b00010000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b00100000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b00100000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
                 getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                        0x00, 0b00110000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                        0x00, 0b00110000, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                         0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                         0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00)
         };
@@ -427,7 +428,7 @@ class ArtPollReplyBuilderTest {
     void bootedFromRom() {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                0x00, 0b00000100, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, 0b00000100, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
@@ -456,7 +457,7 @@ class ArtPollReplyBuilderTest {
     void rdmSupport() {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                0x00, 0b00000010, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, 0b00000010, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
@@ -485,7 +486,7 @@ class ArtPollReplyBuilderTest {
     void ubeaPresent() {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
-                0x00, 0b00000001, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new int[0],
+                0x00, 0b00000001, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
 
@@ -508,5 +509,540 @@ class ArtPollReplyBuilderTest {
         assertSame(builder, builder.withUbeaPresent(false));
         assertFalse(builder.isUbeaPresent());
         assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void status1() {
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder()
+                .withIndicatorState(ArtPollReply.IndicatorState.Normal)
+                .withPortAddressingAuthority(ArtPollReply.PortAddressingAuthority.NotUsed)
+                .withBootedFromRom(true)
+                .withRdmSupport(true)
+                .withUbeaPresent(true);
+
+        assertArrayEquals(getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0b11110111, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
+                0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00),
+                builder.build().getBytes());
+    }
+
+    @Test
+    void estaManufacturer() {
+
+        byte[] expectedDataWithEmptyManufacturer = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, new int[2], DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0x00, new int[]{"o".getBytes()[0], "T".getBytes()[0]}, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals("D8", builder.getEstaManufacturer());
+
+        builder.setEstaManufacturer("Too long!");
+        assertEquals("To", builder.getEstaManufacturer());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setEstaManufacturer(null);
+        assertNotNull(builder.getEstaManufacturer());
+        assertTrue(builder.getEstaManufacturer().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyManufacturer, builder.build().getBytes());
+
+        assertSame(builder, builder.withEstaManufacturer("To"));
+        assertEquals("To", builder.getEstaManufacturer());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withEstaManufacturer(null));
+        assertNotNull(builder.getEstaManufacturer());
+        assertTrue(builder.getEstaManufacturer().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyManufacturer, builder.build().getBytes());
+    }
+
+    @Test
+    void shortName() {
+
+        byte[] expectedDataWithEmptyName = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, new byte[0], DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, "Too Long Name For\0".getBytes(), DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals("LibArtNet", builder.getShortName());
+
+        builder.setShortName("Too Long Name For This!");
+        assertEquals("Too Long Name For", builder.getShortName());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setShortName(null);
+        assertNotNull(builder.getShortName());
+        assertTrue(builder.getShortName().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+
+        assertSame(builder, builder.withShortName("Too Long Name For This!"));
+        assertEquals("Too Long Name For", builder.getShortName());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withShortName(null));
+        assertNotNull(builder.getShortName());
+        assertTrue(builder.getShortName().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+    }
+
+    @Test
+    void longName() {
+
+        String testString = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonu";
+
+        byte[] expectedDataWithEmptyName = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, new byte[0],
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES,
+                (testString.substring(0, 63) + "\0").getBytes(), new byte[0], 0x00, new int[4], new int[4],
+                new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6],
+                new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertEquals("LibArtNet", builder.getLongName());
+
+        builder.setLongName(testString);
+        assertEquals(testString.substring(0, 63), builder.getLongName());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setLongName(null);
+        assertNotNull(builder.getLongName());
+        assertTrue(builder.getLongName().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+
+        assertSame(builder, builder.withLongName(testString));
+        assertEquals(testString.substring(0, 63), builder.getLongName());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withLongName(null));
+        assertNotNull(builder.getLongName());
+        assertTrue(builder.getLongName().isEmpty());
+        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+    }
+
+    @Test
+    void nodeReport() {
+
+        String testString = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonu";
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+                0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                (testString.substring(0, 63) + "\0").getBytes(), 0x00, new int[4], new int[4],
+                new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6],
+                new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertNotNull(builder.getNodeReport());
+        assertTrue(builder.getNodeReport().isEmpty());
+
+        builder.setNodeReport(testString);
+        assertEquals(testString.substring(0, 63), builder.getNodeReport());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        builder.setNodeReport(null);
+        assertNotNull(builder.getNodeReport());
+        assertTrue(builder.getNodeReport().isEmpty());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertSame(builder, builder.withNodeReport(testString));
+        assertEquals(testString.substring(0, 63), builder.getNodeReport());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        assertSame(builder, builder.withNodeReport(null));
+        assertNotNull(builder.getNodeReport());
+        assertTrue(builder.getNodeReport().isEmpty());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+    }
+
+    @Test
+    void portTypes() {
+
+        ArtPollReply.PortType[] testValues = new ArtPollReply.PortType[]{
+                new ArtPollReply.PortType(false, false, ArtPollReply.PortType.Protocol.ARTNET),
+                new ArtPollReply.PortType(false, true, ArtPollReply.PortType.Protocol.MIDI),
+                new ArtPollReply.PortType(true, false, ArtPollReply.PortType.Protocol.AVAB),
+                new ArtPollReply.PortType(true, true, ArtPollReply.PortType.Protocol.ADB625)
+        };
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x03, new int[]{0b00000101, 0b01000001, 0b10000010, 0b11000100}, new int[4],
+                new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE,
+                new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReply.PortType[] defaultTypes = new ArtPollReply.PortType[]{ArtPollReply.PortType.DEFAULT,
+                ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT};
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertArrayEquals(defaultTypes, builder.getPortTypes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setPortType(i, testValues[i]);
+            assertSame(testValues[i], builder.getPortType(i));
+        }
+
+        assertArrayEquals(testValues, builder.getPortTypes());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setPortType(i, null);
+            assertSame(defaultTypes[i], builder.getPortType(i));
+        }
+
+        assertArrayEquals(defaultTypes, builder.getPortTypes());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withPortType(i, testValues[i]));
+            assertSame(testValues[i], builder.getPortType(i));
+        }
+
+        assertArrayEquals(testValues, builder.getPortTypes());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withPortType(i, null));
+            assertSame(defaultTypes[i], builder.getPortType(i));
+        }
+
+        assertArrayEquals(defaultTypes, builder.getPortTypes());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setPortType(-1, ArtPollReply.PortType.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withPortType(4, ArtPollReply.PortType.DEFAULT));
+    }
+
+    @Test
+    void inputStatuses() {
+
+        ArtPollReply.InputStatus[] testValues = new ArtPollReply.InputStatus[]{
+                new ArtPollReply.InputStatus(false, false, false, false, false, false),
+                new ArtPollReply.InputStatus(false, false, false, false, false, true),
+                new ArtPollReply.InputStatus(false, false, false, false, true, false),
+                new ArtPollReply.InputStatus(false, false, false, false, true, true)
+        };
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[]{0b00000000, 0b00000100, 0b00001000, 0b00001100},
+                new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE,
+                new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReply.InputStatus[] defaultStatuses = new ArtPollReply.InputStatus[]{ArtPollReply.InputStatus.DEFAULT,
+                ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT};
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertArrayEquals(defaultStatuses, builder.getInputStatuses());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setInputStatus(i, testValues[i]);
+            assertSame(testValues[i], builder.getInputStatus(i));
+        }
+
+        assertArrayEquals(testValues, builder.getInputStatuses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setInputStatus(i, null);
+            assertSame(defaultStatuses[i], builder.getInputStatus(i));
+        }
+
+        assertArrayEquals(defaultStatuses, builder.getInputStatuses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withInputStatus(i, testValues[i]));
+            assertSame(testValues[i], builder.getInputStatus(i));
+        }
+
+        assertArrayEquals(testValues, builder.getInputStatuses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withInputStatus(i, null));
+            assertSame(defaultStatuses[i], builder.getInputStatus(i));
+        }
+
+        assertArrayEquals(defaultStatuses, builder.getInputStatuses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setInputStatus(-1, ArtPollReply.InputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withInputStatus(4, ArtPollReply.InputStatus.DEFAULT));
+    }
+
+    @Test
+    void outputStatuses() {
+
+        ArtPollReply.OutputStatus[] testValues = new ArtPollReply.OutputStatus[]{
+                new ArtPollReply.OutputStatus(false, false, false, false, false, false, false, false),
+                new ArtPollReply.OutputStatus(false, false, false, false, false, false, false, true),
+                new ArtPollReply.OutputStatus(false, false, false, false, false, false, true, false),
+                new ArtPollReply.OutputStatus(false, false, false, false, false, false, true, true)
+        };
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[]{0b00000000, 0b00000001, 0b00000010, 0b00000011},
+                new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
+                0x00, 0x00);
+
+        ArtPollReply.OutputStatus[] defaultStatuses = new ArtPollReply.OutputStatus[]{ArtPollReply.OutputStatus.DEFAULT,
+                ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT};
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertArrayEquals(defaultStatuses, builder.getOutputStatuses());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(defaultStatuses[i], builder.getOutputStatus(i));
+            builder.setOutputStatus(i, testValues[i]);
+            assertSame(testValues[i], builder.getOutputStatus(i));
+        }
+
+        assertArrayEquals(testValues, builder.getOutputStatuses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setOutputStatus(i, null);
+            assertSame(defaultStatuses[i], builder.getOutputStatus(i));
+        }
+
+        assertArrayEquals(defaultStatuses, builder.getOutputStatuses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withOutputStatus(i, testValues[i]));
+            assertSame(testValues[i], builder.getOutputStatus(i));
+        }
+
+        assertArrayEquals(testValues, builder.getOutputStatuses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withOutputStatus(i, null));
+            assertSame(defaultStatuses[i], builder.getOutputStatus(i));
+        }
+
+        assertArrayEquals(defaultStatuses, builder.getOutputStatuses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setOutputStatus(-1, ArtPollReply.OutputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withOutputStatus(4, ArtPollReply.OutputStatus.DEFAULT));
+    }
+
+    @Test
+    void inputUniverseAddresses() {
+
+        int[] testValues = new int[]{0x00, 0x01, 0x02, 0x03};
+        int[] defaultValues = new int[4];
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], testValues, new int[4], 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertArrayEquals(defaultValues, builder.getInputUniverseAddresses());
+
+        for (int i = 0; i < 4; i++) {
+            assertEquals(0x00, builder.getInputUniverseAddress(i));
+            builder.setInputUniverseAddress(i, testValues[i]);
+            assertEquals(testValues[i], builder.getInputUniverseAddress(i));
+        }
+
+        assertArrayEquals(testValues, builder.getInputUniverseAddresses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setInputUniverseAddress(i, 0x00);
+            assertEquals(0x00, builder.getInputUniverseAddress(i));
+        }
+
+        assertArrayEquals(defaultValues, builder.getInputUniverseAddresses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withInputUniverseAddress(i, testValues[i]));
+            assertEquals(testValues[i], builder.getInputUniverseAddress(i));
+        }
+
+        assertArrayEquals(testValues, builder.getInputUniverseAddresses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withInputUniverseAddress(i, 0x00));
+            assertEquals(0x00, builder.getInputUniverseAddress(i));
+        }
+
+        assertArrayEquals(defaultValues, builder.getInputUniverseAddresses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setInputUniverseAddress(-1, 0x00));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withInputUniverseAddress(4, 0x00));
+    }
+
+    @Test
+    void outputUniverseAddresses() {
+
+        int[] testValues = new int[]{0x00, 0x01, 0x02, 0x03};
+        int[] defaultValues = new int[4];
+
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], testValues, 0x00,
+                0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4], 0x00, 0x00);
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        assertArrayEquals(defaultValues, builder.getOutputUniverseAddresses());
+
+        for (int i = 0; i < 4; i++) {
+            assertEquals(0x00, builder.getOutputUniverseAddress(i));
+            builder.setOutputUniverseAddress(i, testValues[i]);
+            assertEquals(testValues[i], builder.getOutputUniverseAddress(i));
+        }
+
+        assertArrayEquals(testValues, builder.getOutputUniverseAddresses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            builder.setOutputUniverseAddress(i, 0x00);
+            assertEquals(0x00, builder.getOutputUniverseAddress(i));
+        }
+
+        assertArrayEquals(defaultValues, builder.getOutputUniverseAddresses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withOutputUniverseAddress(i, testValues[i]));
+            assertEquals(testValues[i], builder.getOutputUniverseAddress(i));
+        }
+
+        assertArrayEquals(testValues, builder.getOutputUniverseAddresses());
+        assertArrayEquals(expectedData, builder.build().getBytes());
+
+        for (int i = 0; i < 4; i++) {
+            assertSame(builder, builder.withOutputUniverseAddress(i, 0x00));
+            assertEquals(0x00, builder.getOutputUniverseAddress(i));
+        }
+
+        assertArrayEquals(defaultValues, builder.getOutputUniverseAddresses());
+        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setOutputUniverseAddress(-1, 0x00));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withOutputUniverseAddress(4, 0x00));
+    }
+
+    @Test
+    void macrosActive() {
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        boolean[] currentMacrosActive = new boolean[8];
+
+        assertArrayEquals(currentMacrosActive, builder.getMacrosActive());
+
+        for (int i = 0; i < 8; i++) {
+
+            byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                    DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                    new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                    (int) (Math.pow(2, i + 1) - 1), 0x00, DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
+                    0x00, 0x00);
+
+            currentMacrosActive[i] = true;
+
+            builder.setMacroActive(i, true);
+            assertTrue(builder.isMacroActive(i));
+            assertArrayEquals(currentMacrosActive, builder.getMacrosActive());
+            assertArrayEquals(expectedData, builder.build().getBytes());
+        }
+
+        for (int i = 0; i < 8; i++) {
+
+            byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                    DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                    new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                    0xFF - (int) (Math.pow(2, i + 1) - 1), 0x00, DEFAULT_EQUIPMENT_STYLE,
+                    new int[6], new int[4], 0x00, 0x00);
+
+            currentMacrosActive[i] = false;
+
+            assertSame(builder, builder.withMacroActive(i, false));
+            assertFalse(builder.isMacroActive(i));
+            assertArrayEquals(currentMacrosActive, builder.getMacrosActive());
+            assertArrayEquals(expectedData, builder.build().getBytes());
+        }
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setMacroActive(-1, true));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withMacroActive(8, true));
+    }
+
+    @Test
+    void remotesActive() {
+
+        ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
+
+        boolean[] currentRemotesActive = new boolean[8];
+
+        assertArrayEquals(currentRemotesActive, builder.getRemotesActive());
+
+        for (int i = 0; i < 8; i++) {
+
+            byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                    DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                    new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                    0x00, (int) (Math.pow(2, i + 1) - 1), DEFAULT_EQUIPMENT_STYLE, new int[6], new int[4],
+                    0x00, 0x00);
+
+            currentRemotesActive[i] = true;
+
+            builder.setRemoteActive(i, true);
+            assertTrue(builder.isRemoteActive(i));
+            assertArrayEquals(currentRemotesActive, builder.getRemotesActive());
+            assertArrayEquals(expectedData, builder.build().getBytes());
+        }
+
+        for (int i = 0; i < 8; i++) {
+
+            byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+                    DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
+                    new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
+                    0x00,0xFF - (int) (Math.pow(2, i + 1) - 1), DEFAULT_EQUIPMENT_STYLE,
+                    new int[6], new int[4], 0x00, 0x00);
+
+            currentRemotesActive[i] = false;
+
+            assertSame(builder, builder.withRemoteActive(i, false));
+            assertFalse(builder.isRemoteActive(i));
+            assertArrayEquals(currentRemotesActive, builder.getRemotesActive());
+            assertArrayEquals(expectedData, builder.build().getBytes());
+        }
+
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setRemoteActive(-1, true));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withRemoteActive(8, true));
     }
 }

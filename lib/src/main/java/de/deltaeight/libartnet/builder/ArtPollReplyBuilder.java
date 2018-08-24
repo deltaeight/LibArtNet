@@ -438,6 +438,9 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
     public synchronized void setEstaManufacturer(String estaManufacturer) {
         if (!this.estaManufacturer.equals(estaManufacturer)) {
+            if (estaManufacturer == null) {
+                estaManufacturer = "";
+            }
             this.estaManufacturer = estaManufacturer.substring(0, Math.min(estaManufacturer.length(), 2));
             changed = true;
         }
@@ -454,6 +457,9 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
     public synchronized void setShortName(String shortName) {
         if (!this.shortName.equals(shortName)) {
+            if (shortName == null) {
+                shortName = "";
+            }
             this.shortName = shortName.substring(0, Math.min(shortName.length(), 17));
             changed = true;
         }
@@ -470,6 +476,9 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
     public synchronized void setLongName(String longName) {
         if (!this.longName.equals(longName)) {
+            if (longName == null) {
+                longName = "";
+            }
             this.longName = longName.substring(0, Math.min(longName.length(), 63));
             changed = true;
         }
@@ -486,6 +495,9 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
 
     public synchronized void setNodeReport(String nodeReport) {
         if (!this.nodeReport.equals(nodeReport)) {
+            if(nodeReport == null) {
+                nodeReport = "";
+            }
             this.nodeReport = nodeReport.substring(0, Math.min(nodeReport.length(), 63));
             changed = true;
         }
@@ -653,7 +665,7 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
     }
 
     public ArtPollReplyBuilder withRemoteActive(int index, boolean isActive) {
-        setMacroActive(index, isActive);
+        setRemoteActive(index, isActive);
         return this;
     }
 
