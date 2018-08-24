@@ -2,4 +2,4 @@ image: gradle:jdk8
 
 test:
   stage: test
-  script: gradle test
+  script: ./gradlew check
