@@ -25,9 +25,7 @@ import de.deltaeight.libartnet.enums.ArtNet;
 import de.deltaeight.libartnet.enums.OpCode;
 import de.deltaeight.libartnet.packet.ArtDmx;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
 
@@ -38,13 +36,14 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
     private int subnetAddress;
     private int universeAddress;
     private int netAddress;
-    private final ArrayList<Byte> data;
+    private final byte[] data;
+    private int dataSize;
 
     private boolean changed;
     private ArtDmx artDmx;
 
     public ArtDmxBuilder() {
-        data = new ArrayList<>(512);
+        data = new byte[512];
     }
 
     @Override
@@ -52,12 +51,11 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
 
         if (changed) {
 
-            if (data.size() % 2 > 0) {
-                data.add((byte) 0x00);
+            if (dataSize % 2 > 0) {
+                data[dataSize++] = 0x00;
             }
 
-            byte[] tmpData = new byte[data.size()];
-            byte[] bytes = new byte[18 + data.size()];
+            byte[] bytes = new byte[18 + dataSize];
 
             System.arraycopy(ArtNet.HEADER.getBytes(), 0, bytes, 0, 8);
             System.arraycopy(OP_CODE_BYTES, 0, bytes, 8, 2);
@@ -67,17 +65,13 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
             bytes[13] = (byte) physical;
             bytes[14] = (byte) (subnetAddress << 4 | universeAddress);
             bytes[15] = (byte) netAddress;
-            bytes[16] = (byte) (data.size() >> 8);
-            bytes[17] = (byte) data.size();
+            bytes[16] = (byte) (dataSize >> 8);
+            bytes[17] = (byte) dataSize;
 
-            for (int i = 0; i < data.size(); i++) {
-                Byte currentData = data.get(i);
+            System.arraycopy(data, 0, bytes, 18, dataSize);
 
-                tmpData[i] = currentData;
-                bytes[18 + i] = currentData;
-            }
-
-            artDmx = new ArtDmx(sequence, physical, netAddress, subnetAddress, universeAddress, tmpData, bytes);
+            artDmx = new ArtDmx(sequence, physical, netAddress, subnetAddress, universeAddress,
+                    Arrays.copyOfRange(data, 0, dataSize), bytes);
 
             changed = false;
         }
@@ -180,12 +174,18 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
         return this;
     }
 
-    public List<Byte> getData() {
-        return Collections.unmodifiableList(data);
+    public byte[] getData() {
+        return Arrays.copyOfRange(data, 0, dataSize);
     }
 
     public byte getData(int index) {
-        return data.get(index);
+        if (0 > index || index > 511) {
+            throw new IllegalArgumentException("Illegal data index!");
+        }
+        if (index > dataSize - 1) {
+            return 0x00;
+        }
+        return data[index];
     }
 
     public void setData(byte[] data) {
@@ -193,27 +193,11 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
             if (data.length > 512) {
                 throw new IllegalArgumentException("Payload too large!");
             }
-            for (int i = 0; i < data.length; i++) {
-                if (this.data.get(i) != data[i]) {
-                    this.data.set(i, data[i]);
-                    changed = true;
-                }
-            }
-        }
-    }
 
-    public void setData(List<Byte> data) {
-        if (data != null) {
-            if (data.size() > 512) {
-                throw new IllegalArgumentException("Payload too large!");
-            }
-            for (int i = 0; i < data.size(); i++) {
-                byte currentData = data.get(i);
-                if (this.data.get(i) != currentData) {
-                    this.data.set(i, currentData);
-                    changed = true;
-                }
-            }
+            System.arraycopy(data, 0, this.data, 0, data.length);
+
+            dataSize = data.length;
+            changed = true;
         }
     }
 
@@ -221,18 +205,17 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
         if (0 > index || index > 511) {
             throw new IllegalArgumentException("Illegal data index!");
         }
-        if (this.data.get(index) != data) {
-            this.data.set(index, data);
-            changed = true;
+
+        for (int i = dataSize; i < index; i++) {
+            this.data[i] = 0x00;
         }
+
+        this.data[index] = data;
+        dataSize = index + 1;
+        changed = true;
     }
 
     public ArtDmxBuilder withData(byte[] data) {
-        setData(data);
-        return this;
-    }
-
-    public ArtDmxBuilder withData(List<Byte> data) {
         setData(data);
         return this;
     }
