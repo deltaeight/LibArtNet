@@ -6,4 +6,5 @@ test:
   cache:
     key: test
     paths:
+    - ls -la
     - .gradle/
