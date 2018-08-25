@@ -54,7 +54,7 @@ public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
         this.receiveHandlers = receiveHandlers;
     }
 
-    public ArtNetPacketBuilder withReceiveHandlers(HashSet<PacketReceiveHandler<T>> receiveHandlers) {
+    ArtNetPacketBuilder withReceiveHandlers(HashSet<PacketReceiveHandler<T>> receiveHandlers) {
         setReceiveHandlers(receiveHandlers);
         return this;
     }
