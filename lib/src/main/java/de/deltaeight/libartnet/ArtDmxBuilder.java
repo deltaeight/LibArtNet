@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.builder;
+package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.enums.ArtNet;
 import de.deltaeight.libartnet.enums.OpCode;
@@ -27,7 +27,7 @@ import de.deltaeight.libartnet.packet.ArtDmx;
 
 import java.util.Arrays;
 
-public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
+public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpDmx.getBytesLittleEndian();
 
@@ -78,6 +78,19 @@ public class ArtDmxBuilder implements ArtNetPacketBuilder<ArtDmx> {
         }
 
         return artDmx;
+    }
+
+    @Override
+    ArtDmx buildFromBytes(byte[] packetData) {
+        if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
+
+            byte[] data = new byte[packetData[16] << 8 | packetData[17]];
+            System.arraycopy(packetData, 18, data, 0, data.length);
+
+            return new ArtDmx(packetData[12], packetData[13], packetData[15], packetData[14] >> 4,
+                    packetData[14] & 0b00001111, data, packetData);
+        }
+        return null;
     }
 
     public int getSequence() {

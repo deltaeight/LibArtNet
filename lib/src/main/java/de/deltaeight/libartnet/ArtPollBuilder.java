@@ -19,14 +19,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.builder;
+package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.enums.ArtNet;
 import de.deltaeight.libartnet.enums.OpCode;
 import de.deltaeight.libartnet.enums.Priority;
 import de.deltaeight.libartnet.packet.ArtPoll;
 
-public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
+public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpPoll.getBytesLittleEndian();
 
@@ -75,6 +75,12 @@ public class ArtPollBuilder implements ArtNetPacketBuilder<ArtPoll> {
         }
 
         return artPoll;
+    }
+
+    @Override
+    ArtPoll buildFromBytes(byte[] packetData) {
+        // TODO Implement
+        return null;
     }
 
     public boolean vlcTransmissionDisabled() {

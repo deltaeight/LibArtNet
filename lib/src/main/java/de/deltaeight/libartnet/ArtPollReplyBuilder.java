@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.builder;
+package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.enums.ArtNet;
 import de.deltaeight.libartnet.enums.EquipmentStyle;
@@ -30,7 +30,7 @@ import de.deltaeight.libartnet.packet.ArtPollReply;
 import java.net.Inet4Address;
 import java.util.Arrays;
 
-public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
+public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
     public static final EquipmentStyle DEFAULT_EQUIPMENT_STYLE = EquipmentStyle.Config;
 
@@ -229,6 +229,12 @@ public class ArtPollReplyBuilder implements ArtNetPacketBuilder<ArtPollReply> {
         }
 
         return artPollReply;
+    }
+
+    @Override
+    ArtPollReply buildFromBytes(byte[] packetData) {
+        // TODO Implement
+        return null;
     }
 
     public Inet4Address getIpAddress() {

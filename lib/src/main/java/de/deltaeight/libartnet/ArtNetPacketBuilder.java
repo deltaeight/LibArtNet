@@ -19,11 +19,43 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.builder;
+package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.packet.ArtNetPacket;
 
-public interface ArtNetPacketBuilder<T extends ArtNetPacket> {
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-    T build();
+public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
+
+    private HashSet<PacketReceiveHandler<T>> receiveHandlers;
+
+    abstract T build();
+
+    abstract T buildFromBytes(byte[] packetData);
+
+    boolean handleReceive(byte[] packetData) {
+        T packet = buildFromBytes(packetData);
+        if (packet != null) {
+            if (receiveHandlers != null) {
+                receiveHandlers.forEach(handler -> handler.handle(packet));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public Set<PacketReceiveHandler<T>> getReceiveHandlers() {
+        return Collections.unmodifiableSet(receiveHandlers);
+    }
+
+    void setReceiveHandlers(HashSet<PacketReceiveHandler<T>> receiveHandlers) {
+        this.receiveHandlers = receiveHandlers;
+    }
+
+    public ArtNetPacketBuilder withReceiveHandlers(HashSet<PacketReceiveHandler<T>> receiveHandlers) {
+        setReceiveHandlers(receiveHandlers);
+        return this;
+    }
 }
