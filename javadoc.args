@@ -1,0 +1,6 @@
+-protected
+-splitindex
+-author
+-version
+-sourcepath lib/src/main/java
+-subpackages de.deltaeight.libartnet

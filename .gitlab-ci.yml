@@ -18,4 +18,4 @@ javadoc:
   cache: {}
   stage: deploy
   script:
-  - javadoc -protected -splitindex -author -version -d public lib/
+  - javadoc -d public @javadoc.args
