@@ -23,6 +23,8 @@ package de.deltaeight.libartnet.enums;
 
 import de.deltaeight.libartnet.Product;
 
+import java.util.TreeMap;
+
 public enum OemCode {
 
     OemDMXHub(new Product(0x0000, "Artistic Licence Engineering Ltd", "Dmx-Hub", 4, 4, true, false, "support@ArtisticLicence.com", "Wayne Howell")),
@@ -1035,10 +1037,26 @@ public enum OemCode {
 
     UNKNOWN(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
 
+    private static final TreeMap<Integer, OemCode> products = new TreeMap<>();
+
+    static {
+        for (OemCode value : OemCode.values()) {
+            products.put(value.getProduct().getProductCode(), value);
+        }
+    }
+
     private final Product product;
 
     OemCode(Product product) {
         this.product = product;
+    }
+
+    public static OemCode getOemCode(int productCode) {
+        return products.getOrDefault(productCode, UNKNOWN);
+    }
+
+    public static OemCode getOemCode(byte productCode) {
+        return getOemCode((int) productCode);
     }
 
     public Product getProduct() {
