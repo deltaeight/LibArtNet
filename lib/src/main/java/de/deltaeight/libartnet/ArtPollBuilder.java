@@ -102,7 +102,12 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
      */
     @Override
     ArtPoll buildFromBytes(byte[] packetData) {
-        // TODO Implement
+        if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
+
+            return new ArtPoll((packetData[12] & 0b00010000) > 0, (packetData[12] & 0b00001000) > 0,
+            (packetData[12] & 0b00000100) > 0, (packetData[12] & 0b00000010) > 0, Priority.getPriority(packetData[13]),
+                    packetData.clone());
+        }
         return null;
     }
 

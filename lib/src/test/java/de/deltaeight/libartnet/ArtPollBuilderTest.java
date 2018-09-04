@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArtPollBuilderTest {
+class ArtPollBuilderTest extends AbstractPacketBuilderTest {
 
     private byte[] getExpectedData(int talkToMe, int priority) {
         return new byte[]{
@@ -39,7 +39,7 @@ class ArtPollBuilderTest {
 
     @Test
     void build() {
-        assertArrayEquals(getExpectedData(0x00, 0x10), new ArtPollBuilder().build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), new ArtPollBuilder());
     }
 
     @Test
@@ -51,19 +51,19 @@ class ArtPollBuilderTest {
 
         builder.setDisableVlcTransmission(true);
         assertTrue(builder.vlcTransmissionDisabled());
-        assertArrayEquals(getExpectedData(0x10, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x10, 0x10), builder);
 
         builder.setDisableVlcTransmission(false);
         assertFalse(builder.vlcTransmissionDisabled());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
 
         assertSame(builder, builder.withDisableVlcTransmission(true));
         assertTrue(builder.vlcTransmissionDisabled());
-        assertArrayEquals(getExpectedData(0x10, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x10, 0x10), builder);
 
         assertSame(builder, builder.withDisableVlcTransmission(false));
         assertFalse(builder.vlcTransmissionDisabled());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
     }
 
     @Test
@@ -75,19 +75,19 @@ class ArtPollBuilderTest {
 
         builder.setUnicastDiagnosticMessages(true);
         assertTrue(builder.unicastDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x08, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x08, 0x10), builder);
 
         builder.setUnicastDiagnosticMessages(false);
         assertFalse(builder.unicastDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
 
         assertSame(builder, builder.withUnicastDiagnosticMessages(true));
         assertTrue(builder.unicastDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x08, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x08, 0x10), builder);
 
         assertSame(builder, builder.withUnicastDiagnosticMessages(false));
         assertFalse(builder.unicastDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
     }
 
     @Test
@@ -99,19 +99,19 @@ class ArtPollBuilderTest {
 
         builder.setSendDiagnosticMessages(true);
         assertTrue(builder.sendDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x04, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x04, 0x10), builder);
 
         builder.setSendDiagnosticMessages(false);
         assertFalse(builder.sendDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
 
         assertSame(builder, builder.withSendDiagnosticMessages(true));
         assertTrue(builder.sendDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x04, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x04, 0x10), builder);
 
         assertSame(builder, builder.withSendDiagnosticMessages(false));
         assertFalse(builder.sendDiagnosticMessages());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
     }
 
     @Test
@@ -123,19 +123,19 @@ class ArtPollBuilderTest {
 
         builder.setSendArtPollReplyOnChanges(true);
         assertTrue(builder.sendArtPollReplyOnChanges());
-        assertArrayEquals(getExpectedData(0x02, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x02, 0x10), builder);
 
         builder.setSendArtPollReplyOnChanges(false);
         assertFalse(builder.sendArtPollReplyOnChanges());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
 
         assertSame(builder, builder.withSendArtPollReplyOnChanges(true));
         assertTrue(builder.sendArtPollReplyOnChanges());
-        assertArrayEquals(getExpectedData(0x02, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x02, 0x10), builder);
 
         assertSame(builder, builder.withSendArtPollReplyOnChanges(false));
         assertFalse(builder.sendArtPollReplyOnChanges());
-        assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x10), builder);
     }
 
     @Test
@@ -147,7 +147,7 @@ class ArtPollBuilderTest {
                 .withSendDiagnosticMessages(true)
                 .withSendArtPollReplyOnChanges(true);
 
-        assertArrayEquals(getExpectedData(0x1E, 0x10), builder.build().getBytes());
+        assertPackets(getExpectedData(0x1E, 0x10), builder);
     }
 
     @Test
@@ -167,11 +167,11 @@ class ArtPollBuilderTest {
 
             builder.setPriority(testValue);
             assertSame(builder.getPriority(), testValue);
-            assertArrayEquals(getExpectedData(0x00, testByte), builder.build().getBytes());
+            assertPackets(getExpectedData(0x00, testByte), builder);
 
             assertSame(builder, builder.withPriority(null));
             assertSame(builder.getPriority(), Priority.Low);
-            assertArrayEquals(getExpectedData(0x00, 0x10), builder.build().getBytes());
+            assertPackets(getExpectedData(0x00, 0x10), builder);
         }
     }
 }

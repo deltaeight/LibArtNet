@@ -108,7 +108,7 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
             System.arraycopy(packetData, 18, data, 0, data.length);
 
             return new ArtDmx(packetData[12], packetData[13], packetData[15], packetData[14] >> 4,
-                    packetData[14] & 0b00001111, data, packetData);
+                    packetData[14] & 0b00001111, data.clone(), packetData.clone());
         }
         return null;
     }

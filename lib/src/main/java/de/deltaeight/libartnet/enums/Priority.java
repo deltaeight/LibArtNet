@@ -21,6 +21,8 @@
 
 package de.deltaeight.libartnet.enums;
 
+import java.util.HashMap;
+
 /**
  * Priorities for diag data and their bytes
  *
@@ -35,10 +37,23 @@ public enum Priority {
     Critical(0xE0),
     Volatile(0xF0);
 
+    private static final HashMap<Byte, Priority> priorities;
+
+    static {
+        priorities = new HashMap<>(5);
+        for (Priority value : values()) {
+            priorities.put(value.getValue(), value);
+        }
+    }
+
     private final byte value;
 
     Priority(int value) {
         this.value = (byte) value;
+    }
+
+    public static Priority getPriority(byte value) {
+        return priorities.getOrDefault(value, Low);
     }
 
     public byte getValue() {
