@@ -15,6 +15,7 @@ test:
   - ./gradlew check
 
 javadoc:
+  cache: {}
   stage: deploy
   script:
-  - javadoc -protected -splitindex -author -version -d public
+  - javadoc -protected -splitindex -author -version -d public @lib
