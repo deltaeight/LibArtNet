@@ -1,4 +1,4 @@
-package de.deltaeight.libartnet;/*
+/*
  * LibArtNet
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
@@ -19,8 +19,11 @@ package de.deltaeight.libartnet;/*
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package de.deltaeight.libartnet;
+
 import de.deltaeight.libartnet.packet.ArtNetPacket;
 
+@FunctionalInterface
 public interface PacketReceiveHandler<T extends ArtNetPacket> {
 
     void handle(T packet);

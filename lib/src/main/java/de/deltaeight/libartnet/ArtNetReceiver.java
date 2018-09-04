@@ -32,76 +32,122 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 
-public class ArtNetReceiver extends Thread {
+public class ArtNetReceiver {
 
+    private final ExecutorService workingPool;
     private final DatagramSocket socket;
     private final byte[] buffer;
-    private final HashMap<Class<? extends ArtNetPacket>, ArtNetPacketBuilder<?>> packetBuilders;
+    private final ConcurrentHashMap<Class<? extends ArtNetPacket>, PacketReceiveDispatcher<? extends ArtNetPacket>> packetReceiveDispatcher;
     private final HashSet<PacketReceiveHandler<ArtPoll>> artPollReceiveHandlers;
     private final HashSet<PacketReceiveHandler<ArtPollReply>> artPollReplyReceiveHandlers;
     private final HashSet<PacketReceiveHandler<ArtDmx>> artDmxReceiveHandlers;
+    private State state;
+    private Thread workerThread;
     private ExceptionHandler exceptionHandler;
 
-    public ArtNetReceiver(DatagramSocket socket) {
+    public ArtNetReceiver(ExecutorService workingPool, DatagramSocket socket) {
 
         if (socket.getLocalPort() != 0x1936) {
             throw new IllegalArgumentException("Illegal socket port " + socket.getLocalPort() + "!");
         }
 
+        this.workingPool = workingPool;
         this.socket = socket;
 
         buffer = new byte[530];
-        packetBuilders = new HashMap<>();
+        packetReceiveDispatcher = new ConcurrentHashMap<>();
         artPollReceiveHandlers = new HashSet<>();
         artPollReplyReceiveHandlers = new HashSet<>();
         artDmxReceiveHandlers = new HashSet<>();
 
-        setName("ArtNetReceiver");
-        setDaemon(true);
-    }
+        workerThread = new Thread() {
 
-    public ArtNetReceiver() throws SocketException {
-        this(new DatagramSocket(0x1936));
-    }
+            @Override
+            public void run() {
 
-    @Override
-    public void run() {
+                while (!isInterrupted()) {
 
-        while (!isInterrupted()) {
+                    try {
+                        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+                        socket.receive(datagramPacket);
 
-            try {
-                DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-                socket.receive(datagramPacket);
+                        workingPool.execute(() -> {
 
-                if (datagramPacket.getPort() == 0x1936
-                        && datagramPacket.getLength() > 10
-                        && Arrays.equals(ArtNet.HEADER.getBytes(), Arrays.copyOfRange(datagramPacket.getData(), 0, 8))) {
+                            if (datagramPacket.getPort() == 0x1936
+                                    && datagramPacket.getLength() > 10
+                                    && Arrays.equals(ArtNet.HEADER.getBytes(), Arrays.copyOfRange(datagramPacket.getData(), 0, 8))) {
 
-                    for (ArtNetPacketBuilder<?> builder : packetBuilders.values()) {
-                        if (builder.handleReceive(datagramPacket.getData())) {
-                            break;
+                                for (PacketReceiveDispatcher<? extends ArtNetPacket> dispatcher : packetReceiveDispatcher.values()) {
+
+                                    if (dispatcher.handleReceive(datagramPacket.getData())) {
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    } catch (IOException e) {
+                        if (!isInterrupted()) {
+                            if (exceptionHandler != null) {
+                                exceptionHandler.handleException(e);
+                            } else {
+                                interrupt();
+                            }
                         }
                     }
                 }
-            } catch (IOException e) {
-                if (!isInterrupted()) {
-                    if (exceptionHandler != null) {
-                        exceptionHandler.handleException(e);
-                    } else {
-                        interrupt();
-                    }
-                }
             }
+        };
+
+        workerThread.setName("ArtNetReceiver");
+        workerThread.setDaemon(true);
+
+        state = State.Initialized;
+    }
+
+    public ArtNetReceiver(ExecutorService workingPool) throws SocketException {
+        this(workingPool, new DatagramSocket(0x1936));
+        socket.setBroadcast(true);
+        socket.setReuseAddress(true);
+    }
+
+    public ArtNetReceiver(DatagramSocket socket) {
+        this(ForkJoinPool.commonPool(), socket);
+    }
+
+    public ArtNetReceiver() throws SocketException {
+        this(ForkJoinPool.commonPool(), new DatagramSocket(0x1936));
+        socket.setBroadcast(true);
+        socket.setReuseAddress(true);
+    }
+
+    public void start() {
+        if (state == State.Initialized) {
+            workerThread.start();
+            state = State.Running;
+        } else if (state == State.Running) {
+            throw new IllegalStateException("ArtNetReceiver already running!");
+        } else {
+            throw new IllegalStateException("ArtNetReceiver not initialized!");
         }
     }
 
-    @Override
-    public void interrupt() {
-        super.interrupt();
-        socket.close();
+    public void stop() {
+        if (state == State.Running) {
+            workerThread.interrupt();
+            socket.close();
+            state = State.Stopped;
+        } else {
+            throw new IllegalStateException("ArtNetReceiver not Running!");
+        }
+    }
+
+    public State getState() {
+        return state;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -118,8 +164,9 @@ public class ArtNetReceiver extends Thread {
     }
 
     public void addArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
-        if (!packetBuilders.containsKey(ArtPoll.class)) {
-            packetBuilders.put(ArtPoll.class, new ArtPollBuilder().withReceiveHandlers(artPollReceiveHandlers));
+        if (!packetReceiveDispatcher.containsKey(ArtPoll.class)) {
+            packetReceiveDispatcher.put(ArtPoll.class, new PacketReceiveDispatcher<>(workingPool,
+                    new ArtPollBuilder(), artPollReceiveHandlers));
         }
         artPollReceiveHandlers.add(handler);
 
@@ -128,7 +175,7 @@ public class ArtNetReceiver extends Thread {
     public void removeArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
         artPollReceiveHandlers.remove(handler);
         if (artPollReceiveHandlers.isEmpty()) {
-            packetBuilders.remove(ArtPoll.class);
+            packetReceiveDispatcher.remove(ArtPoll.class);
         }
     }
 
@@ -143,9 +190,9 @@ public class ArtNetReceiver extends Thread {
     }
 
     public void addArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
-        if (!packetBuilders.containsKey(ArtPollReply.class)) {
-            packetBuilders.put(ArtPollReply.class, new ArtPollReplyBuilder()
-                    .withReceiveHandlers(artPollReplyReceiveHandlers));
+        if (!packetReceiveDispatcher.containsKey(ArtPollReply.class)) {
+            packetReceiveDispatcher.put(ArtPollReply.class, new PacketReceiveDispatcher<>(workingPool,
+                    new ArtPollReplyBuilder(), artPollReplyReceiveHandlers));
         }
         artPollReplyReceiveHandlers.add(handler);
 
@@ -154,7 +201,7 @@ public class ArtNetReceiver extends Thread {
     public void removeArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
         artPollReplyReceiveHandlers.remove(handler);
         if (artPollReplyReceiveHandlers.isEmpty()) {
-            packetBuilders.remove(ArtPollReply.class);
+            packetReceiveDispatcher.remove(ArtPollReply.class);
         }
     }
 
@@ -169,8 +216,9 @@ public class ArtNetReceiver extends Thread {
     }
 
     public void addArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
-        if (!packetBuilders.containsKey(ArtDmx.class)) {
-            packetBuilders.put(ArtDmx.class, new ArtDmxBuilder().withReceiveHandlers(artDmxReceiveHandlers));
+        if (!packetReceiveDispatcher.containsKey(ArtDmx.class)) {
+            packetReceiveDispatcher.put(ArtDmx.class, new PacketReceiveDispatcher<>(workingPool,
+                    new ArtDmxBuilder(), artDmxReceiveHandlers));
         }
         artDmxReceiveHandlers.add(handler);
 
@@ -179,7 +227,7 @@ public class ArtNetReceiver extends Thread {
     public void removeArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
         artDmxReceiveHandlers.remove(handler);
         if (artDmxReceiveHandlers.isEmpty()) {
-            packetBuilders.remove(ArtDmx.class);
+            packetReceiveDispatcher.remove(ArtDmx.class);
         }
     }
 
@@ -191,5 +239,9 @@ public class ArtNetReceiver extends Thread {
     public ArtNetReceiver withoutArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
         removeArtDmxReceiveHandler(handler);
         return this;
+    }
+
+    public enum State {
+        Initialized, Running, Stopped
     }
 }

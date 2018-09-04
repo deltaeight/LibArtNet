@@ -23,9 +23,29 @@ package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.packet.ArtNetPacket;
 
-public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
-    abstract T build();
+class PacketReceiveDispatcher<T extends ArtNetPacket> {
 
-    abstract T buildFromBytes(byte[] packetData);
+    private final ExecutorService workingPool;
+    private final ArtNetPacketBuilder<T> packetBuilder;
+    private final Set<PacketReceiveHandler<T>> receiveHandlers;
+
+    PacketReceiveDispatcher(ExecutorService workingPool,
+                            ArtNetPacketBuilder<T> packetBuilder,
+                            Set<PacketReceiveHandler<T>> receiveHandlers) {
+
+        this.workingPool = workingPool;
+        this.packetBuilder = packetBuilder;
+        this.receiveHandlers = receiveHandlers;
+    }
+
+    boolean handleReceive(byte[] packetData) {
+        T packet = packetBuilder.buildFromBytes(packetData);
+        if (packet != null) {
+            receiveHandlers.forEach(receiveHandler -> workingPool.submit(() -> receiveHandler.handle(packet)));
+        }
+        return false;
+    }
 }
