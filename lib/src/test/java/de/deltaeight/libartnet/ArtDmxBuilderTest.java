@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArtDmxBuilderTest {
+class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
     private static final byte[] DEFAULT_PACKET = getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[0]);
 
@@ -58,10 +58,7 @@ class ArtDmxBuilderTest {
 
     @Test
     void build() {
-
-        ArtDmxBuilder builder = new ArtDmxBuilder();
-
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, new ArtDmxBuilder());
     }
 
     @Test
@@ -75,19 +72,19 @@ class ArtDmxBuilderTest {
 
         builder.setSequence(1);
         assertEquals(1, builder.getSequence());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setSequence(0);
         assertEquals(0, builder.getSequence());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withSequence(1));
         assertEquals(1, builder.getSequence());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withSequence(0));
         assertEquals(0, builder.getSequence());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSequence(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSequence(256));
@@ -104,19 +101,19 @@ class ArtDmxBuilderTest {
 
         builder.setPhysical(1);
         assertEquals(1, builder.getPhysical());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setPhysical(0);
         assertEquals(0, builder.getPhysical());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withPhysical(1));
         assertEquals(1, builder.getPhysical());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withPhysical(0));
         assertEquals(0, builder.getPhysical());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setPhysical(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withPhysical(256));
@@ -133,19 +130,19 @@ class ArtDmxBuilderTest {
 
         builder.setSubnetAddress(1);
         assertEquals(1, builder.getSubnetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setSubnetAddress(0);
         assertEquals(0, builder.getSubnetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withSubnetAddress(1));
         assertEquals(1, builder.getSubnetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withSubnetAddress(0));
         assertEquals(0, builder.getSubnetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSubnetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSubnetAddress(16));
@@ -162,19 +159,19 @@ class ArtDmxBuilderTest {
 
         builder.setUniverseAddress(1);
         assertEquals(1, builder.getUniverseAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setUniverseAddress(0);
         assertEquals(0, builder.getUniverseAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withUniverseAddress(1));
         assertEquals(1, builder.getUniverseAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withUniverseAddress(0));
         assertEquals(0, builder.getUniverseAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setUniverseAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withUniverseAddress(16));
@@ -191,19 +188,19 @@ class ArtDmxBuilderTest {
 
         builder.setNetAddress(1);
         assertEquals(1, builder.getNetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setNetAddress(0);
         assertEquals(0, builder.getNetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withNetAddress(1));
         assertEquals(1, builder.getNetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withNetAddress(0));
         assertEquals(0, builder.getNetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setNetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withNetAddress(128));
@@ -227,16 +224,14 @@ class ArtDmxBuilderTest {
         assertEquals(3, builder.getDataSize());
         assertEquals(0x0F, builder.getData(2));
         assertArrayEquals(new byte[]{0x00, 0x00, 0x0F}, builder.getData());
-        assertArrayEquals(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x00, 0x00, 0x0F, 0x00}),
-                builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x00, 0x00, 0x0F, 0x00}), builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setData(512, (byte) 0xFF));
 
         builder.setData(new byte[]{0x0F});
         assertEquals(1, builder.getDataSize());
         assertArrayEquals(new byte[]{0x0F}, builder.getData());
-        assertArrayEquals(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x0F, 0x00}),
-                builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x0F, 0x00}), builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setData(new byte[513]));
 
@@ -244,16 +239,14 @@ class ArtDmxBuilderTest {
         assertEquals(3, builder.getDataSize());
         assertEquals(0x12, builder.getData(2));
         assertArrayEquals(new byte[]{0x0F, 0x00, 0x12}, builder.getData());
-        assertArrayEquals(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x0F, 0x00, 0x12, 0x00}),
-                builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x0F, 0x00, 0x12, 0x00}), builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.withData(512, (byte) 0xFF));
 
         assertSame(builder, builder.withData(new byte[]{0x21, 0x22}));
         assertEquals(2, builder.getDataSize());
         assertArrayEquals(new byte[]{0x21, 0x22}, builder.getData());
-        assertArrayEquals(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x21, 0x22}),
-                builder.build().getBytes());
+        assertPackets(getExpectedData(0x00, 0x00, 0x00, 0x00, 0x00, new byte[]{0x21, 0x22}), builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.withData(new byte[513]));
     }

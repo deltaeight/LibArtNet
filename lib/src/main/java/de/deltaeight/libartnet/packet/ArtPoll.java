@@ -23,6 +23,8 @@ package de.deltaeight.libartnet.packet;
 
 import de.deltaeight.libartnet.enums.Priority;
 
+import java.util.Objects;
+
 /**
  * Represents an {@code ArtPoll} packet which requests other Art-Net nodes on the network to reply with
  * {@link ArtPollReply}.
@@ -56,6 +58,23 @@ public class ArtPoll extends ArtNetPacket {
         this.sendDiagnosticMessages = sendDiagnosticMessages;
         this.sendArtPollReplyOnChanges = sendArtPollReplyOnChanges;
         this.priority = priority;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enableVlcTransmission, unicastDiagnosticMessages, sendDiagnosticMessages, sendArtPollReplyOnChanges, priority);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArtPoll artPoll = (ArtPoll) o;
+        return enableVlcTransmission == artPoll.enableVlcTransmission &&
+                unicastDiagnosticMessages == artPoll.unicastDiagnosticMessages &&
+                sendDiagnosticMessages == artPoll.sendDiagnosticMessages &&
+                sendArtPollReplyOnChanges == artPoll.sendArtPollReplyOnChanges &&
+                priority == artPoll.priority;
     }
 
     public boolean isEnableVlcTransmission() {

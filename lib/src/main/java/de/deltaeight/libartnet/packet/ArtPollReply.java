@@ -25,6 +25,8 @@ import de.deltaeight.libartnet.enums.EquipmentStyle;
 import de.deltaeight.libartnet.enums.OemCode;
 
 import java.net.Inet4Address;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents an {@code ArtPollReply} packet containing node information about the sender. This is sent periodically or
@@ -137,6 +139,58 @@ public class ArtPollReply extends ArtNetPacket {
         this.longPortAddressSupport = longPortAddressSupport;
         this.canSwitchToSACN = canSwitchToSACN;
         this.squawking = squawking;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(ipAddress, nodeVersion, netAddress, subnetAddress, oemCode, ubeaVersion, indicatorState, portAddressingAuthority, bootedFromRom, rdmSupport, ubeaPresent, estaManufacturer, shortName, longName, nodeReport, equipmentStyle, bindIndex, webBrowserConfigurationSupport, ipIsDhcpConfigured, dhcpSupport, longPortAddressSupport, canSwitchToSACN, squawking);
+        result = 31 * result + Arrays.hashCode(portTypes);
+        result = 31 * result + Arrays.hashCode(inputStatuses);
+        result = 31 * result + Arrays.hashCode(outputStatuses);
+        result = 31 * result + Arrays.hashCode(inputUniverseAddresses);
+        result = 31 * result + Arrays.hashCode(outputUniverseAddresses);
+        result = 31 * result + Arrays.hashCode(macrosActive);
+        result = 31 * result + Arrays.hashCode(remotesActive);
+        result = 31 * result + Arrays.hashCode(macAddress);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArtPollReply that = (ArtPollReply) o;
+        return nodeVersion == that.nodeVersion &&
+                netAddress == that.netAddress &&
+                subnetAddress == that.subnetAddress &&
+                ubeaVersion == that.ubeaVersion &&
+                bootedFromRom == that.bootedFromRom &&
+                rdmSupport == that.rdmSupport &&
+                ubeaPresent == that.ubeaPresent &&
+                bindIndex == that.bindIndex &&
+                webBrowserConfigurationSupport == that.webBrowserConfigurationSupport &&
+                ipIsDhcpConfigured == that.ipIsDhcpConfigured &&
+                dhcpSupport == that.dhcpSupport &&
+                longPortAddressSupport == that.longPortAddressSupport &&
+                canSwitchToSACN == that.canSwitchToSACN &&
+                squawking == that.squawking &&
+                Objects.equals(ipAddress, that.ipAddress) &&
+                oemCode == that.oemCode &&
+                indicatorState == that.indicatorState &&
+                portAddressingAuthority == that.portAddressingAuthority &&
+                Objects.equals(estaManufacturer, that.estaManufacturer) &&
+                Objects.equals(shortName, that.shortName) &&
+                Objects.equals(longName, that.longName) &&
+                Objects.equals(nodeReport, that.nodeReport) &&
+                Arrays.equals(portTypes, that.portTypes) &&
+                Arrays.equals(inputStatuses, that.inputStatuses) &&
+                Arrays.equals(outputStatuses, that.outputStatuses) &&
+                Arrays.equals(inputUniverseAddresses, that.inputUniverseAddresses) &&
+                Arrays.equals(outputUniverseAddresses, that.outputUniverseAddresses) &&
+                Arrays.equals(macrosActive, that.macrosActive) &&
+                Arrays.equals(remotesActive, that.remotesActive) &&
+                equipmentStyle == that.equipmentStyle &&
+                Arrays.equals(macAddress, that.macAddress);
     }
 
     public Inet4Address getIpAddress() {

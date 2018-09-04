@@ -21,6 +21,9 @@
 
 package de.deltaeight.libartnet.packet;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Represents an {@code ArtDmx} packet containing DMX values.
  * <p>
@@ -55,6 +58,26 @@ public class ArtDmx extends ArtNetPacket {
         this.subnetAddress = subnetAddress;
         this.universeAddress = universeAddress;
         this.data = data;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(sequence, physical, netAddress, subnetAddress, universeAddress);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArtDmx artDmx = (ArtDmx) o;
+        return sequence == artDmx.sequence &&
+                physical == artDmx.physical &&
+                netAddress == artDmx.netAddress &&
+                subnetAddress == artDmx.subnetAddress &&
+                universeAddress == artDmx.universeAddress &&
+                Arrays.equals(data, artDmx.data);
     }
 
     public int getSequence() {
