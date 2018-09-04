@@ -276,14 +276,14 @@ class ArtPollReplyBuilderTest {
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertSame(OemCode.Unknown, builder.getOemCode());
 
         builder.setOemCode(OemCode.OemDMXHub);
         assertSame(OemCode.OemDMXHub, builder.getOemCode());
         assertArrayEquals(expectedData, builder.build().getBytes());
 
         builder.setOemCode(null);
-        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertSame(OemCode.Unknown, builder.getOemCode());
         assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
 
         assertSame(builder, builder.withOemCode(OemCode.OemDMXHub));
@@ -291,7 +291,7 @@ class ArtPollReplyBuilderTest {
         assertArrayEquals(expectedData, builder.build().getBytes());
 
         assertSame(builder, builder.withOemCode(null));
-        assertSame(OemCode.UNKNOWN, builder.getOemCode());
+        assertSame(OemCode.Unknown, builder.getOemCode());
         assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
     }
 

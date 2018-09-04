@@ -36,7 +36,7 @@ import java.util.Arrays;
  * &nbsp;
  * <table border="1">
  * <caption>Default values</caption>
- * <tr><td>OEM Code</td><td>{@link OemCode#UNKNOWN}</td></tr>
+ * <tr><td>OEM Code</td><td>{@link OemCode#Unknown}</td></tr>
  * <tr><td>Indicator state</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.IndicatorState#Unknown}</td></tr>
  * <tr><td>Port addressing authority</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.PortAddressingAuthority#Unknown}</td></tr>
  * <tr><td>ESTA Manufacturer</td><td>{@code D8}</td></tr>
@@ -97,7 +97,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
     public ArtPollReplyBuilder() {
 
-        oemCode = OemCode.UNKNOWN;
+        oemCode = OemCode.Unknown;
         indicatorState = ArtPollReply.IndicatorState.Unknown;
         portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
         estaManufacturer = "D8";
@@ -349,7 +349,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
     public void setOemCode(OemCode oemCode) {
 
         if (oemCode == null) {
-            oemCode = OemCode.UNKNOWN;
+            oemCode = OemCode.Unknown;
         }
 
         if (this.oemCode != oemCode) {

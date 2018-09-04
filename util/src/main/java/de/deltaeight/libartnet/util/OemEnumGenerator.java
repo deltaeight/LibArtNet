@@ -32,16 +32,16 @@ import java.util.regex.Pattern;
 
 public class OemEnumGenerator {
 
-    private static final Pattern pattern = Pattern.compile("#define (Oem[a-zA-Z0-9]+)[ \\xA0]+" +
+    private static final Pattern pattern = Pattern.compile("#define (Oem[a-zA-Z0-9_]+)[ \\xA0]+" +
             "0x([a-fA-F0-9]{4})[ \\xA0]+" +
-            "//Manufacturer: (.+)[ \\xA0]+" +
-            "ProductName: (.+)[ \\xA0]+" +
-            "NumDmxIn: (\\d+)[ \\xA0]+" +
-            "NumDmxOut: (\\d+)[ \\xA0]+" +
-            "DmxPortPhysical: ((?:[nyNY])|(?:[nN]o)|(?:[yY]es)|(?:[pP]hysical))[ \\xA0]+" +
-            "RdmSupported: ((?:[nyNY])|(?:[nN]o)|(?:[yY]es))[ \\xA0]+" +
-            "SupportEmail: (.*)[ \\xA0]+" +
-            "SupportName: (.*)[ \\xA0]+" +
+            "//Manufacturer:[ \\xA0](.+)[ \\xA0]+" +
+            "ProductName:[ \\xA0](.+)[ \\xA0]+" +
+            "NumDmxIn:[ \\xA0](\\d+)[ \\xA0]+" +
+            "NumDmxOut:[ \\xA0](\\d+)[ \\xA0]+" +
+            "DmxPortPhysical:[ \\xA0]((?:[jnyJNY])|(?:[nN]o)|(?:[yY]es)|(?:[pP]hysical)|\\d).*[ \\xA0]+" +
+            "RdmSupported:[ \\xA0]((?:[jnyJNY])|(?:[nN]o)|(?:[yY]es)|(?:RDM))[ \\xA0]+" +
+            "SupportEmail:[ \\xA0](.*)[ \\xA0]+" +
+            "SupportName:[ \\xA0](.*)[ \\xA0]+" +
             "CoWeb:.*");
 
     public static void main(String... args) throws IOException, URISyntaxException {
@@ -94,12 +94,18 @@ public class OemEnumGenerator {
         Matcher matcher = pattern.matcher(line);
         if (matcher.matches()) {
 
-            boolean dmxPortsPhysical = matcher.group(7).equalsIgnoreCase("y")
-                    || matcher.group(7).equalsIgnoreCase("yes")
-                    || matcher.group(7).equalsIgnoreCase("physical");
+            boolean dmxPortsPhysical;
+            try {
+                dmxPortsPhysical = Integer.parseInt(matcher.group(7)) > 0;
+            } catch (NumberFormatException e) {
+                dmxPortsPhysical = matcher.group(7).equalsIgnoreCase("y")
+                        || matcher.group(7).equalsIgnoreCase("yes")
+                        || matcher.group(7).equalsIgnoreCase("physical");
+            }
 
             boolean supportsRdm = matcher.group(8).equalsIgnoreCase("y")
-                    || matcher.group(8).equalsIgnoreCase("yes");
+                    || matcher.group(8).equalsIgnoreCase("yes")
+                    || matcher.group(8).equalsIgnoreCase("rdm");
 
             return matcher.group(1) + "(new Product(0x"
                     + String.format("%04X", Integer.parseInt(matcher.group(2), 16)) + ", \""

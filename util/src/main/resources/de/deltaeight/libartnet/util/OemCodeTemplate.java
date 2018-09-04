@@ -40,7 +40,7 @@ public enum OemCode {
 
     $ENTRIES$,
 
-    UNKNOWN(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
+    Unknown(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
 
     private static final TreeMap<Integer, OemCode> products = new TreeMap<>();
 
@@ -58,15 +58,15 @@ public enum OemCode {
 
     /**
      * @param productCode The code to search for.
-     * @return The {@link OemCode} matching {@code productCode} or {@link #UNKNOWN} if none exists.
+     * @return The {@link OemCode} matching {@code productCode} or {@link #Unknown} if none exists.
      */
     public static OemCode getOemCode(int productCode) {
-        return products.getOrDefault(productCode, UNKNOWN);
+        return products.getOrDefault(productCode, Unknown);
     }
 
     /**
      * @param productCode The code to search for.
-     * @return The {@link OemCode} matching {@code productCode} or {@link #UNKNOWN} if none exists.
+     * @return The {@link OemCode} matching {@code productCode} or {@link #Unknown} if none exists.
      */
     public static OemCode getOemCode(byte productCode) {
         return getOemCode((int) productCode);
