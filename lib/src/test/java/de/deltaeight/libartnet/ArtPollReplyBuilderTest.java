@@ -21,18 +21,12 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.enums.EquipmentStyle;
-import de.deltaeight.libartnet.enums.OemCode;
-import de.deltaeight.libartnet.packet.ArtPollReply;
+import de.deltaeight.libartnet.descriptors.*;
 import org.junit.jupiter.api.Test;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArtPollReplyBuilderTest {
+class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
     private static final int[] DEFAULT_ESTA_MAN_BYTES = new int[]{0x38, 0x44};
     private static final int[] DEFAULT_OEM_BYTES = new int[]{0x7F, 0xFF};
@@ -135,37 +129,41 @@ class ArtPollReplyBuilderTest {
 
     @Test
     void build() {
-        assertArrayEquals(DEFAULT_PACKET, new ArtPollReplyBuilder().build().getBytes());
+        assertPackets(DEFAULT_PACKET, new ArtPollReplyBuilder());
     }
 
     @Test
-    void ipAddress() throws UnknownHostException {
+    void ipAddress() {
 
-        Inet4Address testAddress = (Inet4Address) InetAddress.getByAddress(new byte[]{0x7F, 0x00, 0x00, 0x00});
-        byte[] expectedData = getExpectedData(testAddress.getAddress(), new int[2], 0x00, 0x00,
+        byte[] testAddress = new byte[]{0x7F, 0x00, 0x00, 0x00};
+
+        byte[] expectedData = getExpectedData(testAddress, new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                 new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertNull(builder.getIpAddress());
+        assertArrayEquals(new byte[4], builder.getIpAddress());
 
         builder.setIpAddress(testAddress);
-        assertEquals(testAddress, builder.getIpAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertArrayEquals(testAddress, builder.getIpAddress());
+        assertPackets(expectedData, builder);
 
         builder.setIpAddress(null);
-        assertNull(builder.getIpAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertArrayEquals(new byte[4], builder.getIpAddress());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withIpAddress(testAddress));
-        assertEquals(testAddress, builder.getIpAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertArrayEquals(testAddress, builder.getIpAddress());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withIpAddress(null));
-        assertNull(builder.getIpAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertArrayEquals(new byte[4], builder.getIpAddress());
+        assertPackets(DEFAULT_PACKET, builder);
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setIpAddress(new byte[3]));
+        assertThrows(IllegalArgumentException.class, () -> builder.withIpAddress(new byte[5]));
     }
 
     @Test
@@ -186,19 +184,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setNodeVersion(666);
         assertEquals(666, builder.getNodeVersion());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setNodeVersion(0);
         assertEquals(0, builder.getNodeVersion());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withNodeVersion(666));
         assertEquals(666, builder.getNodeVersion());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withNodeVersion(0));
         assertEquals(0, builder.getNodeVersion());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -215,24 +213,24 @@ class ArtPollReplyBuilderTest {
 
         builder.setNetAddress(42);
         assertEquals(42, builder.getNetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setNetAddress(0);
         assertEquals(0, builder.getNetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withNetAddress(42));
         assertEquals(42, builder.getNetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withNetAddress(0));
         assertEquals(0, builder.getNetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setNetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withNetAddress(128));
     }
-    
+
     @Test
     void subnetAddress() {
 
@@ -247,19 +245,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setSubnetAddress(13);
         assertEquals(13, builder.getSubnetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setSubnetAddress(0);
         assertEquals(0, builder.getSubnetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withSubnetAddress(13));
         assertEquals(13, builder.getSubnetAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withSubnetAddress(0));
         assertEquals(0, builder.getSubnetAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSubnetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSubnetAddress(16));
@@ -280,19 +278,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setOemCode(OemCode.OemDMXHub);
         assertSame(OemCode.OemDMXHub, builder.getOemCode());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setOemCode(null);
         assertSame(OemCode.Unknown, builder.getOemCode());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withOemCode(OemCode.OemDMXHub));
         assertSame(OemCode.OemDMXHub, builder.getOemCode());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withOemCode(null));
         assertSame(OemCode.Unknown, builder.getOemCode());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -310,19 +308,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setUbeaVersion(42);
         assertEquals(42, builder.getUbeaVersion());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setUbeaVersion(0);
         assertEquals(0, builder.getUbeaVersion());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withUbeaVersion(42));
         assertEquals(42, builder.getUbeaVersion());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withUbeaVersion(0));
         assertEquals(0, builder.getUbeaVersion());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setUbeaVersion(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withUbeaVersion(256));
@@ -352,28 +350,28 @@ class ArtPollReplyBuilderTest {
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+        assertSame(IndicatorState.Unknown, builder.getIndicatorState());
 
         for (int i = 0; i < 4; i++) {
 
-            ArtPollReply.IndicatorState currentState = ArtPollReply.IndicatorState.values()[i];
+            IndicatorState currentState = IndicatorState.values()[i];
             byte[] expectedDatum = expectedData[i];
 
             builder.setIndicatorState(currentState);
             assertSame(currentState, builder.getIndicatorState());
-            assertArrayEquals(expectedDatum, builder.build().getBytes());
+            assertPackets(expectedDatum, builder);
 
             builder.setIndicatorState(null);
-            assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
-            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+            assertSame(IndicatorState.Unknown, builder.getIndicatorState());
+            assertPackets(DEFAULT_PACKET, builder);
 
             assertSame(builder, builder.withIndicatorState(currentState));
             assertSame(currentState, builder.getIndicatorState());
-            assertArrayEquals(expectedDatum, builder.build().getBytes());
+            assertPackets(expectedDatum, builder);
 
             assertSame(builder, builder.withIndicatorState(null));
-            assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
-            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+            assertSame(IndicatorState.Unknown, builder.getIndicatorState());
+            assertPackets(DEFAULT_PACKET, builder);
         }
     }
 
@@ -401,28 +399,28 @@ class ArtPollReplyBuilderTest {
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertSame(ArtPollReply.IndicatorState.Unknown, builder.getIndicatorState());
+        assertSame(IndicatorState.Unknown, builder.getIndicatorState());
 
         for (int i = 0; i < 4; i++) {
 
-            ArtPollReply.PortAddressingAuthority currentState = ArtPollReply.PortAddressingAuthority.values()[i];
+            PortAddressingAuthority currentState = PortAddressingAuthority.values()[i];
             byte[] expectedDatum = expectedData[i];
 
             builder.setPortAddressingAuthority(currentState);
             assertSame(currentState, builder.getPortAddressingAuthority());
-            assertArrayEquals(expectedDatum, builder.build().getBytes());
+            assertPackets(expectedDatum, builder);
 
             builder.setPortAddressingAuthority(null);
-            assertSame(ArtPollReply.PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
-            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+            assertSame(PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
+            assertPackets(DEFAULT_PACKET, builder);
 
             assertSame(builder, builder.withPortAddressingAuthority(currentState));
             assertSame(currentState, builder.getPortAddressingAuthority());
-            assertArrayEquals(expectedDatum, builder.build().getBytes());
+            assertPackets(expectedDatum, builder);
 
             assertSame(builder, builder.withPortAddressingAuthority(null));
-            assertSame(ArtPollReply.PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
-            assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+            assertSame(PortAddressingAuthority.Unknown, builder.getPortAddressingAuthority());
+            assertPackets(DEFAULT_PACKET, builder);
         }
     }
 
@@ -440,19 +438,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setBootedFromRom(true);
         assertTrue(builder.isBootedFromRom());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setBootedFromRom(false);
         assertFalse(builder.isBootedFromRom());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withBootedFromRom(true));
         assertTrue(builder.isBootedFromRom());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withBootedFromRom(false));
         assertFalse(builder.isBootedFromRom());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -469,19 +467,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setRdmSupport(true);
         assertTrue(builder.supportsRdm());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setRdmSupport(false);
         assertFalse(builder.supportsRdm());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withRdmSupport(true));
         assertTrue(builder.supportsRdm());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withRdmSupport(false));
         assertFalse(builder.supportsRdm());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -498,36 +496,35 @@ class ArtPollReplyBuilderTest {
 
         builder.setUbeaPresent(true);
         assertTrue(builder.isUbeaPresent());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setUbeaPresent(false);
         assertFalse(builder.isUbeaPresent());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withUbeaPresent(true));
         assertTrue(builder.isUbeaPresent());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withUbeaPresent(false));
         assertFalse(builder.isUbeaPresent());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
     void status1() {
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder()
-                .withIndicatorState(ArtPollReply.IndicatorState.Normal)
-                .withPortAddressingAuthority(ArtPollReply.PortAddressingAuthority.NotUsed)
+                .withIndicatorState(IndicatorState.Normal)
+                .withPortAddressingAuthority(PortAddressingAuthority.NotUsed)
                 .withBootedFromRom(true)
                 .withRdmSupport(true)
                 .withUbeaPresent(true);
 
-        assertArrayEquals(getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+        assertPackets(getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
                 0x00, 0b11110111, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
-                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0x00),
-                builder.build().getBytes());
+                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0x00), builder);
     }
 
     @Test
@@ -549,21 +546,21 @@ class ArtPollReplyBuilderTest {
 
         builder.setEstaManufacturer("Too long!");
         assertEquals("To", builder.getEstaManufacturer());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setEstaManufacturer(null);
         assertNotNull(builder.getEstaManufacturer());
         assertTrue(builder.getEstaManufacturer().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyManufacturer, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyManufacturer, builder);
 
         assertSame(builder, builder.withEstaManufacturer("To"));
         assertEquals("To", builder.getEstaManufacturer());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withEstaManufacturer(null));
         assertNotNull(builder.getEstaManufacturer());
         assertTrue(builder.getEstaManufacturer().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyManufacturer, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyManufacturer, builder);
     }
 
     @Test
@@ -585,21 +582,21 @@ class ArtPollReplyBuilderTest {
 
         builder.setShortName("Too Long Name For This!");
         assertEquals("Too Long Name For", builder.getShortName());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setShortName(null);
         assertNotNull(builder.getShortName());
         assertTrue(builder.getShortName().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyName, builder);
 
         assertSame(builder, builder.withShortName("Too Long Name For This!"));
         assertEquals("Too Long Name For", builder.getShortName());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withShortName(null));
         assertNotNull(builder.getShortName());
         assertTrue(builder.getShortName().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyName, builder);
     }
 
     @Test
@@ -624,21 +621,21 @@ class ArtPollReplyBuilderTest {
 
         builder.setLongName(testString);
         assertEquals(testString.substring(0, 63), builder.getLongName());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setLongName(null);
         assertNotNull(builder.getLongName());
         assertTrue(builder.getLongName().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyName, builder);
 
         assertSame(builder, builder.withLongName(testString));
         assertEquals(testString.substring(0, 63), builder.getLongName());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withLongName(null));
         assertNotNull(builder.getLongName());
         assertTrue(builder.getLongName().isEmpty());
-        assertArrayEquals(expectedDataWithEmptyName, builder.build().getBytes());
+        assertPackets(expectedDataWithEmptyName, builder);
     }
 
     @Test
@@ -659,31 +656,31 @@ class ArtPollReplyBuilderTest {
 
         builder.setNodeReport(testString);
         assertEquals(testString.substring(0, 63), builder.getNodeReport());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setNodeReport(null);
         assertNotNull(builder.getNodeReport());
         assertTrue(builder.getNodeReport().isEmpty());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withNodeReport(testString));
         assertEquals(testString.substring(0, 63), builder.getNodeReport());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withNodeReport(null));
         assertNotNull(builder.getNodeReport());
         assertTrue(builder.getNodeReport().isEmpty());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
     void portTypes() {
 
-        ArtPollReply.PortType[] testValues = new ArtPollReply.PortType[]{
-                new ArtPollReply.PortType(false, false, ArtPollReply.PortType.Protocol.ARTNET),
-                new ArtPollReply.PortType(false, true, ArtPollReply.PortType.Protocol.MIDI),
-                new ArtPollReply.PortType(true, false, ArtPollReply.PortType.Protocol.AVAB),
-                new ArtPollReply.PortType(true, true, ArtPollReply.PortType.Protocol.ADB625)
+        PortType[] testValues = new PortType[]{
+                new PortType(false, false, PortType.Protocol.ARTNET),
+                new PortType(false, true, PortType.Protocol.MIDI),
+                new PortType(true, false, PortType.Protocol.AVAB),
+                new PortType(true, true, PortType.Protocol.ADB625)
         };
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
@@ -692,8 +689,8 @@ class ArtPollReplyBuilderTest {
                 new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE,
                 new byte[6], new byte[4], 0x00, 0x00);
 
-        ArtPollReply.PortType[] defaultTypes = new ArtPollReply.PortType[]{ArtPollReply.PortType.DEFAULT,
-                ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT};
+        PortType[] defaultTypes = new PortType[]{PortType.DEFAULT,
+                PortType.DEFAULT, PortType.DEFAULT, PortType.DEFAULT};
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
@@ -705,7 +702,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getPortTypes());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             builder.setPortType(i, null);
@@ -713,7 +710,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultTypes, builder.getPortTypes());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withPortType(i, testValues[i]));
@@ -721,7 +718,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getPortTypes());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withPortType(i, null));
@@ -729,42 +726,43 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultTypes, builder.getPortTypes());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.setPortType(-1, ArtPollReply.PortType.DEFAULT));
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.withPortType(4, ArtPollReply.PortType.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setPortType(-1, PortType.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withPortType(4, PortType.DEFAULT));
     }
 
     @Test
     void inputStatuses() {
 
-        ArtPollReply.InputStatus[] testValues = new ArtPollReply.InputStatus[]{
-                new ArtPollReply.InputStatus(false, false, false, false, false, false),
-                new ArtPollReply.InputStatus(false, false, false, false, false, true),
-                new ArtPollReply.InputStatus(false, false, false, false, true, false),
-                new ArtPollReply.InputStatus(false, false, false, false, true, true)
+        InputStatus[] testValues = new InputStatus[]{
+                new InputStatus(false, false, false, false, false, true),
+                new InputStatus(false, false, false, false, true, false),
+                new InputStatus(false, false, false, false, true, true),
+                new InputStatus(false, false, false, true, false, false)
         };
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new byte[0], 0x00, new int[4], new int[]{0b00000000, 0b00000100, 0b00001000, 0b00001100},
+                new byte[0], 0x00, new int[4], new int[]{0b00000100, 0b00001000, 0b00001100, 0b00010000},
                 new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE,
                 new byte[6], new byte[4], 0x00, 0x00);
 
-        ArtPollReply.InputStatus[] defaultStatuses = new ArtPollReply.InputStatus[]{ArtPollReply.InputStatus.DEFAULT,
-                ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT};
+        InputStatus[] defaultStatuses = new InputStatus[]{InputStatus.DEFAULT,
+                InputStatus.DEFAULT, InputStatus.DEFAULT, InputStatus.DEFAULT};
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
         assertArrayEquals(defaultStatuses, builder.getInputStatuses());
 
         for (int i = 0; i < 4; i++) {
+            assertSame(defaultStatuses[i], builder.getInputStatus(i));
             builder.setInputStatus(i, testValues[i]);
             assertSame(testValues[i], builder.getInputStatus(i));
         }
 
         assertArrayEquals(testValues, builder.getInputStatuses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             builder.setInputStatus(i, null);
@@ -772,7 +770,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultStatuses, builder.getInputStatuses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withInputStatus(i, testValues[i]));
@@ -780,7 +778,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getInputStatuses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withInputStatus(i, null));
@@ -788,30 +786,30 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultStatuses, builder.getInputStatuses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.setInputStatus(-1, ArtPollReply.InputStatus.DEFAULT));
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.withInputStatus(4, ArtPollReply.InputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setInputStatus(-1, InputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withInputStatus(4, InputStatus.DEFAULT));
     }
 
     @Test
     void outputStatuses() {
 
-        ArtPollReply.OutputStatus[] testValues = new ArtPollReply.OutputStatus[]{
-                new ArtPollReply.OutputStatus(false, false, false, false, false, false, false, false),
-                new ArtPollReply.OutputStatus(false, false, false, false, false, false, false, true),
-                new ArtPollReply.OutputStatus(false, false, false, false, false, false, true, false),
-                new ArtPollReply.OutputStatus(false, false, false, false, false, false, true, true)
+        OutputStatus[] testValues = new OutputStatus[]{
+                new OutputStatus(false, false, false, false, false, false, false, true),
+                new OutputStatus(false, false, false, false, false, false, true, false),
+                new OutputStatus(false, false, false, false, false, false, true, true),
+                new OutputStatus(false, false, false, false, false, true, false, false)
         };
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
-                new byte[0], 0x00, new int[4], new int[4], new int[]{0b00000000, 0b00000001, 0b00000010, 0b00000011},
+                new byte[0], 0x00, new int[4], new int[4], new int[]{0b00000001, 0b00000010, 0b00000011, 0b00000100},
                 new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4],
                 0x00, 0x00);
 
-        ArtPollReply.OutputStatus[] defaultStatuses = new ArtPollReply.OutputStatus[]{ArtPollReply.OutputStatus.DEFAULT,
-                ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT};
+        OutputStatus[] defaultStatuses = new OutputStatus[]{OutputStatus.DEFAULT,
+                OutputStatus.DEFAULT, OutputStatus.DEFAULT, OutputStatus.DEFAULT};
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
@@ -824,7 +822,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getOutputStatuses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             builder.setOutputStatus(i, null);
@@ -832,7 +830,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultStatuses, builder.getOutputStatuses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withOutputStatus(i, testValues[i]));
@@ -840,7 +838,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getOutputStatuses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withOutputStatus(i, null));
@@ -848,10 +846,10 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultStatuses, builder.getOutputStatuses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.setOutputStatus(-1, ArtPollReply.OutputStatus.DEFAULT));
-        assertThrows(IndexOutOfBoundsException.class, () -> builder.withOutputStatus(4, ArtPollReply.OutputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.setOutputStatus(-1, OutputStatus.DEFAULT));
+        assertThrows(IndexOutOfBoundsException.class, () -> builder.withOutputStatus(4, OutputStatus.DEFAULT));
     }
 
     @Test
@@ -876,7 +874,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getInputUniverseAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             builder.setInputUniverseAddress(i, 0x00);
@@ -884,7 +882,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultValues, builder.getInputUniverseAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withInputUniverseAddress(i, testValues[i]));
@@ -892,7 +890,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getInputUniverseAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withInputUniverseAddress(i, 0x00));
@@ -900,7 +898,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultValues, builder.getInputUniverseAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IndexOutOfBoundsException.class, () -> builder.setInputUniverseAddress(-1, 0x00));
         assertThrows(IndexOutOfBoundsException.class, () -> builder.withInputUniverseAddress(4, 0x00));
@@ -928,7 +926,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getOutputUniverseAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             builder.setOutputUniverseAddress(i, 0x00);
@@ -936,7 +934,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultValues, builder.getOutputUniverseAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withOutputUniverseAddress(i, testValues[i]));
@@ -944,7 +942,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(testValues, builder.getOutputUniverseAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         for (int i = 0; i < 4; i++) {
             assertSame(builder, builder.withOutputUniverseAddress(i, 0x00));
@@ -952,7 +950,7 @@ class ArtPollReplyBuilderTest {
         }
 
         assertArrayEquals(defaultValues, builder.getOutputUniverseAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IndexOutOfBoundsException.class, () -> builder.setOutputUniverseAddress(-1, 0x00));
         assertThrows(IndexOutOfBoundsException.class, () -> builder.withOutputUniverseAddress(4, 0x00));
@@ -980,7 +978,7 @@ class ArtPollReplyBuilderTest {
             builder.setMacroActive(i, true);
             assertTrue(builder.isMacroActive(i));
             assertArrayEquals(currentMacrosActive, builder.getMacrosActive());
-            assertArrayEquals(expectedData, builder.build().getBytes());
+            assertPackets(expectedData, builder);
         }
 
         for (int i = 0; i < 8; i++) {
@@ -996,7 +994,7 @@ class ArtPollReplyBuilderTest {
             assertSame(builder, builder.withMacroActive(i, false));
             assertFalse(builder.isMacroActive(i));
             assertArrayEquals(currentMacrosActive, builder.getMacrosActive());
-            assertArrayEquals(expectedData, builder.build().getBytes());
+            assertPackets(expectedData, builder);
         }
 
         assertThrows(IndexOutOfBoundsException.class, () -> builder.setMacroActive(-1, true));
@@ -1025,7 +1023,7 @@ class ArtPollReplyBuilderTest {
             builder.setRemoteActive(i, true);
             assertTrue(builder.isRemoteActive(i));
             assertArrayEquals(currentRemotesActive, builder.getRemotesActive());
-            assertArrayEquals(expectedData, builder.build().getBytes());
+            assertPackets(expectedData, builder);
         }
 
         for (int i = 0; i < 8; i++) {
@@ -1033,7 +1031,7 @@ class ArtPollReplyBuilderTest {
             byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                     DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                     new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4],
-                    0x00,0xFF - (int) (Math.pow(2, i + 1) - 1), DEFAULT_EQUIPMENT_STYLE,
+                    0x00, 0xFF - (int) (Math.pow(2, i + 1) - 1), DEFAULT_EQUIPMENT_STYLE,
                     new byte[6], new byte[4], 0x00, 0x00);
 
             currentRemotesActive[i] = false;
@@ -1041,7 +1039,7 @@ class ArtPollReplyBuilderTest {
             assertSame(builder, builder.withRemoteActive(i, false));
             assertFalse(builder.isRemoteActive(i));
             assertArrayEquals(currentRemotesActive, builder.getRemotesActive());
-            assertArrayEquals(expectedData, builder.build().getBytes());
+            assertPackets(expectedData, builder);
         }
 
         assertThrows(IndexOutOfBoundsException.class, () -> builder.setRemoteActive(-1, true));
@@ -1062,19 +1060,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setEquipmentStyle(EquipmentStyle.Controller);
         assertSame(EquipmentStyle.Controller, builder.getEquipmentStyle());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setEquipmentStyle(null);
         assertSame(EquipmentStyle.Config, builder.getEquipmentStyle());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withEquipmentStyle(EquipmentStyle.Controller));
         assertSame(EquipmentStyle.Controller, builder.getEquipmentStyle());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withEquipmentStyle(null));
         assertSame(EquipmentStyle.Config, builder.getEquipmentStyle());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1093,50 +1091,56 @@ class ArtPollReplyBuilderTest {
 
         builder.setMacAddress(testValue);
         assertArrayEquals(testValue, builder.getMacAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setMacAddress(null);
         assertArrayEquals(new byte[6], builder.getMacAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withMacAddress(testValue));
         assertArrayEquals(testValue, builder.getMacAddress());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withMacAddress(null));
         assertArrayEquals(new byte[6], builder.getMacAddress());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setMacAddress(new byte[5]));
+        assertThrows(IllegalArgumentException.class, () -> builder.withMacAddress(new byte[7]));
     }
 
     @Test
-    void bindIp() throws UnknownHostException {
+    void bindIp() {
 
-        Inet4Address testAddress = (Inet4Address) InetAddress.getByAddress(new byte[]{0x7F, 0x00, 0x00, 0x00});
+        byte[] testAddress = new byte[]{0x7F, 0x00, 0x00, 0x00};
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                 new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
-                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], testAddress.getAddress(), 0x00, 0x00);
+                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], testAddress, 0x00, 0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertNull(builder.getBindIp());
+        assertArrayEquals(new byte[4], builder.getBindIp());
 
         builder.setBindIp(testAddress);
-        assertEquals(testAddress, builder.getBindIp());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertArrayEquals(testAddress, builder.getBindIp());
+        assertPackets(expectedData, builder);
 
         builder.setBindIp(null);
-        assertNull(builder.getBindIp());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertArrayEquals(new byte[4], builder.getBindIp());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withBindIp(testAddress));
-        assertEquals(testAddress, builder.getBindIp());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertArrayEquals(testAddress, builder.getBindIp());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withBindIp(null));
-        assertNull(builder.getBindIp());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertArrayEquals(new byte[4], builder.getBindIp());
+        assertPackets(DEFAULT_PACKET, builder);
+
+        assertThrows(IllegalArgumentException.class, () -> builder.setBindIp(new byte[3]));
+        assertThrows(IllegalArgumentException.class, () -> builder.withBindIp(new byte[5]));
     }
 
     @Test
@@ -1153,19 +1157,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setBindIndex(1);
         assertEquals(1, builder.getBindIndex());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setBindIndex(0);
         assertEquals(0, builder.getBindIndex());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withBindIndex(1));
         assertEquals(1, builder.getBindIndex());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withBindIndex(0));
         assertEquals(0, builder.getBindIndex());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setBindIndex(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withBindIndex(256));
@@ -1185,19 +1189,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setWebBrowserConfigurationSupport(true);
         assertTrue(builder.supportsWebBrowserConfiguration());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setWebBrowserConfigurationSupport(false);
         assertFalse(builder.supportsWebBrowserConfiguration());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withWebBrowserConfigurationSupport(true));
         assertTrue(builder.supportsWebBrowserConfiguration());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withWebBrowserConfigurationSupport(false));
         assertFalse(builder.supportsWebBrowserConfiguration());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1214,19 +1218,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setIpIsDhcpConfigured(true);
         assertTrue(builder.ipIsDhcpConfigured());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setIpIsDhcpConfigured(false);
         assertFalse(builder.ipIsDhcpConfigured());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withIpIsDhcpConfigured(true));
         assertTrue(builder.ipIsDhcpConfigured());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withIpIsDhcpConfigured(false));
         assertFalse(builder.ipIsDhcpConfigured());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1243,19 +1247,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setDhcpSupport(true);
         assertTrue(builder.supportsDhcp());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setDhcpSupport(false);
         assertFalse(builder.supportsDhcp());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withDhcpSupport(true));
         assertTrue(builder.supportsDhcp());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withDhcpSupport(false));
         assertFalse(builder.supportsDhcp());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1272,19 +1276,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setLongPortAddressSupport(true);
         assertTrue(builder.supportsLongPortAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setLongPortAddressSupport(false);
         assertFalse(builder.supportsLongPortAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withLongPortAddressSupport(true));
         assertTrue(builder.supportsLongPortAddresses());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withLongPortAddressSupport(false));
         assertFalse(builder.supportsLongPortAddresses());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1301,19 +1305,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setCanSwitchToSACN(true);
         assertTrue(builder.canSwitchToSACN());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setCanSwitchToSACN(false);
         assertFalse(builder.canSwitchToSACN());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withCanSwitchToSACN(true));
         assertTrue(builder.canSwitchToSACN());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withCanSwitchToSACN(false));
         assertFalse(builder.canSwitchToSACN());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1330,19 +1334,19 @@ class ArtPollReplyBuilderTest {
 
         builder.setSquawking(true);
         assertTrue(builder.isSquawking());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         builder.setSquawking(false);
         assertFalse(builder.isSquawking());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
 
         assertSame(builder, builder.withSquawking(true));
         assertTrue(builder.isSquawking());
-        assertArrayEquals(expectedData, builder.build().getBytes());
+        assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withSquawking(false));
         assertFalse(builder.isSquawking());
-        assertArrayEquals(DEFAULT_PACKET, builder.build().getBytes());
+        assertPackets(DEFAULT_PACKET, builder);
     }
 
     @Test
@@ -1356,10 +1360,9 @@ class ArtPollReplyBuilderTest {
                 .withCanSwitchToSACN(true)
                 .withSquawking(true);
 
-        assertArrayEquals(getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
+        assertPackets(getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES,
                 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0],
                 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
-                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0b00111111),
-                builder.build().getBytes());
+                0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0b00111111), builder);
     }
 }

@@ -21,7 +21,7 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.enums.Priority;
+import de.deltaeight.libartnet.descriptors.Priority;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

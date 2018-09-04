@@ -19,9 +19,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.packet;
+package de.deltaeight.libartnet.packets;
 
-import de.deltaeight.libartnet.enums.Priority;
+import de.deltaeight.libartnet.descriptors.Priority;
 
 import java.util.Objects;
 
@@ -62,7 +62,8 @@ public class ArtPoll extends ArtNetPacket {
 
     @Override
     public int hashCode() {
-        return Objects.hash(enableVlcTransmission, unicastDiagnosticMessages, sendDiagnosticMessages, sendArtPollReplyOnChanges, priority);
+        return Objects.hash(enableVlcTransmission, unicastDiagnosticMessages, sendDiagnosticMessages,
+                sendArtPollReplyOnChanges, priority);
     }
 
     @Override

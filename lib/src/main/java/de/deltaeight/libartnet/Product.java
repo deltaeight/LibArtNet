@@ -25,7 +25,7 @@ package de.deltaeight.libartnet;
  * Represents a product defined by Artistic License Ltd.
  *
  * @author Julian Rabe
- * @see de.deltaeight.libartnet.enums.OemCode
+ * @see de.deltaeight.libartnet.descriptors.OemCode
  */
 public class Product {
 

@@ -21,11 +21,11 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.enums.ArtNet;
-import de.deltaeight.libartnet.packet.ArtDmx;
-import de.deltaeight.libartnet.packet.ArtNetPacket;
-import de.deltaeight.libartnet.packet.ArtPoll;
-import de.deltaeight.libartnet.packet.ArtPollReply;
+import de.deltaeight.libartnet.descriptors.ArtNet;
+import de.deltaeight.libartnet.packets.ArtDmx;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
+import de.deltaeight.libartnet.packets.ArtPoll;
+import de.deltaeight.libartnet.packets.ArtPollReply;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

@@ -19,27 +19,57 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.packet;
+package de.deltaeight.libartnet.descriptors;
 
 /**
- * Represents Art-Net packets
- *
  * @author Julian Rabe
- * @see de.deltaeight.libartnet.ArtNetPacketBuilder
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
-public abstract class ArtNetPacket {
+public enum ArtNet {
+
+    /**
+     * The protocol revision this library works with (14).
+     */
+    PROTOCOL_REVISION(14),
+
+    /**
+     * The Art-Net Header to send with in every {@link de.deltaeight.libartnet.packets.ArtNetPacket} ("Art-Net\0").
+     */
+    HEADER(new byte[]{0x41, 0x72, 0x74, 0x2D, 0x4E, 0x65, 0x74, 0x00}),
+
+    /**
+     * The UDP port on which network traffic is handled ({@code 0x1936}).
+     */
+    PORT(0x1936);
 
     private final byte[] bytes;
 
-    ArtNetPacket(byte[] bytes) {
+    ArtNet(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    ArtNet(int value) {
+        byte[] bytes = new byte[2];
+        bytes[0] = (byte) (value >> 8);
+        bytes[1] = (byte) value;
         this.bytes = bytes;
     }
 
     /**
-     * @return Payload to send over the network.
+     * @return Bytes in big endian byte order.
      */
     public byte[] getBytes() {
-        return bytes.clone();
+        return bytes;
     }
 
+    /**
+     * @return Bytes in little endian byte order.
+     */
+    public byte[] getBytesLittleEndian() {
+        byte[] result = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            result[i] = bytes[bytes.length - i - 1];
+        }
+        return result;
+    }
 }

@@ -21,13 +21,10 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.enums.ArtNet;
-import de.deltaeight.libartnet.enums.EquipmentStyle;
-import de.deltaeight.libartnet.enums.OemCode;
-import de.deltaeight.libartnet.enums.OpCode;
-import de.deltaeight.libartnet.packet.ArtPollReply;
+import de.deltaeight.libartnet.descriptors.*;
+import de.deltaeight.libartnet.packets.ArtPollReply;
 
-import java.net.Inet4Address;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -37,15 +34,16 @@ import java.util.Arrays;
  * <table border="1">
  * <caption>Default values</caption>
  * <tr><td>OEM Code</td><td>{@link OemCode#Unknown}</td></tr>
- * <tr><td>Indicator state</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.IndicatorState#Unknown}</td></tr>
- * <tr><td>Port addressing authority</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.PortAddressingAuthority#Unknown}</td></tr>
+ * <tr><td>Indicator state</td><td>{@link IndicatorState#Unknown}</td></tr>
+ * <tr><td>Port addressing authority</td><td>{@link PortAddressingAuthority#Unknown}</td></tr>
  * <tr><td>ESTA Manufacturer</td><td>{@code D8}</td></tr>
  * <tr><td>Short name</td><td rowspan="2">{@code LibArtNet}</td></tr>
  * <tr><td>Long name</td></tr>
  * <tr><td>Node report</td><td></td></tr>
- * <tr><td>Port types</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.PortType#DEFAULT}</td></tr>
- * <tr><td>Input statuses</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.InputStatus#DEFAULT}</td></tr>
- * <tr><td>Output statuses</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.OutputStatus#DEFAULT}</td></tr>
+ * <tr><td>Port types</td><td>{@link PortType#DEFAULT}</td></tr>
+ * <tr><td>Input statuses</td><td>{@link InputStatus#DEFAULT}</td></tr>
+ * <tr><td>Output statuses</td><td>{@link OutputStatus#DEFAULT}</td></tr>
+ * <tr><td>Equipment style</td><td>{@link EquipmentStyle#Config}</td></tr>
  * </table>
  * <p>
  * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
@@ -56,24 +54,24 @@ import java.util.Arrays;
  */
 public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
-    public static final EquipmentStyle DEFAULT_EQUIPMENT_STYLE = EquipmentStyle.Config;
-
+    private static final EquipmentStyle DEFAULT_EQUIPMENT_STYLE = EquipmentStyle.Config;
     private static final byte[] OP_CODE_BYTES = OpCode.OpPollReply.getBytesLittleEndian();
-    private final ArtPollReply.PortType[] portTypes;
-    private final ArtPollReply.InputStatus[] inputStatuses;
-    private final ArtPollReply.OutputStatus[] outputStatuses;
+
+    private final PortType[] portTypes;
+    private final InputStatus[] inputStatuses;
+    private final OutputStatus[] outputStatuses;
     private final int[] inputUniverseAddresses;
     private final int[] outputUniverseAddresses;
     private final boolean[] macrosActive;
     private final boolean[] remotesActive;
-    private Inet4Address ipAddress;
+    private byte[] ipAddress;
     private int nodeVersion;
     private int netAddress;
     private int subnetAddress;
     private OemCode oemCode;
     private int ubeaVersion;
-    private ArtPollReply.IndicatorState indicatorState;
-    private ArtPollReply.PortAddressingAuthority portAddressingAuthority;
+    private IndicatorState indicatorState;
+    private PortAddressingAuthority portAddressingAuthority;
     private boolean bootedFromRom;
     private boolean rdmSupport;
     private boolean ubeaPresent;
@@ -83,7 +81,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
     private String nodeReport;
     private EquipmentStyle equipmentStyle;
     private byte[] macAddress;
-    private Inet4Address bindIp;
+    private byte[] bindIp;
     private int bindIndex;
     private boolean webBrowserConfigurationSupport;
     private boolean ipIsDhcpConfigured;
@@ -98,24 +96,26 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
     public ArtPollReplyBuilder() {
 
         oemCode = OemCode.Unknown;
-        indicatorState = ArtPollReply.IndicatorState.Unknown;
-        portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
+        indicatorState = IndicatorState.Unknown;
+        portAddressingAuthority = PortAddressingAuthority.Unknown;
         estaManufacturer = "D8";
         shortName = "LibArtNet";
         longName = "LibArtNet";
         nodeReport = "";
-        portTypes = new ArtPollReply.PortType[]{ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT,
-                ArtPollReply.PortType.DEFAULT, ArtPollReply.PortType.DEFAULT};
-        inputStatuses = new ArtPollReply.InputStatus[]{ArtPollReply.InputStatus.DEFAULT,
-                ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT, ArtPollReply.InputStatus.DEFAULT};
-        outputStatuses = new ArtPollReply.OutputStatus[]{ArtPollReply.OutputStatus.DEFAULT,
-                ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT, ArtPollReply.OutputStatus.DEFAULT};
+        portTypes = new PortType[]{PortType.DEFAULT, PortType.DEFAULT,
+                PortType.DEFAULT, PortType.DEFAULT};
+        inputStatuses = new InputStatus[]{InputStatus.DEFAULT,
+                InputStatus.DEFAULT, InputStatus.DEFAULT, InputStatus.DEFAULT};
+        outputStatuses = new OutputStatus[]{OutputStatus.DEFAULT,
+                OutputStatus.DEFAULT, OutputStatus.DEFAULT, OutputStatus.DEFAULT};
+        equipmentStyle = DEFAULT_EQUIPMENT_STYLE;
         inputUniverseAddresses = new int[4];
         outputUniverseAddresses = new int[4];
         macrosActive = new boolean[8];
         remotesActive = new boolean[8];
-        equipmentStyle = DEFAULT_EQUIPMENT_STYLE;
+        ipAddress = new byte[4];
         macAddress = new byte[6];
+        bindIp = new byte[4];
 
         changed = true;
     }
@@ -137,7 +137,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
             System.arraycopy(OP_CODE_BYTES, 0, bytes, 8, 2);
 
             if (ipAddress != null) {
-                System.arraycopy(ipAddress.getAddress(), 0, bytes, 10, 4);
+                System.arraycopy(ipAddress, 0, bytes, 10, 4);
             }
 
             System.arraycopy(ArtNet.PORT.getBytesLittleEndian(), 0, bytes, 14, 2);
@@ -186,7 +186,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
             System.arraycopy(nodeReportBytes, 0, bytes, 108, nodeReportBytes.length);
 
             int portCounter = 0;
-            for (ArtPollReply.PortType portType : portTypes) {
+            for (PortType portType : portTypes) {
                 if (portType.isOutputSupported() || portType.isInputSupported()) {
                     portCounter++;
                 }
@@ -214,10 +214,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
             bytes[200] = equipmentStyle.getValue();
 
             System.arraycopy(macAddress, 0, bytes, 201, 6);
-
-            if (bindIp != null) {
-                System.arraycopy(bindIp.getAddress(), 0, bytes, 207, 4);
-            }
+            System.arraycopy(bindIp, 0, bytes, 207, 4);
 
             bytes[211] = (byte) bindIndex;
 
@@ -250,7 +247,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
                     supportsRdm(), isUbeaPresent(), getEstaManufacturer(), getShortName(), getLongName(),
                     getNodeReport(), getPortTypes(), getInputStatuses(), getOutputStatuses(),
                     getInputUniverseAddresses(), getOutputUniverseAddresses(), getMacrosActive(), getRemotesActive(),
-                    getEquipmentStyle(), getMacAddress(), getBindIndex(), supportsWebBrowserConfiguration(),
+                    getEquipmentStyle(), getMacAddress(), getBindIp(), getBindIndex(), supportsWebBrowserConfiguration(),
                     ipIsDhcpConfigured(), supportsDhcp(), supportsLongPortAddresses(), canSwitchToSACN(), isSquawking(),
                     bytes.clone());
 
@@ -268,22 +265,117 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
      */
     @Override
     ArtPollReply buildFromBytes(byte[] packetData) {
-        // TODO Implement
+        if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
+
+            return new ArtPollReply(
+                    Arrays.copyOfRange(packetData, 10, 14),
+                    packetData[16] << 8 | packetData[17] & 0xFF,
+                    packetData[18],
+                    packetData[19],
+                    OemCode.getOemCode(packetData[20] << 8 | packetData[21] & 0xFF),
+                    packetData[22],
+                    IndicatorState.values()[packetData[23] >> 6 & 0b00000011],
+                    PortAddressingAuthority.values()[packetData[23] >> 4 & 0b00000011],
+                    (packetData[23] & 0b00000100) > 0,
+                    (packetData[23] & 0b00000010) > 0,
+                    (packetData[23] & 0b00000001) > 0,
+                    computeStringWithNullTermination(new byte[]{packetData[25], packetData[24]}),
+                    computeStringWithNullTermination(Arrays.copyOfRange(packetData, 26, 43)),
+                    computeStringWithNullTermination(Arrays.copyOfRange(packetData, 44, 107)),
+                    computeStringWithNullTermination(Arrays.copyOfRange(packetData, 108, 173)),
+                    new PortType[]{
+                            PortType.buildFromByte(packetData[174]),
+                            PortType.buildFromByte(packetData[175]),
+                            PortType.buildFromByte(packetData[176]),
+                            PortType.buildFromByte(packetData[177])
+                    },
+                    new InputStatus[]{
+                            InputStatus.buildFromByte(packetData[178]),
+                            InputStatus.buildFromByte(packetData[179]),
+                            InputStatus.buildFromByte(packetData[180]),
+                            InputStatus.buildFromByte(packetData[181])
+                    },
+                    new OutputStatus[]{
+                            OutputStatus.buildFromByte(packetData[182]),
+                            OutputStatus.buildFromByte(packetData[183]),
+                            OutputStatus.buildFromByte(packetData[184]),
+                            OutputStatus.buildFromByte(packetData[185])
+                    },
+                    new int[]{packetData[186], packetData[187], packetData[188], packetData[189]},
+                    new int[]{packetData[190], packetData[191], packetData[192], packetData[193]},
+                    new boolean[]{
+                            (packetData[195] & 0b00000001) > 0,
+                            (packetData[195] & 0b00000010) > 0,
+                            (packetData[195] & 0b00000100) > 0,
+                            (packetData[195] & 0b00001000) > 0,
+                            (packetData[195] & 0b00010000) > 0,
+                            (packetData[195] & 0b00100000) > 0,
+                            (packetData[195] & 0b01000000) > 0,
+                            (packetData[195] & 0b10000000) > 0
+                    },
+                    new boolean[]{
+                            (packetData[196] & 0b00000001) > 0,
+                            (packetData[196] & 0b00000010) > 0,
+                            (packetData[196] & 0b00000100) > 0,
+                            (packetData[196] & 0b00001000) > 0,
+                            (packetData[196] & 0b00010000) > 0,
+                            (packetData[196] & 0b00100000) > 0,
+                            (packetData[196] & 0b01000000) > 0,
+                            (packetData[196] & 0b10000000) > 0
+                    },
+                    EquipmentStyle.getEquipmentStyle(packetData[200]),
+                    Arrays.copyOfRange(packetData, 201, 207),
+                    Arrays.copyOfRange(packetData, 207, 211),
+                    packetData[211],
+                    (packetData[212] & 0b00000001) > 0,
+                    (packetData[212] & 0b00000010) > 0,
+                    (packetData[212] & 0b00000100) > 0,
+                    (packetData[212] & 0b00001000) > 0,
+                    (packetData[212] & 0b00010000) > 0,
+                    (packetData[212] & 0b00100000) > 0,
+                    packetData);
+        }
         return null;
     }
 
-    public Inet4Address getIpAddress() {
-        return ipAddress;
+    private String computeStringWithNullTermination(byte[] input) {
+
+        int nullIndex = -1;
+        for (int i = 0; i < input.length; i++) {
+            if(input[i] == 0x00) {
+                nullIndex = i;
+                break;
+            }
+        }
+
+        if(nullIndex > -1) {
+            return new String(Arrays.copyOfRange(input, 0, nullIndex), StandardCharsets.US_ASCII);
+        }
+
+        return new String(input, StandardCharsets.US_ASCII);
     }
 
-    public void setIpAddress(Inet4Address ipAddress) {
-        if (this.ipAddress != ipAddress || this.ipAddress != null && !this.ipAddress.equals(ipAddress)) {
-            this.ipAddress = ipAddress;
+    public byte[] getIpAddress() {
+        return ipAddress.clone();
+    }
+
+    public void setIpAddress(byte[] ipAddress) {
+
+        if (ipAddress == null) {
+            ipAddress = new byte[4];
+        }
+
+        if (ipAddress.length != 4) {
+            throw new IllegalArgumentException("Illegal IP Address!");
+        }
+
+        if (!Arrays.equals(this.ipAddress, ipAddress)) {
+            this.ipAddress = ipAddress.clone();
             changed = true;
         }
     }
 
-    public ArtPollReplyBuilder withIpAddress(Inet4Address ipAddress) {
+    public ArtPollReplyBuilder withIpAddress(byte[] ipAddress) {
         setIpAddress(ipAddress);
         return this;
     }
@@ -382,14 +474,14 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         return this;
     }
 
-    public ArtPollReply.IndicatorState getIndicatorState() {
+    public IndicatorState getIndicatorState() {
         return indicatorState;
     }
 
-    public void setIndicatorState(ArtPollReply.IndicatorState indicatorState) {
+    public void setIndicatorState(IndicatorState indicatorState) {
 
         if (indicatorState == null) {
-            indicatorState = ArtPollReply.IndicatorState.Unknown;
+            indicatorState = IndicatorState.Unknown;
         }
 
         if (this.indicatorState != indicatorState) {
@@ -398,19 +490,19 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
-    public ArtPollReplyBuilder withIndicatorState(ArtPollReply.IndicatorState indicatorState) {
+    public ArtPollReplyBuilder withIndicatorState(IndicatorState indicatorState) {
         setIndicatorState(indicatorState);
         return this;
     }
 
-    public ArtPollReply.PortAddressingAuthority getPortAddressingAuthority() {
+    public PortAddressingAuthority getPortAddressingAuthority() {
         return portAddressingAuthority;
     }
 
-    public void setPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
+    public void setPortAddressingAuthority(PortAddressingAuthority portAddressingAuthority) {
 
         if (portAddressingAuthority == null) {
-            portAddressingAuthority = ArtPollReply.PortAddressingAuthority.Unknown;
+            portAddressingAuthority = PortAddressingAuthority.Unknown;
         }
 
         if (this.portAddressingAuthority != portAddressingAuthority) {
@@ -419,7 +511,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
-    public ArtPollReplyBuilder withPortAddressingAuthority(ArtPollReply.PortAddressingAuthority portAddressingAuthority) {
+    public ArtPollReplyBuilder withPortAddressingAuthority(PortAddressingAuthority portAddressingAuthority) {
         setPortAddressingAuthority(portAddressingAuthority);
         return this;
     }
@@ -548,18 +640,18 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         return this;
     }
 
-    public ArtPollReply.PortType[] getPortTypes() {
+    public PortType[] getPortTypes() {
         return portTypes.clone();
     }
 
-    public ArtPollReply.PortType getPortType(int index) {
+    public PortType getPortType(int index) {
         return portTypes[index];
     }
 
-    public void setPortType(int index, ArtPollReply.PortType portType) {
+    public void setPortType(int index, PortType portType) {
 
         if (portType == null) {
-            portType = ArtPollReply.PortType.DEFAULT;
+            portType = PortType.DEFAULT;
         }
 
         if (!this.portTypes[index].equals(portType)) {
@@ -568,23 +660,23 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
-    public ArtPollReplyBuilder withPortType(int index, ArtPollReply.PortType portType) {
+    public ArtPollReplyBuilder withPortType(int index, PortType portType) {
         setPortType(index, portType);
         return this;
     }
 
-    public ArtPollReply.InputStatus[] getInputStatuses() {
+    public InputStatus[] getInputStatuses() {
         return inputStatuses.clone();
     }
 
-    public ArtPollReply.InputStatus getInputStatus(int index) {
+    public InputStatus getInputStatus(int index) {
         return inputStatuses[index];
     }
 
-    public void setInputStatus(int index, ArtPollReply.InputStatus inputStatus) {
+    public void setInputStatus(int index, InputStatus inputStatus) {
 
         if (inputStatus == null) {
-            inputStatus = ArtPollReply.InputStatus.DEFAULT;
+            inputStatus = InputStatus.DEFAULT;
         }
 
         if (!this.inputStatuses[index].equals(inputStatus)) {
@@ -593,23 +685,23 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
-    public ArtPollReplyBuilder withInputStatus(int index, ArtPollReply.InputStatus inputStatus) {
+    public ArtPollReplyBuilder withInputStatus(int index, InputStatus inputStatus) {
         setInputStatus(index, inputStatus);
         return this;
     }
 
-    public ArtPollReply.OutputStatus[] getOutputStatuses() {
+    public OutputStatus[] getOutputStatuses() {
         return outputStatuses.clone();
     }
 
-    public ArtPollReply.OutputStatus getOutputStatus(int index) {
+    public OutputStatus getOutputStatus(int index) {
         return outputStatuses[index];
     }
 
-    public void setOutputStatus(int index, ArtPollReply.OutputStatus outputStatus) {
+    public void setOutputStatus(int index, OutputStatus outputStatus) {
 
         if (outputStatus == null) {
-            outputStatus = ArtPollReply.OutputStatus.DEFAULT;
+            outputStatus = OutputStatus.DEFAULT;
         }
 
         if (!this.outputStatuses[index].equals(outputStatus)) {
@@ -618,7 +710,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
     }
 
-    public ArtPollReplyBuilder withOutputStatus(int index, ArtPollReply.OutputStatus outputStatus) {
+    public ArtPollReplyBuilder withOutputStatus(int index, OutputStatus outputStatus) {
         setOutputStatus(index, outputStatus);
         return this;
     }
@@ -745,7 +837,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         }
 
         if (!Arrays.equals(this.macAddress, macAddress)) {
-            this.macAddress = macAddress;
+            this.macAddress = macAddress.clone();
             changed = true;
         }
     }
@@ -755,18 +847,27 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         return this;
     }
 
-    public Inet4Address getBindIp() {
-        return bindIp;
+    public byte[] getBindIp() {
+        return bindIp.clone();
     }
 
-    public void setBindIp(Inet4Address bindIp) {
-        if (this.bindIp != bindIp || this.bindIp != null && !this.bindIp.equals(bindIp)) {
-            this.bindIp = bindIp;
+    public void setBindIp(byte[] bindIp) {
+
+        if (bindIp == null) {
+            bindIp = new byte[4];
+        }
+
+        if (bindIp.length != 4) {
+            throw new IllegalArgumentException("Illegal bind IP address!");
+        }
+
+        if (!Arrays.equals(this.bindIp, bindIp)) {
+            this.bindIp = bindIp.clone();
             changed = true;
         }
     }
 
-    public ArtPollReplyBuilder withBindIp(Inet4Address bindIp) {
+    public ArtPollReplyBuilder withBindIp(byte[] bindIp) {
         setBindIp(bindIp);
         return this;
     }

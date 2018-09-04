@@ -72,7 +72,7 @@ public class OemEnumGenerator {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        Files.write(Paths.get("lib/src/main/java/de/deltaeight/libartnet/enums/OemCode.java"),
+        Files.write(Paths.get("lib/src/main/java/de/deltaeight/libartnet/descriptors/OemCode.java"),
                 template.replace("$ENTRIES$", parsedLines.toString())
                         .replace("$PRODUCT_COUNTER$", "" + productCounter)
                         .replace("$DATE$", dateFormat.format(new Date()))

@@ -19,57 +19,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.enums;
+package de.deltaeight.libartnet.descriptors;
 
 /**
+ * Represents the port addressing authority.
+ *
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.packets.ArtPollReply
  * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
-public enum ArtNet {
+public enum PortAddressingAuthority {
 
-    /**
-     * The protocol revision this library works with (14).
-     */
-    PROTOCOL_REVISION(14),
+    Unknown(0b00000000),
+    FrontPanel(0b00000001),
+    Network(0b00000010),
+    NotUsed(0b00000011);
 
-    /**
-     * The Art-Net Header to send with in every {@link de.deltaeight.libartnet.packet.ArtNetPacket} ("Art-Net\0").
-     */
-    HEADER(new byte[]{0x41, 0x72, 0x74, 0x2D, 0x4E, 0x65, 0x74, 0x00}),
+    private final byte value;
 
-    /**
-     * The UDP port on which network traffic is handled ({@code 0x1936}).
-     */
-    PORT(0x1936);
-
-    private final byte[] bytes;
-
-    ArtNet(byte[] bytes) {
-        this.bytes = bytes;
+    PortAddressingAuthority(int value) {
+        this.value = (byte) value;
     }
 
-    ArtNet(int value) {
-        byte[] bytes = new byte[2];
-        bytes[0] = (byte) (value >> 8);
-        bytes[1] = (byte) value;
-        this.bytes = bytes;
-    }
-
-    /**
-     * @return Bytes in big endian byte order.
-     */
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    /**
-     * @return Bytes in little endian byte order.
-     */
-    public byte[] getBytesLittleEndian() {
-        byte[] result = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            result[i] = bytes[bytes.length - i - 1];
-        }
-        return result;
+    public byte getValue() {
+        return value;
     }
 }

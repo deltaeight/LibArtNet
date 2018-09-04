@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.enums;
+package de.deltaeight.libartnet.descriptors;
 
 import de.deltaeight.libartnet.Product;
 
@@ -34,6 +34,7 @@ import java.util.HashMap;
  * Last updated $DATE$.
  *
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.packets.ArtPollReply
  * @see <a href="http://artisticlicence.com/WebSiteMaster/Software/Art-Net/Art-NetOemCodes.h">Art-NetOemCodes.h</a>
  */
 public enum OemCode {
@@ -63,14 +64,6 @@ public enum OemCode {
      */
     public static OemCode getOemCode(int productCode) {
         return products.getOrDefault(productCode, Unknown);
-    }
-
-    /**
-     * @param productCode The code to search for.
-     * @return The {@link OemCode} matching {@code productCode} or {@link #Unknown} if none exists.
-     */
-    public static OemCode getOemCode(byte productCode) {
-        return getOemCode((int) productCode);
     }
 
     /**

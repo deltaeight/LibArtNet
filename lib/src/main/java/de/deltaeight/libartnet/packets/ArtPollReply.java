@@ -19,12 +19,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.packet;
+package de.deltaeight.libartnet.packets;
 
-import de.deltaeight.libartnet.enums.EquipmentStyle;
-import de.deltaeight.libartnet.enums.OemCode;
+import de.deltaeight.libartnet.descriptors.*;
 
-import java.net.Inet4Address;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -41,7 +39,7 @@ import java.util.Objects;
  */
 public class ArtPollReply extends ArtNetPacket {
 
-    private final Inet4Address ipAddress;
+    private final byte[] ipAddress;
     private final int nodeVersion;
     private final int netAddress;
     private final int subnetAddress;
@@ -65,6 +63,7 @@ public class ArtPollReply extends ArtNetPacket {
     private final boolean[] remotesActive;
     private final EquipmentStyle equipmentStyle;
     private final byte[] macAddress;
+    private final byte[] bindIp;
     private final int bindIndex;
     private final boolean webBrowserConfigurationSupport;
     private final boolean ipIsDhcpConfigured;
@@ -73,7 +72,7 @@ public class ArtPollReply extends ArtNetPacket {
     private final boolean canSwitchToSACN;
     private final boolean squawking;
 
-    public ArtPollReply(Inet4Address ipAddress,
+    public ArtPollReply(byte[] ipAddress,
                         int nodeVersion,
                         int netAddress,
                         int subnetAddress,
@@ -97,6 +96,7 @@ public class ArtPollReply extends ArtNetPacket {
                         boolean[] remotesActive,
                         EquipmentStyle equipmentStyle,
                         byte[] macAddress,
+                        byte[] bindIp,
                         int bindIndex,
                         boolean webBrowserConfigurationSupport,
                         boolean ipIsDhcpConfigured,
@@ -132,6 +132,7 @@ public class ArtPollReply extends ArtNetPacket {
         this.remotesActive = remotesActive;
         this.equipmentStyle = equipmentStyle;
         this.macAddress = macAddress;
+        this.bindIp = bindIp;
         this.bindIndex = bindIndex;
         this.webBrowserConfigurationSupport = webBrowserConfigurationSupport;
         this.ipIsDhcpConfigured = ipIsDhcpConfigured;
@@ -143,7 +144,13 @@ public class ArtPollReply extends ArtNetPacket {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(ipAddress, nodeVersion, netAddress, subnetAddress, oemCode, ubeaVersion, indicatorState, portAddressingAuthority, bootedFromRom, rdmSupport, ubeaPresent, estaManufacturer, shortName, longName, nodeReport, equipmentStyle, bindIndex, webBrowserConfigurationSupport, ipIsDhcpConfigured, dhcpSupport, longPortAddressSupport, canSwitchToSACN, squawking);
+
+        int result = Objects.hash(nodeVersion, netAddress, subnetAddress, oemCode, ubeaVersion, indicatorState,
+                portAddressingAuthority, bootedFromRom, rdmSupport, ubeaPresent, estaManufacturer, shortName, longName,
+                nodeReport, equipmentStyle, bindIndex, webBrowserConfigurationSupport, ipIsDhcpConfigured, dhcpSupport,
+                longPortAddressSupport, canSwitchToSACN, squawking);
+
+        result = 31 * result + Arrays.hashCode(ipAddress);
         result = 31 * result + Arrays.hashCode(portTypes);
         result = 31 * result + Arrays.hashCode(inputStatuses);
         result = 31 * result + Arrays.hashCode(outputStatuses);
@@ -152,6 +159,8 @@ public class ArtPollReply extends ArtNetPacket {
         result = 31 * result + Arrays.hashCode(macrosActive);
         result = 31 * result + Arrays.hashCode(remotesActive);
         result = 31 * result + Arrays.hashCode(macAddress);
+        result = 31 * result + Arrays.hashCode(bindIp);
+
         return result;
     }
 
@@ -174,7 +183,7 @@ public class ArtPollReply extends ArtNetPacket {
                 longPortAddressSupport == that.longPortAddressSupport &&
                 canSwitchToSACN == that.canSwitchToSACN &&
                 squawking == that.squawking &&
-                Objects.equals(ipAddress, that.ipAddress) &&
+                Arrays.equals(ipAddress, that.ipAddress) &&
                 oemCode == that.oemCode &&
                 indicatorState == that.indicatorState &&
                 portAddressingAuthority == that.portAddressingAuthority &&
@@ -190,10 +199,11 @@ public class ArtPollReply extends ArtNetPacket {
                 Arrays.equals(macrosActive, that.macrosActive) &&
                 Arrays.equals(remotesActive, that.remotesActive) &&
                 equipmentStyle == that.equipmentStyle &&
-                Arrays.equals(macAddress, that.macAddress);
+                Arrays.equals(macAddress, that.macAddress) &&
+                Arrays.equals(bindIp, that.bindIp);
     }
 
-    public Inet4Address getIpAddress() {
+    public byte[] getIpAddress() {
         return ipAddress;
     }
 
@@ -289,6 +299,10 @@ public class ArtPollReply extends ArtNetPacket {
         return macAddress.clone();
     }
 
+    public byte[] getBindIp() {
+        return bindIp;
+    }
+
     public int getBindIndex() {
         return bindIndex;
     }
@@ -315,300 +329,5 @@ public class ArtPollReply extends ArtNetPacket {
 
     public boolean isSquawking() {
         return squawking;
-    }
-
-    /**
-     * Represents an indicator state.
-     *
-     * @author Julian Rabe
-     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-     */
-    public enum IndicatorState {
-
-        Unknown(0b00000000),
-        LocateIdentify(0b00000001),
-        Mute(0b00000010),
-        Normal(0b00000011);
-
-        private final byte value;
-
-        IndicatorState(int value) {
-            this.value = (byte) value;
-        }
-
-        public byte getValue() {
-            return value;
-        }
-    }
-
-    /**
-     * Represents the port addressing authority.
-     *
-     * @author Julian Rabe
-     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-     */
-    public enum PortAddressingAuthority {
-
-        Unknown(0b00000000),
-        FrontPanel(0b00000001),
-        Network(0b00000010),
-        NotUsed(0b00000011);
-
-        private final byte value;
-
-        PortAddressingAuthority(int value) {
-            this.value = (byte) value;
-        }
-
-        public byte getValue() {
-            return value;
-        }
-    }
-
-    /**
-     * Represents a port type.
-     *
-     * @author Julian Rabe
-     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-     */
-    public static class PortType {
-
-        public static final PortType DEFAULT = new PortType(false, false, Protocol.DMX512);
-
-        private final boolean outputSupported;
-        private final boolean inputSupported;
-        private final Protocol protocol;
-
-        public PortType(boolean outputSupported, boolean inputSupported, Protocol protocol) {
-            this.outputSupported = outputSupported;
-            this.inputSupported = inputSupported;
-            this.protocol = protocol;
-        }
-
-        public byte getByte() {
-            byte result = 0x00;
-            if (outputSupported) {
-                result |= 0b10000000;
-            }
-            if (inputSupported) {
-                result |= 0b01000000;
-            }
-            result |= protocol.getValue();
-            return result;
-        }
-
-        public boolean isOutputSupported() {
-            return outputSupported;
-        }
-
-        public boolean isInputSupported() {
-            return inputSupported;
-        }
-
-        public Protocol getProtocol() {
-            return protocol;
-        }
-
-        /**
-         * Represents a Protocol for input/output ports.
-         *
-         * @author Julian Rabe
-         * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-         */
-        public enum Protocol {
-
-            DMX512(0b00000000),
-            MIDI(0b00000001),
-            AVAB(0b00000010),
-            COLORTRAN_CMX(0b00000011),
-            ADB625(0b00000100),
-            ARTNET(0b00000101);
-
-            private final byte value;
-
-            Protocol(int value) {
-                this.value = (byte) value;
-            }
-
-            public byte getValue() {
-                return value;
-            }
-        }
-    }
-
-    private static abstract class PortStatus {
-
-        private final boolean includesTestPackets;
-        private final boolean includesSIPs;
-        private final boolean includesTextPackets;
-
-        PortStatus(boolean includesTestPackets,
-                   boolean includesSIPs,
-                   boolean includesTextPackets) {
-
-            this.includesTestPackets = includesTestPackets;
-            this.includesSIPs = includesSIPs;
-            this.includesTextPackets = includesTextPackets;
-        }
-
-        public boolean includesTestPackets() {
-            return includesTestPackets;
-        }
-
-        public boolean includesSIPs() {
-            return includesSIPs;
-        }
-
-        public boolean includesTextPackets() {
-            return includesTextPackets;
-        }
-    }
-
-    /**
-     * Represents the status of an input port.
-     *
-     * @author Julian Rabe
-     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-     */
-    public static class InputStatus extends PortStatus {
-
-        public static final InputStatus DEFAULT = new InputStatus(false, false, false, false, false, false);
-
-        private final boolean dataReceived;
-        private final boolean inputDisabled;
-        private final boolean errorsDetected;
-
-        public InputStatus(boolean dataReceived,
-                           boolean includesTestPackets,
-                           boolean includesSIPs,
-                           boolean includesTextPackets,
-                           boolean inputDisabled,
-                           boolean errorsDetected) {
-
-            super(includesTestPackets, includesSIPs, includesTextPackets);
-
-            this.dataReceived = dataReceived;
-            this.inputDisabled = inputDisabled;
-            this.errorsDetected = errorsDetected;
-        }
-
-        public byte getByte() {
-            byte result = 0x00;
-            if (dataReceived) {
-                result |= 0b10000000;
-            }
-            if (includesTestPackets()) {
-                result |= 0b01000000;
-            }
-            if (includesSIPs()) {
-                result |= 0b00100000;
-            }
-            if (includesTextPackets()) {
-                result |= 0b00010000;
-            }
-            if (inputDisabled) {
-                result |= 0b00001000;
-            }
-            if (errorsDetected) {
-                result |= 0b00000100;
-            }
-            return result;
-        }
-
-        public boolean isDataReceived() {
-            return dataReceived;
-        }
-
-        public boolean isInputDisabled() {
-            return inputDisabled;
-        }
-
-        public boolean isErrorsDetected() {
-            return errorsDetected;
-        }
-    }
-
-    /**
-     * Represents the status of an output port.
-     *
-     * @author Julian Rabe
-     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
-     */
-    public static class OutputStatus extends PortStatus {
-
-        public static final OutputStatus DEFAULT = new OutputStatus(false, false, false, false, false, false, false, false);
-
-        private final boolean dataTransmitted;
-        private final boolean merging;
-        private final boolean outputShort;
-        private final boolean mergeModeLTP;
-        private final boolean transmittingSACN;
-
-        public OutputStatus(boolean dataTransmitted,
-                            boolean includesTestPackets,
-                            boolean includesSIPs,
-                            boolean includesTextPackets,
-                            boolean merging,
-                            boolean outputShort,
-                            boolean mergeModeLTP,
-                            boolean transmittingSACN) {
-
-            super(includesTestPackets, includesSIPs, includesTextPackets);
-
-            this.dataTransmitted = dataTransmitted;
-            this.merging = merging;
-            this.outputShort = outputShort;
-            this.mergeModeLTP = mergeModeLTP;
-            this.transmittingSACN = transmittingSACN;
-        }
-
-        public byte getByte() {
-            byte result = 0x00;
-            if (dataTransmitted) {
-                result |= 0b10000000;
-            }
-            if (includesTestPackets()) {
-                result |= 0b01000000;
-            }
-            if (includesSIPs()) {
-                result |= 0b00100000;
-            }
-            if (includesTextPackets()) {
-                result |= 0b00010000;
-            }
-            if (merging) {
-                result |= 0b00001000;
-            }
-            if (outputShort) {
-                result |= 0b00000100;
-            }
-            if (mergeModeLTP) {
-                result |= 0b00000010;
-            }
-            if (transmittingSACN) {
-                result |= 0b00000001;
-            }
-            return result;
-        }
-
-        public boolean isDataTransmitted() {
-            return dataTransmitted;
-        }
-
-        public boolean isMerging() {
-            return merging;
-        }
-
-        public boolean isOutputShort() {
-            return outputShort;
-        }
-
-        public boolean isMergeModeLTP() {
-            return mergeModeLTP;
-        }
-
-        public boolean isTransmittingSACN() {
-            return transmittingSACN;
-        }
     }
 }

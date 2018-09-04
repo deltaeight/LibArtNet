@@ -19,27 +19,25 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.enums;
+package de.deltaeight.libartnet.descriptors;
 
 /**
- * Supported equipment styles and their bytes
+ * Represents an indicator state.
  *
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.packets.ArtPollReply
  * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
-public enum EquipmentStyle {
+public enum IndicatorState {
 
-    Node(0x00),
-    Controller(0x01),
-    MediaServer(0x02),
-    Routing(0x03),
-    Backup(0x04),
-    Config(0x05),
-    Visualiser(0x06);
+    Unknown(0b00000000),
+    LocateIdentify(0b00000001),
+    Mute(0b00000010),
+    Normal(0b00000011);
 
     private final byte value;
 
-    EquipmentStyle(int value) {
+    IndicatorState(int value) {
         this.value = (byte) value;
     }
 

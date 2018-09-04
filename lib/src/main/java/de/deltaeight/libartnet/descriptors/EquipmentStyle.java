@@ -19,30 +19,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
-
-import de.deltaeight.libartnet.packets.ArtNetPacket;
+package de.deltaeight.libartnet.descriptors;
 
 /**
- * Builder class for {@link ArtNetPacket}s. Can be used to build packets from received payloads.
+ * Supported equipment styles and their bytes
  *
- * @param <T> The {@link ArtNetPacket} implementation the implementing builder class is used for.
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.packets.ArtPollReply
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
-public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
+public enum EquipmentStyle {
 
-    /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
-     *
-     * @return {@link ArtNetPacket} instance.
-     */
-    abstract T build();
+    Node(0x00),
+    Controller(0x01),
+    MediaServer(0x02),
+    Routing(0x03),
+    Backup(0x04),
+    Config(0x05),
+    Visualiser(0x06);
 
-    /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
-     *
-     * @param packetData The payload received via {@code UDP}.
-     * @return {@link ArtNetPacket} instance.
-     */
-    abstract T buildFromBytes(byte[] packetData);
+    private final byte value;
+
+    EquipmentStyle(int value) {
+        this.value = (byte) value;
+    }
+
+    public static EquipmentStyle getEquipmentStyle(int value) {
+        if (value > values().length - 1) {
+            return Config;
+        }
+        return values()[value];
+    }
+
+    public byte getValue() {
+        return value;
+    }
 }

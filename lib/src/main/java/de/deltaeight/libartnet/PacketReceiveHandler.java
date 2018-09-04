@@ -21,7 +21,7 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.packet.ArtNetPacket;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
 
 /**
  * Provides functionality for received {@link ArtNetPacket} instances.

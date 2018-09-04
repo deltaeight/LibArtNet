@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.enums;
+package de.deltaeight.libartnet.descriptors;
 
 import java.util.HashMap;
 
@@ -27,6 +27,7 @@ import java.util.HashMap;
  * Priorities for diag data and their bytes
  *
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.packets.ArtPoll
  * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
 public enum Priority {

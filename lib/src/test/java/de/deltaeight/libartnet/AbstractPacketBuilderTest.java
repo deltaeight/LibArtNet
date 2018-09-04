@@ -21,7 +21,7 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.packet.ArtNetPacket;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -21,9 +21,9 @@
 
 package de.deltaeight.libartnet;
 
-import de.deltaeight.libartnet.enums.ArtNet;
-import de.deltaeight.libartnet.enums.OpCode;
-import de.deltaeight.libartnet.packet.ArtDmx;
+import de.deltaeight.libartnet.descriptors.ArtNet;
+import de.deltaeight.libartnet.descriptors.OpCode;
+import de.deltaeight.libartnet.packets.ArtDmx;
 
 import java.util.Arrays;
 

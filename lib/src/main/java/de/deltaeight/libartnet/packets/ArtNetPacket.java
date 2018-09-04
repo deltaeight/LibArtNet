@@ -19,30 +19,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
-
-import de.deltaeight.libartnet.packets.ArtNetPacket;
+package de.deltaeight.libartnet.packets;
 
 /**
- * Builder class for {@link ArtNetPacket}s. Can be used to build packets from received payloads.
+ * Represents Art-Net packets
  *
- * @param <T> The {@link ArtNetPacket} implementation the implementing builder class is used for.
  * @author Julian Rabe
+ * @see de.deltaeight.libartnet.ArtNetPacketBuilder
  */
-public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
+public abstract class ArtNetPacket {
+
+    private final byte[] bytes;
+
+    ArtNetPacket(byte[] bytes) {
+        this.bytes = bytes;
+    }
 
     /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
-     *
-     * @return {@link ArtNetPacket} instance.
+     * @return Payload to send over the network.
      */
-    abstract T build();
+    public byte[] getBytes() {
+        return bytes.clone();
+    }
 
-    /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
-     *
-     * @param packetData The payload received via {@code UDP}.
-     * @return {@link ArtNetPacket} instance.
-     */
-    abstract T buildFromBytes(byte[] packetData);
 }
