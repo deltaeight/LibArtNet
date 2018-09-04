@@ -12,13 +12,3 @@ cache:
 test:
   stage: test
   script: ./gradlew check
-
-#javadoc:
-#  cache: {}
-#  stage: deploy
-#  script: javadoc -d public @javadoc.args
-#  only:
-#  - master
-#  artifacts:
-#    paths:
-#    - public
