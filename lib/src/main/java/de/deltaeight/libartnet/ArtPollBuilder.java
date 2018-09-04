@@ -26,6 +26,17 @@ import de.deltaeight.libartnet.enums.OpCode;
 import de.deltaeight.libartnet.enums.Priority;
 import de.deltaeight.libartnet.packet.ArtPoll;
 
+/**
+ * Builds instances of {@link ArtPoll}.
+ * <p>
+ * Default diagnose data priority is {@link Priority#Low}.
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see ArtPoll
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpPoll.getBytesLittleEndian();
@@ -44,25 +55,31 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
         changed = true;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtPoll} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     public ArtPoll build() {
-        if(changed) {
+        if (changed) {
 
             byte[] bytes = new byte[14];
             System.arraycopy(ArtNet.HEADER.getBytes(), 0, bytes, 0, 8);
             System.arraycopy(OP_CODE_BYTES, 0, bytes, 8, 2);
             System.arraycopy(ArtNet.PROTOCOL_REVISION.getBytes(), 0, bytes, 10, 2);
 
-            if(disableVlcTransmission) {
+            if (disableVlcTransmission) {
                 bytes[12] |= 0b00010000;
             }
-            if(unicastDiagnosticMessages) {
+            if (unicastDiagnosticMessages) {
                 bytes[12] |= 0b00001000;
             }
-            if(sendDiagnosticMessages) {
+            if (sendDiagnosticMessages) {
                 bytes[12] |= 0b00000100;
             }
-            if(sendArtPollReplyOnChanges) {
+            if (sendArtPollReplyOnChanges) {
                 bytes[12] |= 0b00000010;
             }
 
@@ -77,6 +94,12 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
         return artPoll;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtPoll} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     ArtPoll buildFromBytes(byte[] packetData) {
         // TODO Implement
@@ -88,7 +111,7 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
     }
 
     public void setDisableVlcTransmission(boolean disableVlcTransmission) {
-        if(this.disableVlcTransmission != disableVlcTransmission) {
+        if (this.disableVlcTransmission != disableVlcTransmission) {
             this.disableVlcTransmission = disableVlcTransmission;
             changed = true;
         }
@@ -104,7 +127,7 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
     }
 
     public void setUnicastDiagnosticMessages(boolean unicastDiagnosticMessages) {
-        if(this.unicastDiagnosticMessages != unicastDiagnosticMessages) {
+        if (this.unicastDiagnosticMessages != unicastDiagnosticMessages) {
             this.unicastDiagnosticMessages = unicastDiagnosticMessages;
             changed = true;
         }
@@ -120,7 +143,7 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
     }
 
     public void setSendDiagnosticMessages(boolean sendDiagnosticMessages) {
-        if(this.sendDiagnosticMessages != sendDiagnosticMessages) {
+        if (this.sendDiagnosticMessages != sendDiagnosticMessages) {
             this.sendDiagnosticMessages = sendDiagnosticMessages;
             changed = true;
         }
@@ -136,7 +159,7 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
     }
 
     public void setSendArtPollReplyOnChanges(boolean sendArtPollReplyOnChanges) {
-        if(this.sendArtPollReplyOnChanges != sendArtPollReplyOnChanges) {
+        if (this.sendArtPollReplyOnChanges != sendArtPollReplyOnChanges) {
             this.sendArtPollReplyOnChanges = sendArtPollReplyOnChanges;
             changed = true;
         }
@@ -153,11 +176,11 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
 
     public void setPriority(Priority priority) {
 
-        if(priority == null) {
+        if (priority == null) {
             priority = Priority.Low;
         }
 
-        if(this.priority != priority) {
+        if (this.priority != priority) {
             this.priority = priority;
             changed = true;
         }

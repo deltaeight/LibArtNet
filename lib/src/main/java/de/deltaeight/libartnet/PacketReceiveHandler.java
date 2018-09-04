@@ -23,8 +23,18 @@ package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.packet.ArtNetPacket;
 
+/**
+ * Provides functionality for received {@link ArtNetPacket} instances.
+ *
+ * @param <T> The {@link ArtNetPacket} implementation the implementing class is used for.
+ */
 @FunctionalInterface
 public interface PacketReceiveHandler<T extends ArtNetPacket> {
 
+    /**
+     * Is called by {@link ArtNetReceiver} when an {@link ArtNetPacket} of type {@link T} was received.
+     *
+     * @param packet The {@link ArtNetPacket} which was received.
+     */
     void handle(T packet);
 }

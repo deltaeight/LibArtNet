@@ -27,16 +27,24 @@ import de.deltaeight.libartnet.packet.ArtDmx;
 
 import java.util.Arrays;
 
+/**
+ * Builds instances of {@link ArtDmx}.
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see ArtDmx
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpDmx.getBytesLittleEndian();
-
+    private final byte[] data;
     private int sequence;
     private int physical;
     private int subnetAddress;
     private int universeAddress;
     private int netAddress;
-    private final byte[] data;
     private int dataSize;
 
     private boolean changed;
@@ -47,6 +55,12 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
         changed = true;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtDmx} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     public ArtDmx build() {
 
@@ -80,6 +94,12 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
         return artDmx;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtDmx} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     ArtDmx buildFromBytes(byte[] packetData) {
         if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
@@ -196,16 +216,6 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
         return Arrays.copyOfRange(data, 0, dataSize);
     }
 
-    public byte getData(int index) {
-        if (0 > index || index > 511) {
-            throw new IllegalArgumentException("Illegal data index!");
-        }
-        if (index > dataSize - 1) {
-            return 0x00;
-        }
-        return data[index];
-    }
-
     public void setData(byte[] data) {
         if (data != null) {
             if (data.length > 512) {
@@ -217,6 +227,16 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
             dataSize = data.length;
             changed = true;
         }
+    }
+
+    public byte getData(int index) {
+        if (0 > index || index > 511) {
+            throw new IllegalArgumentException("Illegal data index!");
+        }
+        if (index > dataSize - 1) {
+            return 0x00;
+        }
+        return data[index];
     }
 
     public void setData(int index, byte data) {

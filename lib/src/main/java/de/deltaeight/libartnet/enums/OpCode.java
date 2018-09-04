@@ -21,6 +21,12 @@
 
 package de.deltaeight.libartnet.enums;
 
+/**
+ * Available OpCodes and their bytes
+ *
+ * @author Julian Rabe
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public enum OpCode {
 
     OpPoll(0x2000),
@@ -71,10 +77,16 @@ public enum OpCode {
         this.bytes = opCode.bytes;
     }
 
+    /**
+     * @return Bytes in big endian byte order.
+     */
     public byte[] getBytes() {
         return bytes;
     }
 
+    /**
+     * @return Bytes in little endian byte order.
+     */
     public byte[] getBytesLittleEndian() {
         byte[] result = new byte[2];
         result[0] = bytes[1];

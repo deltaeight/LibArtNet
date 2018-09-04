@@ -30,12 +30,42 @@ import de.deltaeight.libartnet.packet.ArtPollReply;
 import java.net.Inet4Address;
 import java.util.Arrays;
 
+/**
+ * Builds instances of {@link ArtPollReply}.
+ * <p>
+ * &nbsp;
+ * <table border="1">
+ * <caption>Default values</caption>
+ * <tr><td>OEM Code</td><td>{@link OemCode#UNKNOWN}</td></tr>
+ * <tr><td>Indicator state</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.IndicatorState#Unknown}</td></tr>
+ * <tr><td>Port addressing authority</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.PortAddressingAuthority#Unknown}</td></tr>
+ * <tr><td>ESTA Manufacturer</td><td>{@code D8}</td></tr>
+ * <tr><td>Short name</td><td rowspan="2">{@code LibArtNet}</td></tr>
+ * <tr><td>Long name</td></tr>
+ * <tr><td>Node report</td><td></td></tr>
+ * <tr><td>Port types</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.PortType#DEFAULT}</td></tr>
+ * <tr><td>Input statuses</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.InputStatus#DEFAULT}</td></tr>
+ * <tr><td>Output statuses</td><td>{@link de.deltaeight.libartnet.packet.ArtPollReply.OutputStatus#DEFAULT}</td></tr>
+ * </table>
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see ArtPollReply
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
     public static final EquipmentStyle DEFAULT_EQUIPMENT_STYLE = EquipmentStyle.Config;
 
     private static final byte[] OP_CODE_BYTES = OpCode.OpPollReply.getBytesLittleEndian();
-
+    private final ArtPollReply.PortType[] portTypes;
+    private final ArtPollReply.InputStatus[] inputStatuses;
+    private final ArtPollReply.OutputStatus[] outputStatuses;
+    private final int[] inputUniverseAddresses;
+    private final int[] outputUniverseAddresses;
+    private final boolean[] macrosActive;
+    private final boolean[] remotesActive;
     private Inet4Address ipAddress;
     private int nodeVersion;
     private int netAddress;
@@ -51,13 +81,6 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
     private String shortName;
     private String longName;
     private String nodeReport;
-    private final ArtPollReply.PortType[] portTypes;
-    private final ArtPollReply.InputStatus[] inputStatuses;
-    private final ArtPollReply.OutputStatus[] outputStatuses;
-    private final int[] inputUniverseAddresses;
-    private final int[] outputUniverseAddresses;
-    private final boolean[] macrosActive;
-    private final boolean[] remotesActive;
     private EquipmentStyle equipmentStyle;
     private byte[] macAddress;
     private Inet4Address bindIp;
@@ -97,6 +120,12 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         changed = true;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtPollReply} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     public ArtPollReply build() {
 
@@ -231,6 +260,12 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         return artPollReply;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ArtPollReply} instance.
+     * @see ArtNetPacketBuilder#build()
+     */
     @Override
     ArtPollReply buildFromBytes(byte[] packetData) {
         // TODO Implement
@@ -500,7 +535,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
     public void setNodeReport(String nodeReport) {
         if (!this.nodeReport.equals(nodeReport)) {
-            if(nodeReport == null) {
+            if (nodeReport == null) {
                 nodeReport = "";
             }
             this.nodeReport = nodeReport.substring(0, Math.min(nodeReport.length(), 63));

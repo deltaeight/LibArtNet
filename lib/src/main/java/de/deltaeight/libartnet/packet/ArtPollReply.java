@@ -26,6 +26,17 @@ import de.deltaeight.libartnet.enums.OemCode;
 
 import java.net.Inet4Address;
 
+/**
+ * Represents an {@code ArtPollReply} packet containing node information about the sender. This is sent periodically or
+ * as an answer to {@link ArtPoll} packets.
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see ArtPoll
+ * @see de.deltaeight.libartnet.ArtPollReplyBuilder
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtPollReply extends ArtNetPacket {
 
     private final Inet4Address ipAddress;
@@ -252,6 +263,12 @@ public class ArtPollReply extends ArtNetPacket {
         return squawking;
     }
 
+    /**
+     * Represents an indicator state.
+     *
+     * @author Julian Rabe
+     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+     */
     public enum IndicatorState {
 
         Unknown(0b00000000),
@@ -270,6 +287,12 @@ public class ArtPollReply extends ArtNetPacket {
         }
     }
 
+    /**
+     * Represents the port addressing authority.
+     *
+     * @author Julian Rabe
+     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+     */
     public enum PortAddressingAuthority {
 
         Unknown(0b00000000),
@@ -288,6 +311,12 @@ public class ArtPollReply extends ArtNetPacket {
         }
     }
 
+    /**
+     * Represents a port type.
+     *
+     * @author Julian Rabe
+     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+     */
     public static class PortType {
 
         public static final PortType DEFAULT = new PortType(false, false, Protocol.DMX512);
@@ -326,6 +355,12 @@ public class ArtPollReply extends ArtNetPacket {
             return protocol;
         }
 
+        /**
+         * Represents a Protocol for input/output ports.
+         *
+         * @author Julian Rabe
+         * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+         */
         public enum Protocol {
 
             DMX512(0b00000000),
@@ -375,6 +410,12 @@ public class ArtPollReply extends ArtNetPacket {
         }
     }
 
+    /**
+     * Represents the status of an input port.
+     *
+     * @author Julian Rabe
+     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+     */
     public static class InputStatus extends PortStatus {
 
         public static final InputStatus DEFAULT = new InputStatus(false, false, false, false, false, false);
@@ -433,6 +474,12 @@ public class ArtPollReply extends ArtNetPacket {
         }
     }
 
+    /**
+     * Represents the status of an output port.
+     *
+     * @author Julian Rabe
+     * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+     */
     public static class OutputStatus extends PortStatus {
 
         public static final OutputStatus DEFAULT = new OutputStatus(false, false, false, false, false, false, false, false);

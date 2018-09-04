@@ -21,6 +21,15 @@
 
 package de.deltaeight.libartnet.packet;
 
+/**
+ * Represents an {@code ArtDmx} packet containing DMX values.
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see de.deltaeight.libartnet.ArtDmxBuilder
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtDmx extends ArtNetPacket {
 
     private final int sequence;

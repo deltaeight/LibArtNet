@@ -21,6 +21,12 @@
 
 package de.deltaeight.libartnet;
 
+/**
+ * Represents a product defined by Artistic License Ltd.
+ *
+ * @author Julian Rabe
+ * @see de.deltaeight.libartnet.enums.OemCode
+ */
 public class Product {
 
     private final int productCode;
@@ -33,6 +39,17 @@ public class Product {
     private final String supportEmail;
     private final String supportName;
 
+    /**
+     * @param productCode      The product code assigned by Artistic License Ltd.
+     * @param manufacturer     The manufacturer of the product
+     * @param name             The name of the product
+     * @param dmxOutputs       The amount of DMX outputs
+     * @param dmxInputs        The amount of DMX inputs
+     * @param dmxPortsPhysical Whether the product has physical DMX ports or not.
+     * @param supportsRdm      Whether the product supports RDM or not.
+     * @param supportEmail     The Email address of the customer support.
+     * @param supportName      The name of the customer support.
+     */
     public Product(int productCode,
                    String manufacturer,
                    String name,
@@ -78,7 +95,7 @@ public class Product {
         return dmxPortsPhysical;
     }
 
-    public boolean isSupportsRdm() {
+    public boolean supportsRdm() {
         return supportsRdm;
     }
 

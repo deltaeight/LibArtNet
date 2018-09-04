@@ -25,9 +25,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,8 +69,13 @@ public class OemEnumGenerator {
             }
         }
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         Files.write(Paths.get("lib/src/main/java/de/deltaeight/libartnet/enums/OemCode.java"),
-                template.replace("$ENTRIES$", parsedLines.toString()).getBytes());
+                template.replace("$ENTRIES$", parsedLines.toString())
+                        .replace("$DATE$", dateFormat.format(new Date()))
+                        .getBytes());
 
         System.out.println("Result written to OemCode.java!");
         System.out.println("Products parsed: " + productCounter);

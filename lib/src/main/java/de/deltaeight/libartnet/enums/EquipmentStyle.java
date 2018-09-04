@@ -21,6 +21,12 @@
 
 package de.deltaeight.libartnet.enums;
 
+/**
+ * Supported equipment styles and their bytes
+ *
+ * @author Julian Rabe
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public enum EquipmentStyle {
 
     Node(0x00),

@@ -21,6 +21,12 @@
 
 package de.deltaeight.libartnet.packet;
 
+/**
+ * Represents Art-Net packets
+ *
+ * @author Julian Rabe
+ * @see de.deltaeight.libartnet.ArtNetPacketBuilder
+ */
 public abstract class ArtNetPacket {
 
     private final byte[] bytes;
@@ -29,6 +35,9 @@ public abstract class ArtNetPacket {
         this.bytes = bytes;
     }
 
+    /**
+     * @return Payload to send over the network.
+     */
     public byte[] getBytes() {
         return bytes.clone();
     }

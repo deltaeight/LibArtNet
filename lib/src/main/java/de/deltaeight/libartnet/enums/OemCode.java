@@ -25,6 +25,17 @@ import de.deltaeight.libartnet.Product;
 
 import java.util.TreeMap;
 
+/**
+ * Available OEM codes as provided by Artistic License Ltd.
+ * Stores OEM codes as enum entries and makes them searchable.
+ * <p>
+ * This {@code enum} is auto-generated.
+ * <p>
+ * Last updated 04.09.2018 17:15:23 UTC.
+ *
+ * @author Julian Rabe
+ * @see <a href="http://artisticlicence.com/WebSiteMaster/Software/Art-Net/Art-NetOemCodes.h">Art-NetOemCodes.h</a>
+ */
 public enum OemCode {
 
     OemDMXHub(new Product(0x0000, "Artistic Licence Engineering Ltd", "Dmx-Hub", 4, 4, true, false, "support@ArtisticLicence.com", "Wayne Howell")),
@@ -1051,14 +1062,25 @@ public enum OemCode {
         this.product = product;
     }
 
+    /**
+     * @param productCode The code to search for.
+     * @return The {@link OemCode} matching {@code productCode} or {@link #UNKNOWN} if none exists.
+     */
     public static OemCode getOemCode(int productCode) {
         return products.getOrDefault(productCode, UNKNOWN);
     }
 
+    /**
+     * @param productCode The code to search for.
+     * @return The {@link OemCode} matching {@code productCode} or {@link #UNKNOWN} if none exists.
+     */
     public static OemCode getOemCode(byte productCode) {
         return getOemCode((int) productCode);
     }
 
+    /**
+     * @return The {@link Product} associated with the {@code OemCode}.
+     */
     public Product getProduct() {
         return product;
     }

@@ -23,6 +23,17 @@ package de.deltaeight.libartnet.packet;
 
 import de.deltaeight.libartnet.enums.Priority;
 
+/**
+ * Represents an {@code ArtPoll} packet which requests other Art-Net nodes on the network to reply with
+ * {@link ArtPollReply}.
+ * <p>
+ * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
+ *
+ * @author Julian Rabe
+ * @see ArtPollReply
+ * @see de.deltaeight.libartnet.ArtPollBuilder
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public class ArtPoll extends ArtNetPacket {
 
     private final boolean enableVlcTransmission;

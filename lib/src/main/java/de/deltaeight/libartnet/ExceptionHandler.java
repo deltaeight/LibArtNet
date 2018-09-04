@@ -21,8 +21,19 @@
 
 package de.deltaeight.libartnet;
 
+/**
+ * Used to handle exceptions thrown by network handlers.
+ *
+ * @author Julian Rabe
+ * @see ArtNetReceiver
+ */
 @FunctionalInterface
 public interface ExceptionHandler {
 
+    /**
+     * Is called when an exception is thrown.
+     *
+     * @param exception The exception that was thrown.
+     */
     void handleException(Exception exception);
 }

@@ -21,10 +21,25 @@
 
 package de.deltaeight.libartnet.enums;
 
+/**
+ * @author Julian Rabe
+ * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
+ */
 public enum ArtNet {
 
+    /**
+     * The protocol revision this library works with (14).
+     */
     PROTOCOL_REVISION(14),
+
+    /**
+     * The Art-Net Header to send with in every {@link de.deltaeight.libartnet.packet.ArtNetPacket} ("Art-Net\0").
+     */
     HEADER(new byte[]{0x41, 0x72, 0x74, 0x2D, 0x4E, 0x65, 0x74, 0x00}),
+
+    /**
+     * The UDP port on which network traffic is handled ({@code 0x1936}).
+     */
     PORT(0x1936);
 
     private final byte[] bytes;
@@ -40,10 +55,16 @@ public enum ArtNet {
         this.bytes = bytes;
     }
 
+    /**
+     * @return Bytes in big endian byte order.
+     */
     public byte[] getBytes() {
         return bytes;
     }
 
+    /**
+     * @return Bytes in little endian byte order.
+     */
     public byte[] getBytesLittleEndian() {
         byte[] result = new byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {

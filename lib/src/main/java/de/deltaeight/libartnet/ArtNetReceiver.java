@@ -37,6 +37,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
+/**
+ * Provides a multi-threaded receiver which listens to UDP network traffic and uses {@link PacketReceiveHandler}
+ * instances to react to known packets.
+ *
+ * @author Julian Rabe
+ */
 public class ArtNetReceiver {
 
     private final ExecutorService workingPool;
@@ -50,6 +56,12 @@ public class ArtNetReceiver {
     private Thread workerThread;
     private ExceptionHandler exceptionHandler;
 
+    /**
+     * Initializes an instance for use.
+     *
+     * @param workingPool The {@link ExecutorService} to use.
+     * @param socket      The {@link DatagramSocket} to use.
+     */
     public ArtNetReceiver(ExecutorService workingPool, DatagramSocket socket) {
 
         if (socket.getLocalPort() != 0x1936) {
@@ -109,22 +121,52 @@ public class ArtNetReceiver {
         state = State.Initialized;
     }
 
+    /**
+     * Initializes an instance for use but creates a default {@link DatagramSocket} bound to Port {@code 0x1936}.
+     *
+     * @param workingPool The {@link ExecutorService} to use.
+     * @throws SocketException When it was not possible to bind to Port {@code 0x1936}, the socket is not able to switch
+     *                         to broadcast or is not able to bind multiple addresses.
+     */
     public ArtNetReceiver(ExecutorService workingPool) throws SocketException {
         this(workingPool, new DatagramSocket(0x1936));
         socket.setBroadcast(true);
         socket.setReuseAddress(true);
     }
 
+    /**
+     * Initializes an instance for use but uses the common {@link ForkJoinPool} shared across the JVM.
+     *
+     * @param socket The {@link DatagramSocket} to use.
+     * @see ForkJoinPool#commonPool()
+     */
     public ArtNetReceiver(DatagramSocket socket) {
         this(ForkJoinPool.commonPool(), socket);
     }
 
+    /**
+     * Initializes an instance for use but creates a default {@link DatagramSocket} bound to Port {@code 0x1936} and
+     * uses the common {@link ForkJoinPool} shared across the JVM.
+     *
+     * @throws SocketException When it was not possible to bind to Port {@code 0x1936}, the socket is not able to switch
+     *                         to broadcast or is not able to bind multiple addresses.
+     * @see ForkJoinPool#commonPool()
+     */
     public ArtNetReceiver() throws SocketException {
         this(ForkJoinPool.commonPool(), new DatagramSocket(0x1936));
         socket.setBroadcast(true);
         socket.setReuseAddress(true);
     }
 
+    /**
+     * Starts listening to UDP packets. Only possible if not already running or stopped.
+     * <p>
+     * It is recommended, to check the state of the {@link ArtNetReceiver} using {@link #getState()} before calling.
+     *
+     * @throws IllegalStateException When {@link #getState()} {@code != } {@link State#Initialized}.
+     * @see #stop()
+     * @see State
+     */
     public void start() {
         if (state == State.Initialized) {
             workerThread.start();
@@ -136,6 +178,15 @@ public class ArtNetReceiver {
         }
     }
 
+    /**
+     * Stops listening to UDP packets and closes the underlying socket. Only possible if running.
+     * <p>
+     * It is recommended, to check the state of the {@link ArtNetReceiver} using {@link #getState()} before calling.
+     *
+     * @throws IllegalStateException When {@link #getState()} {@code != } {@link State#Running}.
+     * @see #start()
+     * @see State
+     */
     public void stop() {
         if (state == State.Running) {
             workerThread.interrupt();
@@ -154,15 +205,29 @@ public class ArtNetReceiver {
         return exceptionHandler;
     }
 
+    /**
+     * Sets the {@link ExceptionHandler} which is called when exceptions are thrown while listeninng to the UDP port.
+     *
+     * @param exceptionHandler The {@link ExceptionHandler} to use.
+     */
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
+    /**
+     * @param exceptionHandler The {@link ExceptionHandler} to use.
+     * @see #setExceptionHandler(ExceptionHandler)
+     */
     public ArtNetReceiver withExceptionHandler(ExceptionHandler exceptionHandler) {
         setExceptionHandler(exceptionHandler);
         return this;
     }
 
+    /**
+     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtPoll} packets are received.
+     *
+     * @param handler The {@link PacketReceiveHandler} to use.
+     */
     public void addArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
         if (!packetReceiveDispatcher.containsKey(ArtPoll.class)) {
             packetReceiveDispatcher.put(ArtPoll.class, new PacketReceiveDispatcher<>(workingPool,
@@ -179,6 +244,10 @@ public class ArtNetReceiver {
         }
     }
 
+    /**
+     * @param handler The {@link PacketReceiveHandler} to use.
+     * @see #addArtPollReceiveHandler(PacketReceiveHandler)
+     */
     public ArtNetReceiver withArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
         addArtPollReceiveHandler(handler);
         return this;
@@ -189,6 +258,11 @@ public class ArtNetReceiver {
         return this;
     }
 
+    /**
+     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtPollReply} packets are received.
+     *
+     * @param handler The {@link PacketReceiveHandler} to use.
+     */
     public void addArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
         if (!packetReceiveDispatcher.containsKey(ArtPollReply.class)) {
             packetReceiveDispatcher.put(ArtPollReply.class, new PacketReceiveDispatcher<>(workingPool,
@@ -205,6 +279,10 @@ public class ArtNetReceiver {
         }
     }
 
+    /**
+     * @param handler The {@link PacketReceiveHandler} to use.
+     * @see #addArtPollReplyReceiveHandler(PacketReceiveHandler)
+     */
     public ArtNetReceiver withArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
         addArtPollReplyReceiveHandler(handler);
         return this;
@@ -215,6 +293,11 @@ public class ArtNetReceiver {
         return this;
     }
 
+    /**
+     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtDmx} packets are received.
+     *
+     * @param handler The {@link PacketReceiveHandler} to use.
+     */
     public void addArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
         if (!packetReceiveDispatcher.containsKey(ArtDmx.class)) {
             packetReceiveDispatcher.put(ArtDmx.class, new PacketReceiveDispatcher<>(workingPool,
@@ -231,6 +314,10 @@ public class ArtNetReceiver {
         }
     }
 
+    /**
+     * @param handler The {@link PacketReceiveHandler} to use.
+     * @see #addArtDmxReceiveHandler(PacketReceiveHandler)
+     */
     public ArtNetReceiver withArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
         addArtDmxReceiveHandler(handler);
         return this;
@@ -241,7 +328,38 @@ public class ArtNetReceiver {
         return this;
     }
 
+    /**
+     * Represents the state of the {@link ArtNetReceiver}.
+     * <p>
+     * During the lifecycle of an {@link ArtNetReceiver}, it passes three states: {@link #Initialized}, {@link #Running}
+     * and {@link #Stopped}. Once stopped, an {@link ArtNetReceiver} cannot be started again.
+     *
+     * @author Julian Rabe
+     */
     public enum State {
-        Initialized, Running, Stopped
+
+        /**
+         * After an instance of {@link ArtNetReceiver} is initialized, the socket is open and the instance is ready to
+         * be used.
+         * <p>
+         * When in this state, calling {@link ArtNetReceiver#stop()} is illegal.
+         */
+        Initialized,
+
+        /**
+         * When {@link ArtNetReceiver#start()} is called, the {@link ArtNetReceiver} starts it's listener- and
+         * worker-threads and starts listening to UDP packets.
+         * <p>
+         * When in this state, calling {@link ArtNetReceiver#start()} is illegal.
+         */
+        Running,
+
+        /**
+         * When {@link ArtNetReceiver#stop()} is called, the {@link ArtNetReceiver} stops it's listener- and
+         * worker-threads and closes the underlying socket.
+         * <p>
+         * When in this state, calling both {@link ArtNetReceiver#start()} and {@link ArtNetReceiver#stop()} is illegal.
+         */
+        Stopped
     }
 }

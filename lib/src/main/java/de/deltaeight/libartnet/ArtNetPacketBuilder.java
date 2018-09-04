@@ -23,9 +23,26 @@ package de.deltaeight.libartnet;
 
 import de.deltaeight.libartnet.packet.ArtNetPacket;
 
+/**
+ * Builder class for {@link ArtNetPacket}s. Can be used to build packets from received payloads.
+ *
+ * @param <T> The {@link ArtNetPacket} implementation the implementing builder class is used for.
+ * @author Julian Rabe
+ */
 public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
 
+    /**
+     * Builds and returns an instance of {@link ArtNetPacket}.
+     *
+     * @return {@link ArtNetPacket} instance.
+     */
     abstract T build();
 
+    /**
+     * Builds and returns an instance of {@link ArtNetPacket}.
+     *
+     * @param packetData The payload received via {@code UDP}.
+     * @return {@link ArtNetPacket} instance.
+     */
     abstract T buildFromBytes(byte[] packetData);
 }
