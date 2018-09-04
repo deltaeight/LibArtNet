@@ -74,6 +74,7 @@ public class OemEnumGenerator {
 
         Files.write(Paths.get("lib/src/main/java/de/deltaeight/libartnet/enums/OemCode.java"),
                 template.replace("$ENTRIES$", parsedLines.toString())
+                        .replace("$PRODUCT_COUNTER$", "" + productCounter)
                         .replace("$DATE$", dateFormat.format(new Date()))
                         .getBytes());
 

@@ -23,7 +23,7 @@ package de.deltaeight.libartnet.enums;
 
 import de.deltaeight.libartnet.Product;
 
-import java.util.TreeMap;
+import java.util.HashMap;
 
 /**
  * Available OEM codes as provided by Artistic License Ltd.
@@ -31,7 +31,7 @@ import java.util.TreeMap;
  * <p>
  * This {@code enum} is auto-generated.
  * <p>
- * Last updated 04.09.2018 17:36:52 UTC.
+ * Last updated 04.09.2018 19:03:47 UTC.
  *
  * @author Julian Rabe
  * @see <a href="http://artisticlicence.com/WebSiteMaster/Software/Art-Net/Art-NetOemCodes.h">Art-NetOemCodes.h</a>
@@ -1202,9 +1202,10 @@ public enum OemCode {
 
     Unknown(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
 
-    private static final TreeMap<Integer, OemCode> products = new TreeMap<>();
+    private static final HashMap<Integer, OemCode> products;
 
     static {
+        products = new HashMap<>(1161);
         for (OemCode value : OemCode.values()) {
             products.put(value.getProduct().getProductCode(), value);
         }

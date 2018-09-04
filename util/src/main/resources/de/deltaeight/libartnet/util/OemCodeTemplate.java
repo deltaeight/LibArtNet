@@ -23,7 +23,7 @@ package de.deltaeight.libartnet.enums;
 
 import de.deltaeight.libartnet.Product;
 
-import java.util.TreeMap;
+import java.util.HashMap;
 
 /**
  * Available OEM codes as provided by Artistic License Ltd.
@@ -42,9 +42,10 @@ public enum OemCode {
 
     Unknown(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
 
-    private static final TreeMap<Integer, OemCode> products = new TreeMap<>();
+    private static final HashMap<Integer, OemCode> products;
 
     static {
+        products = new HashMap<>($PRODUCT_COUNTER$);
         for (OemCode value : OemCode.values()) {
             products.put(value.getProduct().getProductCode(), value);
         }
