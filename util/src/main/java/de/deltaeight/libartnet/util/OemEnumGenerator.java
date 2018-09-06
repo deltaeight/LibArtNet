@@ -30,6 +30,15 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This is a nifty tool to auto-generate the {@code OemCode} enum. All you need is {@code Art-NetOemCodes.h} from
+ * Artistic License Ltd. which you can obtain
+ * <a href="http://artisticlicence.com/WebSiteMaster/Software/Art-Net/Art-NetOemCodes.h">here</a>. You will then need
+ * to put it into the resources of this package. {@link #main(String...)} will then generate the enum under
+ * {@code lib/src/main/java/de/deltaeight/libartnet/descriptors/OemCode.java}.
+ *
+ * @author Julian Rabe
+ */
 public class OemEnumGenerator {
 
     private static final Pattern pattern = Pattern.compile("#define (Oem[a-zA-Z0-9_]+)[ \\xA0]+" +
