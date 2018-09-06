@@ -21,6 +21,7 @@
 
 package de.deltaeight.libartnet.packets;
 
+import de.deltaeight.libartnet.builders.ArtPollBuilder;
 import de.deltaeight.libartnet.descriptors.Priority;
 
 import java.util.Objects;
@@ -33,7 +34,7 @@ import java.util.Objects;
  *
  * @author Julian Rabe
  * @see ArtPollReply
- * @see de.deltaeight.libartnet.ArtPollBuilder
+ * @see ArtPollBuilder
  * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
 public class ArtPoll extends ArtNetPacket {

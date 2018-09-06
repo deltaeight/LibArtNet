@@ -19,29 +19,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet.packets;
+package de.deltaeight.libartnet.network;
 
 import de.deltaeight.libartnet.builders.ArtNetPacketBuilder;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
+
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
- * Represents Art-Net packets
+ * Used to enforce strong typing in {@link ArtNetReceiver} when handling received packets.
  *
+ * @param <T> The {@link ArtNetPacket} this {@link PacketReceiveDispatcher} handles.
  * @author Julian Rabe
- * @see ArtNetPacketBuilder
+ * @see PacketReceiveHandler
+ * @see ArtNetReceiver
  */
-public abstract class ArtNetPacket {
+class PacketReceiveDispatcher<T extends ArtNetPacket> {
 
-    private final byte[] bytes;
+    private final ExecutorService workingPool;
+    private final ArtNetPacketBuilder<T> packetBuilder;
+    private final Set<PacketReceiveHandler<T>> receiveHandlers;
 
-    ArtNetPacket(byte[] bytes) {
-        this.bytes = bytes;
+    PacketReceiveDispatcher(ExecutorService workingPool,
+                            ArtNetPacketBuilder<T> packetBuilder,
+                            Set<PacketReceiveHandler<T>> receiveHandlers) {
+
+        this.workingPool = workingPool;
+        this.packetBuilder = packetBuilder;
+        this.receiveHandlers = receiveHandlers;
     }
 
-    /**
-     * @return Payload to send over the network.
-     */
-    public byte[] getBytes() {
-        return bytes.clone();
+    boolean handleReceive(byte[] packetData) {
+        T packet = packetBuilder.buildFromBytes(packetData);
+        if (packet != null) {
+            receiveHandlers.forEach(receiveHandler -> workingPool.submit(() -> receiveHandler.handle(packet)));
+        }
+        return false;
     }
-
 }

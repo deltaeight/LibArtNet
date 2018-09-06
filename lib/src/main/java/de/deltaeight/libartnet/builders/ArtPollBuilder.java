@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.builders;
 
 import de.deltaeight.libartnet.descriptors.ArtNet;
 import de.deltaeight.libartnet.descriptors.OpCode;
@@ -101,7 +101,7 @@ public class ArtPollBuilder extends ArtNetPacketBuilder<ArtPoll> {
      * @see ArtNetPacketBuilder#build()
      */
     @Override
-    ArtPoll buildFromBytes(byte[] packetData) {
+    public ArtPoll buildFromBytes(byte[] packetData) {
         if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
 
             return new ArtPoll((packetData[12] & 0b00010000) > 0, (packetData[12] & 0b00001000) > 0,

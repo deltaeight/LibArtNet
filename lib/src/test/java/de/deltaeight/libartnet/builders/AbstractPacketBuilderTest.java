@@ -19,8 +19,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.builders;
 
+import de.deltaeight.libartnet.builders.ArtNetPacketBuilder;
 import de.deltaeight.libartnet.packets.ArtNetPacket;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.descriptors;
 
 /**
  * Represents a product defined by Artistic License Ltd.
@@ -50,15 +50,15 @@ public class Product {
      * @param supportEmail     The Email address of the customer support.
      * @param supportName      The name of the customer support.
      */
-    public Product(int productCode,
-                   String manufacturer,
-                   String name,
-                   int dmxOutputs,
-                   int dmxInputs,
-                   boolean dmxPortsPhysical,
-                   boolean supportsRdm,
-                   String supportEmail,
-                   String supportName) {
+    Product(int productCode,
+            String manufacturer,
+            String name,
+            int dmxOutputs,
+            int dmxInputs,
+            boolean dmxPortsPhysical,
+            boolean supportsRdm,
+            String supportEmail,
+            String supportName) {
 
         this.productCode = productCode;
         this.manufacturer = manufacturer;

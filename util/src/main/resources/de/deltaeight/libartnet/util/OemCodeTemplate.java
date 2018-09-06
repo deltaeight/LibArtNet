@@ -21,8 +21,6 @@
 
 package de.deltaeight.libartnet.descriptors;
 
-import de.deltaeight.libartnet.Product;
-
 import java.util.HashMap;
 
 /**

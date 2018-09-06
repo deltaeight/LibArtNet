@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.builders;
 
 import de.deltaeight.libartnet.descriptors.*;
 import de.deltaeight.libartnet.packets.ArtPollReply;
@@ -264,7 +264,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
      * @see ArtNetPacketBuilder#build()
      */
     @Override
-    ArtPollReply buildFromBytes(byte[] packetData) {
+    public ArtPollReply buildFromBytes(byte[] packetData) {
         if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
 
             return new ArtPollReply(

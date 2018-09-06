@@ -19,21 +19,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.network;
+
+import de.deltaeight.libartnet.packets.ArtNetPacket;
 
 /**
- * Used to handle exceptions thrown by network handlers.
+ * Provides functionality for received {@link ArtNetPacket} instances.
  *
- * @author Julian Rabe
- * @see ArtNetReceiver
+ * @param <T> The {@link ArtNetPacket} implementation the implementing class is used for.
  */
 @FunctionalInterface
-public interface ExceptionHandler {
+public interface PacketReceiveHandler<T extends ArtNetPacket> {
 
     /**
-     * Is called when an exception is thrown.
+     * Is called by {@link ArtNetReceiver} when an {@link ArtNetPacket} of type {@link T} was received.
      *
-     * @param exception The exception that was thrown.
+     * @param packet The {@link ArtNetPacket} which was received.
      */
-    void handleException(Exception exception);
+    void handle(T packet);
 }

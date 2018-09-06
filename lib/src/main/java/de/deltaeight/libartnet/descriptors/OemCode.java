@@ -21,8 +21,6 @@
 
 package de.deltaeight.libartnet.descriptors;
 
-import de.deltaeight.libartnet.Product;
-
 import java.util.HashMap;
 
 /**
@@ -31,7 +29,7 @@ import java.util.HashMap;
  * <p>
  * This {@code enum} is auto-generated.
  * <p>
- * Last updated 04.09.2018 23:27:38 UTC.
+ * Last updated 06.09.2018 00:40:01 UTC.
  *
  * @author Julian Rabe
  * @see de.deltaeight.libartnet.packets.ArtPollReply

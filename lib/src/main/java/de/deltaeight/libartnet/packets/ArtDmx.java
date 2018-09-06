@@ -21,6 +21,8 @@
 
 package de.deltaeight.libartnet.packets;
 
+import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ import java.util.Objects;
  * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
  *
  * @author Julian Rabe
- * @see de.deltaeight.libartnet.ArtDmxBuilder
+ * @see ArtDmxBuilder
  * @see <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a>
  */
 public class ArtDmx extends ArtNetPacket {

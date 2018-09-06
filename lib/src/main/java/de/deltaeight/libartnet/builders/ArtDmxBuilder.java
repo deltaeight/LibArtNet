@@ -19,7 +19,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.builders;
 
 import de.deltaeight.libartnet.descriptors.ArtNet;
 import de.deltaeight.libartnet.descriptors.OpCode;
@@ -101,7 +101,7 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
      * @see ArtNetPacketBuilder#build()
      */
     @Override
-    ArtDmx buildFromBytes(byte[] packetData) {
+    public ArtDmx buildFromBytes(byte[] packetData) {
         if (packetData[8] == OP_CODE_BYTES[0] && packetData[9] == OP_CODE_BYTES[1]) {
 
             byte[] data = new byte[packetData[16] << 8 | packetData[17]];

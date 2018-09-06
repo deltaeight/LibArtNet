@@ -19,8 +19,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.network;
 
+import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+import de.deltaeight.libartnet.builders.ArtNetPacketBuilder;
+import de.deltaeight.libartnet.builders.ArtPollBuilder;
+import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
 import de.deltaeight.libartnet.packets.ArtNetPacket;
 import org.junit.jupiter.api.Test;
 
@@ -45,17 +49,17 @@ class ArtNetReceiverTest {
         DatagramSocketMockup datagramSocketMockup = new DatagramSocketMockup();
         ArtNetReceiver artNetReceiver = new ArtNetReceiver(datagramSocketMockup);
 
-        assertSame(ArtNetReceiver.State.Initialized, artNetReceiver.getState());
+        assertSame(NetworkHandler.State.Initialized, artNetReceiver.getState());
         assertThrows(IllegalStateException.class, artNetReceiver::stop);
 
         artNetReceiver.start();
 
-        assertSame(ArtNetReceiver.State.Running, artNetReceiver.getState());
+        assertSame(NetworkHandler.State.Running, artNetReceiver.getState());
         assertThrows(IllegalStateException.class, artNetReceiver::start);
 
         artNetReceiver.stop();
 
-        assertSame(ArtNetReceiver.State.Stopped, artNetReceiver.getState());
+        assertSame(NetworkHandler.State.Stopped, artNetReceiver.getState());
         assertThrows(IllegalStateException.class, artNetReceiver::start);
         assertThrows(IllegalStateException.class, artNetReceiver::stop);
     }

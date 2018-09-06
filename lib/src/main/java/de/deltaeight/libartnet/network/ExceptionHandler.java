@@ -19,30 +19,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
-
-import de.deltaeight.libartnet.packets.ArtNetPacket;
+package de.deltaeight.libartnet.network;
 
 /**
- * Builder class for {@link ArtNetPacket}s. Can be used to build packets from received payloads.
+ * Used to handle exceptions thrown by network handlers.
  *
- * @param <T> The {@link ArtNetPacket} implementation the implementing builder class is used for.
  * @author Julian Rabe
+ * @see ArtNetReceiver
  */
-public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
+@FunctionalInterface
+public interface ExceptionHandler {
 
     /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
+     * Is called when an exception is thrown.
      *
-     * @return {@link ArtNetPacket} instance.
+     * @param exception The exception that was thrown.
      */
-    abstract T build();
-
-    /**
-     * Builds and returns an instance of {@link ArtNetPacket}.
-     *
-     * @param packetData The payload received via {@code UDP}.
-     * @return {@link ArtNetPacket} instance.
-     */
-    abstract T buildFromBytes(byte[] packetData);
+    void handleException(Exception exception);
 }

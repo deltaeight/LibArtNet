@@ -19,33 +19,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.deltaeight.libartnet;
+package de.deltaeight.libartnet.builders;
 
 import de.deltaeight.libartnet.packets.ArtNetPacket;
 
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
+/**
+ * Builder class for {@link ArtNetPacket}s. Can be used to build packets from received payloads.
+ *
+ * @param <T> The {@link ArtNetPacket} implementation the implementing builder class is used for.
+ * @author Julian Rabe
+ */
+public abstract class ArtNetPacketBuilder<T extends ArtNetPacket> {
 
-class PacketReceiveDispatcher<T extends ArtNetPacket> {
+    /**
+     * Builds and returns an instance of {@link ArtNetPacket}.
+     *
+     * @return {@link ArtNetPacket} instance.
+     */
+    public abstract T build();
 
-    private final ExecutorService workingPool;
-    private final ArtNetPacketBuilder<T> packetBuilder;
-    private final Set<PacketReceiveHandler<T>> receiveHandlers;
-
-    PacketReceiveDispatcher(ExecutorService workingPool,
-                            ArtNetPacketBuilder<T> packetBuilder,
-                            Set<PacketReceiveHandler<T>> receiveHandlers) {
-
-        this.workingPool = workingPool;
-        this.packetBuilder = packetBuilder;
-        this.receiveHandlers = receiveHandlers;
-    }
-
-    boolean handleReceive(byte[] packetData) {
-        T packet = packetBuilder.buildFromBytes(packetData);
-        if (packet != null) {
-            receiveHandlers.forEach(receiveHandler -> workingPool.submit(() -> receiveHandler.handle(packet)));
-        }
-        return false;
-    }
+    /**
+     * Builds and returns an instance of {@link ArtNetPacket}.
+     *
+     * @param packetData The payload received via {@code UDP}.
+     * @return {@link ArtNetPacket} instance.
+     */
+    public abstract T buildFromBytes(byte[] packetData);
 }
