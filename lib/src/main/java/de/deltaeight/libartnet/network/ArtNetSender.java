@@ -46,7 +46,6 @@ public class ArtNetSender extends NetworkHandler {
      */
     public ArtNetSender(DatagramSocket socket) {
         super(socket);
-
         packetQueue = new LinkedBlockingQueue<>();
     }
 

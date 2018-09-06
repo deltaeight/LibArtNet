@@ -63,7 +63,6 @@ public class ArtNetReceiver extends NetworkHandler {
      */
     public ArtNetReceiver(ExecutorService workingPool, DatagramSocket socket) {
         super(socket);
-
         this.workingPool = workingPool;
 
         buffer = new byte[530];
