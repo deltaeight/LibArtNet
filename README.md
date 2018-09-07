@@ -1,4 +1,4 @@
-# LibArtNet
+# LibArtNet [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
