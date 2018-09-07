@@ -98,6 +98,8 @@ using Javadoc.
 For bug reports, please include steps to reproduce, Java version and last tested commit SHA along with a description of 
 what went wrong which should be as detailed as possible.
 
+Please also have a look at the [code of conduct](CODE_OF_CONDUCT.md) before you contribute.
+
 ## License
 
 LibArtNet is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
