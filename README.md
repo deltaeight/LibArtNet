@@ -4,7 +4,7 @@ LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) pr
 [Artistic License Ltd.](https://artisticlicence.com)
 
 **LibArtNet is still work in progress and not considered stable, therefore think twice if you want to use it in
-production.**
+production!**
 
 However, see the [feature list](#features), the [roadmap](#roadmap) and how to [contribute](#contribute) for further 
 information. If you feel there is something missing that is not listed there, feel free to open an issue.
@@ -48,7 +48,7 @@ All classes are documented using Javadoc. However, if there is something missing
 
 The receiver needs receive handlers which are called when the appropriate packet is received:
 
-```
+```java
 ArtNetReceiver receiver = new ArtNetReceiver()
     .withArtDmxReceiveHandler(packet -> System.out.println("Channel 63 value: " + packet.getData()[62]));
 
@@ -63,7 +63,7 @@ receiver.stop();
 
 The sender needs Art-Net packets to send, therefore we need a builder instance for the desired packets first:
 
-```
+```java
 ArtPollReplyBuilder builder = new ArtPollReplyBuilder()
         .withOemCode(OemCode.OemRobertJulDalis1)
         .withBindIp(new byte[]{127, 0, 0, 1});
