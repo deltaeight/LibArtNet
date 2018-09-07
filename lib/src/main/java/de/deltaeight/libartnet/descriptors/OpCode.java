@@ -67,10 +67,7 @@ public enum OpCode {
     private final byte[] bytes;
 
     OpCode(int value) {
-        byte[] bytes = new byte[2];
-        bytes[0] = (byte) (value >> 8);
-        bytes[1] = (byte) value;
-        this.bytes = bytes;
+        this.bytes = new byte[]{(byte) (value >> 8), (byte) value};
     }
 
     OpCode(OpCode opCode) {

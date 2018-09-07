@@ -30,7 +30,7 @@ import de.deltaeight.libartnet.packets.ArtTimeCode;
 /**
  * Builds instances of {@link ArtTimeCode}.
  * <p>
- * Default {@link TimeCodeType} is {@link TimeCodeType#EBU}.
+ * Default {@link TimeCodeType} is {@link TimeCodeType#Film}.
  * <p>
  * See the <a href="https://art-net.org.uk/resources/art-net-specification/">Art-Net Specification</a> for details.
  *
@@ -52,7 +52,7 @@ public class ArtTimeCodeBuilder extends ArtNetPacketBuilder<ArtTimeCode> {
     private ArtTimeCode artTimeCode;
 
     public ArtTimeCodeBuilder() {
-        type = TimeCodeType.EBU;
+        type = TimeCodeType.Film;
         changed = true;
     }
 
@@ -65,10 +65,6 @@ public class ArtTimeCodeBuilder extends ArtNetPacketBuilder<ArtTimeCode> {
     @Override
     public ArtTimeCode build() {
         if (changed) {
-
-            if (frames > Math.ceil(type.getFramerate())) {
-                frames = (int) (Math.ceil(type.getFramerate()) - 1);
-            }
 
             byte[] bytes = new byte[19];
             System.arraycopy(ArtNet.HEADER.getBytes(), 0, bytes, 0, 8);
@@ -113,7 +109,11 @@ public class ArtTimeCodeBuilder extends ArtNetPacketBuilder<ArtTimeCode> {
         if (this.type != type) {
 
             if (type == null) {
-                type = TimeCodeType.EBU;
+                type = TimeCodeType.Film;
+            }
+
+            if (frames > Math.ceil(type.getFramerate())) {
+                frames = (int) (Math.ceil(type.getFramerate()) - 1);
             }
 
             this.type = type;
@@ -196,7 +196,7 @@ public class ArtTimeCodeBuilder extends ArtNetPacketBuilder<ArtTimeCode> {
     public void setFrames(int frames) {
         if (this.frames != frames) {
 
-            if (0 > frames || frames > Math.ceil(type.getFramerate())) {
+            if (0 > frames || frames > Math.ceil(type.getFramerate()) - 1) {
                 throw new IllegalArgumentException("Illegal frames value!");
             }
 

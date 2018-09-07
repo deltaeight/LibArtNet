@@ -21,10 +21,7 @@
 
 package de.deltaeight.libartnet.network;
 
-import de.deltaeight.libartnet.builders.ArtDmxBuilder;
-import de.deltaeight.libartnet.builders.ArtNetPacketBuilder;
-import de.deltaeight.libartnet.builders.ArtPollBuilder;
-import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
+import de.deltaeight.libartnet.builders.*;
 import de.deltaeight.libartnet.packets.ArtNetPacket;
 import org.junit.jupiter.api.Test;
 
@@ -106,9 +103,10 @@ class ArtNetReceiverTest {
 
     @Test
     void receiveHandlers() throws SocketException, InterruptedException {
+        testReceiveHandler(ArtNetReceiver::withArtDmxReceiveHandler, new ArtDmxBuilder());
         testReceiveHandler(ArtNetReceiver::withArtPollReceiveHandler, new ArtPollBuilder());
         testReceiveHandler(ArtNetReceiver::withArtPollReplyReceiveHandler, new ArtPollReplyBuilder());
-        testReceiveHandler(ArtNetReceiver::withArtDmxReceiveHandler, new ArtDmxBuilder());
+        testReceiveHandler(ArtNetReceiver::withArtTimeCodeReceiveHandler, new ArtTimeCodeBuilder());
     }
 
     @FunctionalInterface

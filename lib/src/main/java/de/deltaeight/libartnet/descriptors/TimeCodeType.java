@@ -44,7 +44,7 @@ public enum TimeCodeType {
 
     public static TimeCodeType getTimeCodeType(int value) {
         if (value > values().length - 1) {
-            return EBU;
+            return Film;
         }
         return values()[value];
     }
