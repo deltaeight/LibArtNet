@@ -24,11 +24,9 @@ package de.deltaeight.libartnet.network;
 import de.deltaeight.libartnet.builders.ArtDmxBuilder;
 import de.deltaeight.libartnet.builders.ArtPollBuilder;
 import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
+import de.deltaeight.libartnet.builders.ArtTimeCodeBuilder;
 import de.deltaeight.libartnet.descriptors.ArtNet;
-import de.deltaeight.libartnet.packets.ArtDmx;
-import de.deltaeight.libartnet.packets.ArtNetPacket;
-import de.deltaeight.libartnet.packets.ArtPoll;
-import de.deltaeight.libartnet.packets.ArtPollReply;
+import de.deltaeight.libartnet.packets.*;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -51,9 +49,10 @@ public class ArtNetReceiver extends NetworkHandler {
     private final ExecutorService workingPool;
     private final byte[] buffer;
     private final ConcurrentHashMap<Class<? extends ArtNetPacket>, PacketReceiveDispatcher<? extends ArtNetPacket>> packetReceiveDispatcher;
+    private final HashSet<PacketReceiveHandler<ArtDmx>> artDmxReceiveHandlers;
     private final HashSet<PacketReceiveHandler<ArtPoll>> artPollReceiveHandlers;
     private final HashSet<PacketReceiveHandler<ArtPollReply>> artPollReplyReceiveHandlers;
-    private final HashSet<PacketReceiveHandler<ArtDmx>> artDmxReceiveHandlers;
+    private final HashSet<PacketReceiveHandler<ArtTimeCode>> artTimeCodeReceiveHandlers;
 
     /**
      * Initializes an instance for use.
@@ -67,9 +66,11 @@ public class ArtNetReceiver extends NetworkHandler {
 
         buffer = new byte[530];
         packetReceiveDispatcher = new ConcurrentHashMap<>();
+
+        artDmxReceiveHandlers = new HashSet<>();
         artPollReceiveHandlers = new HashSet<>();
         artPollReplyReceiveHandlers = new HashSet<>();
-        artDmxReceiveHandlers = new HashSet<>();
+        artTimeCodeReceiveHandlers = new HashSet<>();
     }
 
     /**
@@ -243,6 +244,41 @@ public class ArtNetReceiver extends NetworkHandler {
 
     public ArtNetReceiver withoutArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
         removeArtPollReplyReceiveHandler(handler);
+        return this;
+    }
+
+    /**
+     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtTimeCode} packets are received.
+     *
+     * @param handler The {@link PacketReceiveHandler} to use.
+     */
+    public void addArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {
+        if (!packetReceiveDispatcher.containsKey(ArtTimeCode.class)) {
+            packetReceiveDispatcher.put(ArtTimeCode.class, new PacketReceiveDispatcher<>(workingPool,
+                    new ArtTimeCodeBuilder(), artTimeCodeReceiveHandlers));
+        }
+        artTimeCodeReceiveHandlers.add(handler);
+
+    }
+
+    public void removeArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {
+        artTimeCodeReceiveHandlers.remove(handler);
+        if (artTimeCodeReceiveHandlers.isEmpty()) {
+            packetReceiveDispatcher.remove(ArtTimeCode.class);
+        }
+    }
+
+    /**
+     * @param handler The {@link PacketReceiveHandler} to use.
+     * @see #addArtTimeCodeReceiveHandler(PacketReceiveHandler)
+     */
+    public ArtNetReceiver withArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {
+        addArtTimeCodeReceiveHandler(handler);
+        return this;
+    }
+
+    public ArtNetReceiver withoutArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {
+        removeArtTimeCodeReceiveHandler(handler);
         return this;
     }
 }
