@@ -2,6 +2,13 @@
 
 Great that you are here and want to help!
 
+## Documentation
+
+LibArtNet uses Javadoc comment blocks for documentation of the API. This should include a brief explanation of what 
+classes/methods do and how to use them. You can also include the `@author`-tag if you wish.
+
+Please don't forget to describe what values are expected by methods and what they throw (and why).
+
 ## Testing
 
 LibArtNet uses [JUnit 5](https://junit.org/junit5/) as its Java test framework. Please make sure to write useful test 

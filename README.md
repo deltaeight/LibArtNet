@@ -92,11 +92,11 @@ Your contribution is more than welcome!
 If you'd like to contribute, every help is much appreciated. Feel free to fork, create pull requests and open issues for
 bugs or feature requests.
 
+For bug reports and feature requests there are issue templates that you can just fill out to provide us with the 
+required information.
+
 For pull requests, please keep consistency with the existing code style and file headers. Please document your work
 using Javadoc. Please have a look at [this guide](CONTRIBUTING.md) for details.
-
-For bug reports, please include steps to reproduce, Java version and last tested commit SHA along with a description of 
-what went wrong which should be as detailed as possible.
 
 Please also have a look at the [code of conduct](CODE_OF_CONDUCT.md) before you contribute.
 
