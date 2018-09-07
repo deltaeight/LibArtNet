@@ -93,7 +93,7 @@ If you'd like to contribute, every help is much appreciated. Feel free to fork, 
 bugs or feature requests.
 
 For pull requests, please keep consistency with the existing code style and file headers. Please document your work
-using Javadoc.
+using Javadoc. Please have a look at [this guide](CONTRIBUTING.md) for details.
 
 For bug reports, please include steps to reproduce, Java version and last tested commit SHA along with a description of 
 what went wrong which should be as detailed as possible.
