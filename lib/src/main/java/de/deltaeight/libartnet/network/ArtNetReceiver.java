@@ -142,6 +142,41 @@ public class ArtNetReceiver extends NetworkHandler {
     }
 
     /**
+     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtDmx} packets are received.
+     *
+     * @param handler The {@link PacketReceiveHandler} to use.
+     */
+    public void addArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
+        if (!packetReceiveDispatcher.containsKey(ArtDmx.class)) {
+            packetReceiveDispatcher.put(ArtDmx.class, new PacketReceiveDispatcher<>(workingPool,
+                    new ArtDmxBuilder(), artDmxReceiveHandlers));
+        }
+        artDmxReceiveHandlers.add(handler);
+
+    }
+
+    public void removeArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
+        artDmxReceiveHandlers.remove(handler);
+        if (artDmxReceiveHandlers.isEmpty()) {
+            packetReceiveDispatcher.remove(ArtDmx.class);
+        }
+    }
+
+    /**
+     * @param handler The {@link PacketReceiveHandler} to use.
+     * @see #addArtDmxReceiveHandler(PacketReceiveHandler)
+     */
+    public ArtNetReceiver withArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
+        addArtDmxReceiveHandler(handler);
+        return this;
+    }
+
+    public ArtNetReceiver withoutArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
+        removeArtDmxReceiveHandler(handler);
+        return this;
+    }
+
+    /**
      * Adds a {@link PacketReceiveHandler} which is called when {@link ArtPoll} packets are received.
      *
      * @param handler The {@link PacketReceiveHandler} to use.
@@ -208,41 +243,6 @@ public class ArtNetReceiver extends NetworkHandler {
 
     public ArtNetReceiver withoutArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
         removeArtPollReplyReceiveHandler(handler);
-        return this;
-    }
-
-    /**
-     * Adds a {@link PacketReceiveHandler} which is called when {@link ArtDmx} packets are received.
-     *
-     * @param handler The {@link PacketReceiveHandler} to use.
-     */
-    public void addArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
-        if (!packetReceiveDispatcher.containsKey(ArtDmx.class)) {
-            packetReceiveDispatcher.put(ArtDmx.class, new PacketReceiveDispatcher<>(workingPool,
-                    new ArtDmxBuilder(), artDmxReceiveHandlers));
-        }
-        artDmxReceiveHandlers.add(handler);
-
-    }
-
-    public void removeArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
-        artDmxReceiveHandlers.remove(handler);
-        if (artDmxReceiveHandlers.isEmpty()) {
-            packetReceiveDispatcher.remove(ArtDmx.class);
-        }
-    }
-
-    /**
-     * @param handler The {@link PacketReceiveHandler} to use.
-     * @see #addArtDmxReceiveHandler(PacketReceiveHandler)
-     */
-    public ArtNetReceiver withArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
-        addArtDmxReceiveHandler(handler);
-        return this;
-    }
-
-    public ArtNetReceiver withoutArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
-        removeArtDmxReceiveHandler(handler);
         return this;
     }
 }
