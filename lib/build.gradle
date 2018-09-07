@@ -18,3 +18,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    baseName 'LibArtNet'
+}

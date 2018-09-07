@@ -33,6 +33,12 @@ Planned features are
 Currently, the only way to use LibArtNet is to clone this repository and compile it yourself. Publishing artifacts is 
 planned but not implemented yet.
 
+To build a `.jar` file to use in your IDE, run
+
+```bash
+./gradlew :lib:jar 
+```
+
 ### Requirements
 
 * Java 1.8 or higher
