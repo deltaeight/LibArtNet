@@ -17,9 +17,21 @@ information. If you feel there is something missing that is not listed there, fe
 ### Supported Art-Net packets
 
 * ArtDmx
+  * Sequence number
+  * 15bit universe addressing 
 * ArtPoll
+  * unicast
+  * sending `ArtPollReply` on state changes
+  * priorities for diagnostic data
 * ArtPollReply
+  * macros
+  * remotes
+  * OEM codes (enum with all codes available)
+  * short/long names
+  * equipment styles
+  * much more
 * ArtTimeCode
+  * 24/25/29,97/30 fps
 
 ## <a name="roadmap">Roadmap</a>
 
