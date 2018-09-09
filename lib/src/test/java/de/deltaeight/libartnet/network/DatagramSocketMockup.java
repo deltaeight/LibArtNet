@@ -34,6 +34,7 @@ class DatagramSocketMockup extends DatagramSocket {
     private boolean throwIoException;
     private ArtNetPacket injectArtNetPacket;
     private boolean closed;
+    private PacketSentHandler onPacketSent;
 
     DatagramSocketMockup() throws SocketException {
         this.localPort = 0x1936;
@@ -46,6 +47,15 @@ class DatagramSocketMockup extends DatagramSocket {
     DatagramSocketMockup(boolean throwIoException) throws SocketException {
         this();
         this.throwIoException = throwIoException;
+    }
+
+    @Override
+    public void send(DatagramPacket p) throws IOException {
+        if (throwIoException) {
+            throw new IOException();
+        } else if (onPacketSent != null) {
+            onPacketSent.handle(p);
+        }
     }
 
     @Override
@@ -83,5 +93,15 @@ class DatagramSocketMockup extends DatagramSocket {
 
     void injectPacket(ArtNetPacket packet) {
         injectArtNetPacket = packet;
+    }
+
+    void setOnPacketSent(PacketSentHandler onPacketSent) {
+        this.onPacketSent = onPacketSent;
+    }
+
+    @FunctionalInterface
+    interface PacketSentHandler {
+
+        void handle(DatagramPacket packet);
     }
 }

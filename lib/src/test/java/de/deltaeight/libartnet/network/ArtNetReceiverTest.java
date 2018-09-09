@@ -26,56 +26,20 @@ import de.deltaeight.libartnet.packets.ArtNetPacket;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ArtNetReceiverTest {
+class ArtNetReceiverTest extends AbstractNetworkHandlerTest<ArtNetReceiver> {
 
-    @Test
-    void constructor() {
-        assertThrows(IllegalArgumentException.class, () -> new ArtNetReceiver(new DatagramSocketMockup(666)));
-    }
-
-    @Test
-    void states() throws SocketException {
-
-        DatagramSocketMockup datagramSocketMockup = new DatagramSocketMockup();
-        ArtNetReceiver artNetReceiver = new ArtNetReceiver(datagramSocketMockup);
-
-        assertSame(NetworkHandler.State.Initialized, artNetReceiver.getState());
-        assertThrows(IllegalStateException.class, artNetReceiver::stop);
-
-        artNetReceiver.start();
-
-        assertSame(NetworkHandler.State.Running, artNetReceiver.getState());
-        assertThrows(IllegalStateException.class, artNetReceiver::start);
-
-        artNetReceiver.stop();
-
-        assertSame(NetworkHandler.State.Stopped, artNetReceiver.getState());
-        assertThrows(IllegalStateException.class, artNetReceiver::start);
-        assertThrows(IllegalStateException.class, artNetReceiver::stop);
-    }
-
-    @Test
-    void exceptionHandler() throws SocketException, InterruptedException {
-
-        AtomicReference<Throwable> handledException = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        new ArtNetReceiver(new DatagramSocketMockup(true))
-                .withExceptionHandler(exception -> {
-                    handledException.set(exception);
-                    latch.countDown();
-                })
-                .start();
-
-        latch.await(3, TimeUnit.SECONDS);
-        assertTrue(handledException.get() instanceof IOException);
+    @Override
+    ArtNetReceiver getNewInstance(DatagramSocket datagramSocket) {
+        return new ArtNetReceiver(datagramSocket);
     }
 
     private <T extends ArtNetPacket> void testReceiveHandler(ArtNetReceiverPreparation<T> artNetReceiverPreparation,
@@ -99,6 +63,26 @@ class ArtNetReceiverTest {
 
         latch.await(3, TimeUnit.SECONDS);
         assertEquals(packet, packetReference.get());
+    }
+
+    @Test
+    final void exceptionHandler() throws SocketException, InterruptedException {
+
+        AtomicReference<Throwable> handledException = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        ArtNetReceiver artNetReceiver = (ArtNetReceiver) new ArtNetReceiver(new DatagramSocketMockup(true))
+                .withExceptionHandler(exception -> {
+                    handledException.set(exception);
+                    latch.countDown();
+                });
+
+        artNetReceiver.start();
+
+        latch.await(3, TimeUnit.SECONDS);
+        assertTrue(handledException.get() instanceof IOException);
+
+        artNetReceiver.stop();
     }
 
     @Test
