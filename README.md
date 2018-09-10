@@ -1,10 +1,9 @@
-# LibArtNet [![Maven Central](https://img.shields.io/maven-central/v/de.deltaeight/LibArtNet.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22) [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
+# LibArtNet [![Maven Central](https://img.shields.io/maven-central/v/de.deltaeight/LibArtNet.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22) [![Javadocs](http://www.javadoc.io/badge/de.deltaeight/LibArtNet.svg?color=blue)](http://www.javadoc.io/doc/de.deltaeight/LibArtNet) [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
 
-**LibArtNet is still work in progress and not considered stable, therefore think twice if you want to use it in
-production!**
+**Please have in mind that LibArtNet is still in beta.**
 
 However, see the [feature list](#features), the [roadmap](#roadmap) and how to [contribute](#contribute) for further 
 information. If you feel there is something missing that is not listed there, feel free to open an issue.
