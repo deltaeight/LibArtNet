@@ -42,7 +42,8 @@ Planned features are
 
 ## Usage
 
-All classes are documented using Javadoc. However, if there is something missing or unclear, feel free to open an issue.
+All classes are documented using [Javadoc](https://javadoc.io/doc/de.deltaeight/LibArtNet). However, if there is 
+something missing or unclear, feel free to open an issue.
 
 ### Requirements
 
