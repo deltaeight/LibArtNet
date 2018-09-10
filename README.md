@@ -41,25 +41,27 @@ Planned features are
 * Art-Net node, an abstraction layer using the existing receiver and sender to act as a node
 * RDM support 
 
-## Installation
+## Usage
 
-Currently, the only way to use LibArtNet is to clone this repository and compile it yourself. Publishing artifacts is 
-planned but not implemented yet.
+All classes are documented using Javadoc. However, if there is something missing or unclear, feel free to open an issue.
+
+### Requirements
+
+* Java 1.8 or higher
+* Gradle if you want to compile from source
+
+### Installation
+
+Download the desired version from the [release page](releases) and include it in your classpath. Artifact publishing to
+Maven Central Repository is coming soon.
+
+### Compiling from source
 
 To build a `.jar` file to use in your IDE, run
 
 ```bash
 ./gradlew :lib:jar 
 ```
-
-### Requirements
-
-* Java 1.8 or higher
-* Gradle
-
-## Usage
-
-All classes are documented using Javadoc. However, if there is something missing or unclear, feel free to open an issue.
 
 ### Usage examples
 
