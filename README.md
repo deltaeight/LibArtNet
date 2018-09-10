@@ -52,7 +52,8 @@ something missing or unclear, feel free to open an issue.
 
 ### Installation
 
-LibArtNet is available on Maven Central and on the [release page](../../releases).
+LibArtNet is available on [Maven Central](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22)
+and on the [release page](../../releases).
 
 #### Maven
 
@@ -68,7 +69,7 @@ Add this dependency to `pom.xml`:
 
 #### Gradle
 
-Add this to `build.gradle`;
+Add this to `build.gradle`:
 
 ```groovy
 dependencies {
