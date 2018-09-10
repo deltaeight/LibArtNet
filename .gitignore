@@ -1,8 +1,6 @@
 # Gradle
 .gradle
 build
-gradle.properties
-signing-key.gpg
 
 # IntelliJ project files
 .idea
