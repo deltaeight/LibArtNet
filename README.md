@@ -1,4 +1,4 @@
-# LibArtNet [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
+# LibArtNet [![Maven Central](https://img.shields.io/maven-central/v/de.deltaeight/LibArtNet.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22) [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
@@ -52,8 +52,29 @@ All classes are documented using Javadoc. However, if there is something missing
 
 ### Installation
 
-Download the desired version from the [release page](../../releases) and include it in your classpath. Artifact publishing to
-Maven Central Repository is coming soon.
+LibArtNet is available on Maven Central and on the [release page](../../releases).
+
+#### Maven
+
+Add this dependency to `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>de.deltaeight</groupId>
+  <artifactId>LibArtNet</artifactId>
+  <version>1.0-beta</version>
+</dependency>
+```
+
+#### Gradle
+
+Add this to `build.gradle`;
+
+```groovy
+dependencies {
+    implementation 'de.deltaeight:LibArtNet:1.0-beta'
+}
+```
 
 ### Compiling from source
 
