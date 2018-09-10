@@ -1,9 +1,13 @@
 plugins {
     id 'java'
+    id 'maven'
+    id 'signing'
 }
 
 group 'de.deltaeight'
 version '1.0-beta'
+
+archivesBaseName = 'LibArtNet'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -23,6 +27,64 @@ test {
     }
 }
 
-jar {
-    baseName 'LibArtNet'
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'LibArtNet'
+                packaging 'jar'
+                description 'Art-Net 4 protocol implementation in Java'
+                url 'https://github.com/deltaeight/LibArtNet'
+
+                scm {
+                    connection 'scm:https://github.com/deltaeight/LibArtNet.git'
+                    developerConnection 'scm:https://github.com/deltaeight/LibArtNet.git'
+                    url 'https://github.com/deltaeight/LibArtNet'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'https://opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'schw4rzlicht'
+                        name 'Julian Rabe'
+                        email 'julian@deltaeight.de'
+                    }
+                }
+            }
+        }
+    }
 }
