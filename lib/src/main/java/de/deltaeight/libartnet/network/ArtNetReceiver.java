@@ -165,6 +165,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
     /**
      * @param handler The {@link PacketReceiveHandler} to use.
+     * @return Current {@link ArtNetReceiver} instance for fluent code style.
      * @see #addArtDmxReceiveHandler(PacketReceiveHandler)
      */
     public ArtNetReceiver withArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
@@ -200,6 +201,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
     /**
      * @param handler The {@link PacketReceiveHandler} to use.
+     * @return Current {@link ArtNetReceiver} instance for fluent code style.
      * @see #addArtPollReceiveHandler(PacketReceiveHandler)
      */
     public ArtNetReceiver withArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
@@ -235,6 +237,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
     /**
      * @param handler The {@link PacketReceiveHandler} to use.
+     * @return Current {@link ArtNetReceiver} instance for fluent code style.
      * @see #addArtPollReplyReceiveHandler(PacketReceiveHandler)
      */
     public ArtNetReceiver withArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
@@ -270,6 +273,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
     /**
      * @param handler The {@link PacketReceiveHandler} to use.
+     * @return Current {@link ArtNetReceiver} instance for fluent code style.
      * @see #addArtTimeCodeReceiveHandler(PacketReceiveHandler)
      */
     public ArtNetReceiver withArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {

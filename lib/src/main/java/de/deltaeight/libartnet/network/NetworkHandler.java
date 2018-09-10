@@ -138,6 +138,7 @@ abstract class NetworkHandler {
 
     /**
      * @param exceptionHandler The {@link ExceptionHandler} to use.
+     * @return Current {@link NetworkHandler} instance for fluent code style.
      * @see #setExceptionHandler(ExceptionHandler)
      */
     public NetworkHandler withExceptionHandler(ExceptionHandler exceptionHandler) {
