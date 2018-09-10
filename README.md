@@ -52,7 +52,7 @@ All classes are documented using Javadoc. However, if there is something missing
 
 ### Installation
 
-Download the desired version from the [release page](releases) and include it in your classpath. Artifact publishing to
+Download the desired version from the [release page](../../releases) and include it in your classpath. Artifact publishing to
 Maven Central Repository is coming soon.
 
 ### Compiling from source
