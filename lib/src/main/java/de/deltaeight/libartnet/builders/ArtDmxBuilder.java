@@ -132,6 +132,14 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
         return this;
     }
 
+    /**
+     * Increments the sequence number of the ArtDmx packet to the next possible value. If {@code sequence + 1 > 255},
+     * sequence will be reset to 0.
+     */
+    public void incrementSequence() {
+        sequence = sequence + 1 > 255 ? 0 : sequence + 1;
+    }
+
     public int getPhysical() {
         return physical;
     }

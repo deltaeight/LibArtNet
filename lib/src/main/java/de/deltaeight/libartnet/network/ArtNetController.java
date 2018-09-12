@@ -21,8 +21,11 @@
 
 package de.deltaeight.libartnet.network;
 
+import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.HashMap;
 
 /**
  * Provides an abstraction layer which makes use of {@link ArtNetReceiver} and {@link ArtNetSender} to provide Art-Net
@@ -34,6 +37,7 @@ public class ArtNetController extends NetworkHandler {
 
     private final ArtNetReceiver receiver;
     private final ArtNetSender sender;
+    private final HashMap<Integer, ArtDmxBuilder> universes;
 
     /**
      * Initializes an instance for use but creates a default {@link DatagramSocket} bound to Port {@code 0x1936}.
@@ -54,16 +58,16 @@ public class ArtNetController extends NetworkHandler {
         super(socket);
         this.receiver = new ArtNetReceiver(socket);
         this.sender = new ArtNetSender(socket);
+        universes = new HashMap<>(32768);
     }
 
     @Override
     void run() throws Exception {
-        // TODO Manage universes to send
         // TODO Manage nodes
         // TODO Send ArtDmx
         // TODO Send ArtPoll continuously
         // TODO Send ArtPollReply
-        // TODO Add listener support
+        // TODO Add listener support (maybe)
     }
 
     /**
@@ -94,5 +98,49 @@ public class ArtNetController extends NetworkHandler {
         super.setExceptionHandler(exceptionHandler);
         receiver.setExceptionHandler(exceptionHandler);
         sender.setExceptionHandler(exceptionHandler);
+    }
+
+    /**
+     * Sets the DMX data for the desired universe identified by net number, subnet number and universe.
+     *
+     * @param net      The net number ({@code 0 <= net <= 127}).
+     * @param subnet   The subnet number ({@code 0 <= subnet <= 15}).
+     * @param universe The universe number ({@code 0 <= universe <= 15}).
+     * @param data     The DMX data this universe contains. Set to {@code null} to remove universe from the controller.
+     */
+    public void setUniverseData(int net, int subnet, int universe, byte[] data) {
+
+        if (0 > net || net > 127) {
+            throw new IllegalArgumentException("Illegal net number!");
+        }
+
+        if (0 > subnet || subnet > 15) {
+            throw new IllegalArgumentException("Illegal subnet number!");
+        }
+
+        if (0 > universe || universe > 15) {
+            throw new IllegalArgumentException("Illegal universe number!");
+        }
+
+        if (data != null && data.length > 512) {
+            throw new IllegalArgumentException("Data length > 512 bytes!");
+        }
+
+        int uid = (net & 0x7f << 8) | (subnet & 0xf << 4) | (universe & 0xf);
+
+        if (data == null) {
+            universes.remove(uid);
+        } else {
+            ArtDmxBuilder builder = universes.get(uid);
+
+            if (builder == null) {
+                builder = new ArtDmxBuilder()
+                        .withNetAddress(net)
+                        .withSubnetAddress(subnet)
+                        .withUniverseAddress(universe);
+            }
+
+            builder.withData(data);
+        }
     }
 }
