@@ -30,7 +30,7 @@ information. If you feel there is something missing that is not listed there, fe
   * equipment styles
   * much more
 * ArtTimeCode
-  * 24/25/29,97/30 fps
+  * 24/25/29.97/30 fps
 
 ## <a name="roadmap">Roadmap</a>
 
