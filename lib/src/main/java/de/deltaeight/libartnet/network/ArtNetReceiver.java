@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2019 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -153,7 +153,6 @@ public class ArtNetReceiver extends NetworkHandler {
                     new ArtDmxBuilder(), artDmxReceiveHandlers));
         }
         artDmxReceiveHandlers.add(handler);
-
     }
 
     public void removeArtDmxReceiveHandler(PacketReceiveHandler<ArtDmx> handler) {
@@ -189,7 +188,6 @@ public class ArtNetReceiver extends NetworkHandler {
                     new ArtPollBuilder(), artPollReceiveHandlers));
         }
         artPollReceiveHandlers.add(handler);
-
     }
 
     public void removeArtPollReceiveHandler(PacketReceiveHandler<ArtPoll> handler) {
@@ -225,7 +223,6 @@ public class ArtNetReceiver extends NetworkHandler {
                     new ArtPollReplyBuilder(), artPollReplyReceiveHandlers));
         }
         artPollReplyReceiveHandlers.add(handler);
-
     }
 
     public void removeArtPollReplyReceiveHandler(PacketReceiveHandler<ArtPollReply> handler) {
@@ -261,7 +258,6 @@ public class ArtNetReceiver extends NetworkHandler {
                     new ArtTimeCodeBuilder(), artTimeCodeReceiveHandlers));
         }
         artTimeCodeReceiveHandlers.add(handler);
-
     }
 
     public void removeArtTimeCodeReceiveHandler(PacketReceiveHandler<ArtTimeCode> handler) {

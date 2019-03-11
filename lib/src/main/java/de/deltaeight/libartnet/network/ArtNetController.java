@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2019 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -22,10 +22,15 @@
 package de.deltaeight.libartnet.network;
 
 import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+import de.deltaeight.libartnet.packets.ArtDmx;
 
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.SortedSet;
 
 /**
  * Provides an abstraction layer which makes use of {@link ArtNetReceiver} and {@link ArtNetSender} to provide Art-Net
@@ -38,6 +43,10 @@ public class ArtNetController extends NetworkHandler {
     private final ArtNetReceiver receiver;
     private final ArtNetSender sender;
     private final HashMap<Integer, ArtDmxBuilder> universes;
+    private final HashMap<Integer, HashSet<InetAddress>> universeReceivers;
+    private final UniverseUpdateManager universeUpdateManager;
+
+    private InetAddress broadcastAddress;
 
     /**
      * Initializes an instance for use but creates a default {@link DatagramSocket} bound to Port {@code 0x1936}.
@@ -46,28 +55,56 @@ public class ArtNetController extends NetworkHandler {
      *                         to broadcast or is not able to bind multiple addresses.
      */
     public ArtNetController() throws SocketException {
-        this(new DatagramSocket(0x1936));
+        this(new DatagramSocket(0x1936), new DatagramSocket(0x1936));
     }
 
     /**
      * Initializes an instance for use.
      *
-     * @param socket The {@link DatagramSocket} to use.
+     * @param socket          The {@link DatagramSocket} to use.
+     * @param receivingSocket The {@link DatagramSocket} to receive on.
      */
-    public ArtNetController(DatagramSocket socket) {
+    public ArtNetController(DatagramSocket socket, DatagramSocket receivingSocket) {
         super(socket);
-        this.receiver = new ArtNetReceiver(socket);
+        this.receiver = new ArtNetReceiver(receivingSocket);
         this.sender = new ArtNetSender(socket);
         universes = new HashMap<>(32768);
+        universeReceivers = new HashMap<>();
+        universeUpdateManager = new UniverseUpdateManager();
+        broadcastAddress = InetAddress.getLoopbackAddress();
     }
 
     @Override
-    void run() throws Exception {
-        // TODO Manage nodes
-        // TODO Send ArtDmx
-        // TODO Send ArtPoll continuously
-        // TODO Send ArtPollReply
-        // TODO Add listener support (maybe)
+    void run() {
+
+        // TODO - Manage nodes/receivers
+        //      - Send ArtPoll continuously
+        //      - Send ArtPollReply
+        //      - Add listener support (maybe)
+
+        SortedSet<UniverseUpdateManager.UniverseUpdate> resendUniverses = universeUpdateManager
+                .getUniversesUpdatedBefore(Instant.now().minusSeconds(4));
+
+        resendUniverses.parallelStream().forEach(universe -> {
+
+            int uid = universe.getUid();
+            ArtDmxBuilder uni = universes.get(uid);
+
+            if (uni == null) {
+                universeUpdateManager.removeUniverse(uid);
+            } else {
+                HashSet<InetAddress> addresses = universeReceivers.get(uid);
+                ArtDmx packet = uni.build();
+
+                if (addresses == null) {
+                    sender.send(broadcastAddress, packet);
+                } else {
+                    addresses.parallelStream().forEach(address -> sender.send(address, packet));
+                }
+
+                universeUpdateManager.universeUpdated(uid);
+            }
+        });
     }
 
     /**
@@ -86,8 +123,8 @@ public class ArtNetController extends NetworkHandler {
     @Override
     public void stop() {
         super.stop();
-        receiver.start();
-        sender.start();
+        receiver.stop();
+        sender.stop();
     }
 
     /**
@@ -138,9 +175,21 @@ public class ArtNetController extends NetworkHandler {
                         .withNetAddress(net)
                         .withSubnetAddress(subnet)
                         .withUniverseAddress(universe);
+
+                universes.put(uid, builder);
             }
 
             builder.withData(data);
         }
+
+        universeUpdateManager.universeUpdated(uid, Instant.EPOCH);
+    }
+
+    public InetAddress getBroadcastAddress() {
+        return broadcastAddress;
+    }
+
+    public void setBroadcastAddress(InetAddress broadcastAddress) {
+        this.broadcastAddress = broadcastAddress;
     }
 }

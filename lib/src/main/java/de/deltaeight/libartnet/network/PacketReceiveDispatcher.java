@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2019 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -54,6 +54,7 @@ class PacketReceiveDispatcher<T extends ArtNetPacket> {
         T packet = packetBuilder.buildFromBytes(packetData);
         if (packet != null) {
             receiveHandlers.forEach(receiveHandler -> workingPool.submit(() -> receiveHandler.handle(packet)));
+            return true;
         }
         return false;
     }
