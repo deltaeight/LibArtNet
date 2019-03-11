@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2019 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -25,21 +25,26 @@ import de.deltaeight.libartnet.builders.*;
 import de.deltaeight.libartnet.packets.ArtNetPacket;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 class ArtNetReceiverTest extends AbstractNetworkHandlerTest<ArtNetReceiver> {
 
     @Override
     ArtNetReceiver getNewInstance(DatagramSocket datagramSocket) {
         return new ArtNetReceiver(datagramSocket);
+    }
+
+    @Override
+    void provokeException(ArtNetReceiver networkHandler) {
+        // Do nothing
     }
 
     private <T extends ArtNetPacket> void testReceiveHandler(ArtNetReceiverPreparation<T> artNetReceiverPreparation,
@@ -61,28 +66,8 @@ class ArtNetReceiverTest extends AbstractNetworkHandlerTest<ArtNetReceiver> {
 
         datagramSocketMockup.injectPacket(packet);
 
-        latch.await(3, TimeUnit.SECONDS);
-        assertEquals(packet, packetReference.get());
-    }
-
-    @Test
-    final void exceptionHandler() throws SocketException, InterruptedException {
-
-        AtomicReference<Throwable> handledException = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        ArtNetReceiver artNetReceiver = (ArtNetReceiver) new ArtNetReceiver(new DatagramSocketMockup(true))
-                .withExceptionHandler(exception -> {
-                    handledException.set(exception);
-                    latch.countDown();
-                });
-
-        artNetReceiver.start();
-
-        latch.await(3, TimeUnit.SECONDS);
-        assertTrue(handledException.get() instanceof IOException);
-
-        artNetReceiver.stop();
+        assertThat(latch.await(3, TimeUnit.SECONDS), is(true));
+        assertThat(packet, is(equalTo(packetReference.get())));
     }
 
     @Test
