@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2019 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -25,14 +25,14 @@ import de.deltaeight.libartnet.builders.ArtDmxBuilder;
 import de.deltaeight.libartnet.packets.ArtDmx;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.CoreMatchers.equalToObject;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 class ArtNetSenderTest extends AbstractNetworkHandlerTest<ArtNetSender> {
 
@@ -41,25 +41,9 @@ class ArtNetSenderTest extends AbstractNetworkHandlerTest<ArtNetSender> {
         return new ArtNetSender(datagramSocket);
     }
 
-    @Test
-    final void exceptionHandler() throws SocketException, InterruptedException, UnknownHostException {
-
-        AtomicReference<Throwable> handledException = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        ArtNetSender artNetSender = (ArtNetSender) new ArtNetSender(new DatagramSocketMockup(true))
-                .withExceptionHandler(exception -> {
-                    handledException.set(exception);
-                    latch.countDown();
-                });
-
-        artNetSender.start();
-        artNetSender.send(InetAddress.getByName("127.0.0.1"), new ArtDmxBuilder().build());
-
-        latch.await(3, TimeUnit.SECONDS);
-        assertTrue(handledException.get() instanceof IOException);
-
-        artNetSender.stop();
+    @Override
+    void provokeException(ArtNetSender networkHandler) throws Exception {
+        networkHandler.send(InetAddress.getByName("127.0.0.1"), new ArtDmxBuilder().build());
     }
 
     @Test
@@ -80,8 +64,8 @@ class ArtNetSenderTest extends AbstractNetworkHandlerTest<ArtNetSender> {
         artNetSender.start();
         artNetSender.send(InetAddress.getByName("127.0.0.1"), artDmx);
 
-        latch.await(3, TimeUnit.SECONDS);
-        assertArrayEquals(artDmx.getBytes(), receivedPacket.get().getData());
+        assertThat(latch.await(3, TimeUnit.SECONDS), is(true));
+        assertThat(artDmx.getBytes(), is(equalToObject(receivedPacket.get().getData())));
 
         artNetSender.stop();
     }
