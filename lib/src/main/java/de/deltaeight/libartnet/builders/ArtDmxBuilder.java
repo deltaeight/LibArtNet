@@ -109,7 +109,7 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
 
             int subUni = packetData[14];
 
-            ArtDmx result = new ArtDmx(packetData[12], packetData[13], packetData[15],
+            return new ArtDmx(packetData[12], packetData[13], packetData[15],
                     (subUni & 0xFF) >>> 4, subUni & 0xF,
                     data.clone(), packetData.clone());
         }
