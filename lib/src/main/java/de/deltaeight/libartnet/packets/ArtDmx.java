@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -104,5 +104,15 @@ public class ArtDmx extends ArtNetPacket {
 
     public byte[] getData() {
         return data;
+    }
+
+    public int[] getIntData() {
+        int[] result = new int[data.length];
+
+        for (int i = 0; i < data.length; i++) {
+            result[i] = data[i] & 0xFF;
+        }
+
+        return result;
     }
 }
