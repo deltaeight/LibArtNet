@@ -131,7 +131,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
                 for (PacketReceiveDispatcher<? extends ArtNetPacket> dispatcher : packetReceiveDispatcher.values()) {
 
-                    if (dispatcher.handleReceive(datagramPacket.getData())) {
+                    if (dispatcher.handleReceive(datagramPacket.getData().clone())) {
                         break;
                     }
                 }
