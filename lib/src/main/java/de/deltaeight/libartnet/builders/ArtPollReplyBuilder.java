@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,11 +21,20 @@
 
 package de.deltaeight.libartnet.builders;
 
-import de.deltaeight.libartnet.descriptors.*;
-import de.deltaeight.libartnet.packets.ArtPollReply;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import de.deltaeight.libartnet.descriptors.ArtNet;
+import de.deltaeight.libartnet.descriptors.EquipmentStyle;
+import de.deltaeight.libartnet.descriptors.IndicatorState;
+import de.deltaeight.libartnet.descriptors.InputStatus;
+import de.deltaeight.libartnet.descriptors.OemCode;
+import de.deltaeight.libartnet.descriptors.OpCode;
+import de.deltaeight.libartnet.descriptors.OutputStatus;
+import de.deltaeight.libartnet.descriptors.PortAddressingAuthority;
+import de.deltaeight.libartnet.descriptors.PortType;
+import de.deltaeight.libartnet.descriptors.Product;
+import de.deltaeight.libartnet.packets.ArtPollReply;
 
 /**
  * Builds instances of {@link ArtPollReply}.
@@ -33,7 +42,7 @@ import java.util.Arrays;
  * &nbsp;
  * <table border="1">
  * <caption>Default values</caption>
- * <tr><td>OEM Code</td><td>{@link OemCode#Unknown}</td></tr>
+ * <tr><td>Product</td><td>Unknown product, see {@link OemCode}</td></tr>
  * <tr><td>Indicator state</td><td>{@link IndicatorState#Unknown}</td></tr>
  * <tr><td>Port addressing authority</td><td>{@link PortAddressingAuthority#Unknown}</td></tr>
  * <tr><td>ESTA Manufacturer</td><td>{@code D8}</td></tr>
@@ -68,7 +77,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
     private int nodeVersion;
     private int netAddress;
     private int subnetAddress;
-    private OemCode oemCode;
+    private Product product;
     private int ubeaVersion;
     private IndicatorState indicatorState;
     private PortAddressingAuthority portAddressingAuthority;
@@ -95,7 +104,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
 
     public ArtPollReplyBuilder() {
 
-        oemCode = OemCode.Unknown;
+        product = OemCode.getUnknownProduct();
         indicatorState = IndicatorState.Unknown;
         portAddressingAuthority = PortAddressingAuthority.Unknown;
         estaManufacturer = "D8";
@@ -148,8 +157,8 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
             bytes[18] = (byte) netAddress;
             bytes[19] = (byte) subnetAddress;
 
-            bytes[20] = (byte) (oemCode.getProduct().getProductCode() >> 8);
-            bytes[21] = (byte) oemCode.getProduct().getProductCode();
+            bytes[20] = (byte) (product.getProductCode() >> 8);
+            bytes[21] = (byte) product.getProductCode();
 
             bytes[22] = (byte) ubeaVersion;
             bytes[23] |= indicatorState.getValue() << 6;
@@ -198,8 +207,8 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
                 bytes[174 + i] = portTypes[i].getByte();
                 bytes[178 + i] = inputStatuses[i].getByte();
                 bytes[182 + i] = outputStatuses[i].getByte();
-                bytes[186 + i] = (byte) (int) inputUniverseAddresses[i];
-                bytes[190 + i] = (byte) (int) outputUniverseAddresses[i];
+                bytes[186 + i] = (byte) inputUniverseAddresses[i];
+                bytes[190 + i] = (byte) outputUniverseAddresses[i];
             }
 
             for (int i = 0; i < 8; i++) {
@@ -243,7 +252,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
             }
 
             artPollReply = new ArtPollReply(getIpAddress(), getNodeVersion(), getNetAddress(), getSubnetAddress(),
-                    getOemCode(), getUbeaVersion(), getIndicatorState(), getPortAddressingAuthority(), isBootedFromRom(),
+                    getProduct(), getUbeaVersion(), getIndicatorState(), getPortAddressingAuthority(), isBootedFromRom(),
                     supportsRdm(), isUbeaPresent(), getEstaManufacturer(), getShortName(), getLongName(),
                     getNodeReport(), getPortTypes(), getInputStatuses(), getOutputStatuses(),
                     getInputUniverseAddresses(), getOutputUniverseAddresses(), getMacrosActive(), getRemotesActive(),
@@ -272,7 +281,7 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
                     packetData[16] << 8 | packetData[17] & 0xFF,
                     packetData[18],
                     packetData[19],
-                    OemCode.getOemCode(packetData[20] << 8 | packetData[21] & 0xFF),
+                    OemCode.getProductByProductCode(packetData[20] << 8 | packetData[21] & 0xFF),
                     packetData[22],
                     IndicatorState.values()[packetData[23] >> 6 & 0b00000011],
                     PortAddressingAuthority.values()[packetData[23] >> 4 & 0b00000011],
@@ -434,24 +443,24 @@ public class ArtPollReplyBuilder extends ArtNetPacketBuilder<ArtPollReply> {
         return this;
     }
 
-    public OemCode getOemCode() {
-        return oemCode;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setOemCode(OemCode oemCode) {
+    public void setProduct(Product product) {
 
-        if (oemCode == null) {
-            oemCode = OemCode.Unknown;
+        if (product == null) {
+            product = OemCode.getUnknownProduct();
         }
 
-        if (this.oemCode != oemCode) {
-            this.oemCode = oemCode;
+        if (this.product != product) {
+            this.product = product;
             changed = true;
         }
     }
 
-    public ArtPollReplyBuilder withOemCode(OemCode oemCode) {
-        setOemCode(oemCode);
+    public ArtPollReplyBuilder withProduct(Product product) {
+        setProduct(product);
         return this;
     }
 

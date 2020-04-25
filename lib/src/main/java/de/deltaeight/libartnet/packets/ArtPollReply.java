@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,11 +21,17 @@
 
 package de.deltaeight.libartnet.packets;
 
-import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
-import de.deltaeight.libartnet.descriptors.*;
-
 import java.util.Arrays;
 import java.util.Objects;
+
+import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
+import de.deltaeight.libartnet.descriptors.EquipmentStyle;
+import de.deltaeight.libartnet.descriptors.IndicatorState;
+import de.deltaeight.libartnet.descriptors.InputStatus;
+import de.deltaeight.libartnet.descriptors.OutputStatus;
+import de.deltaeight.libartnet.descriptors.PortAddressingAuthority;
+import de.deltaeight.libartnet.descriptors.PortType;
+import de.deltaeight.libartnet.descriptors.Product;
 
 /**
  * Represents an {@code ArtPollReply} packet containing node information about the sender. This is sent periodically or
@@ -44,7 +50,7 @@ public class ArtPollReply extends ArtNetPacket {
     private final int nodeVersion;
     private final int netAddress;
     private final int subnetAddress;
-    private final OemCode oemCode;
+    private final Product product;
     private final int ubeaVersion;
     private final IndicatorState indicatorState;
     private final PortAddressingAuthority portAddressingAuthority;
@@ -77,7 +83,7 @@ public class ArtPollReply extends ArtNetPacket {
                         int nodeVersion,
                         int netAddress,
                         int subnetAddress,
-                        OemCode oemCode,
+                        Product product,
                         int ubeaVersion,
                         IndicatorState indicatorState,
                         PortAddressingAuthority portAddressingAuthority,
@@ -113,7 +119,7 @@ public class ArtPollReply extends ArtNetPacket {
         this.nodeVersion = nodeVersion;
         this.netAddress = netAddress;
         this.subnetAddress = subnetAddress;
-        this.oemCode = oemCode;
+        this.product = product;
         this.ubeaVersion = ubeaVersion;
         this.indicatorState = indicatorState;
         this.portAddressingAuthority = portAddressingAuthority;
@@ -146,7 +152,7 @@ public class ArtPollReply extends ArtNetPacket {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(nodeVersion, netAddress, subnetAddress, oemCode, ubeaVersion, indicatorState,
+        int result = Objects.hash(nodeVersion, netAddress, subnetAddress, product, ubeaVersion, indicatorState,
                 portAddressingAuthority, bootedFromRom, rdmSupport, ubeaPresent, estaManufacturer, shortName, longName,
                 nodeReport, equipmentStyle, bindIndex, webBrowserConfigurationSupport, ipIsDhcpConfigured, dhcpSupport,
                 longPortAddressSupport, canSwitchToSACN, squawking);
@@ -185,7 +191,7 @@ public class ArtPollReply extends ArtNetPacket {
                 canSwitchToSACN == that.canSwitchToSACN &&
                 squawking == that.squawking &&
                 Arrays.equals(ipAddress, that.ipAddress) &&
-                oemCode == that.oemCode &&
+                product == that.product &&
                 indicatorState == that.indicatorState &&
                 portAddressingAuthority == that.portAddressingAuthority &&
                 Objects.equals(estaManufacturer, that.estaManufacturer) &&
@@ -220,8 +226,8 @@ public class ArtPollReply extends ArtNetPacket {
         return subnetAddress;
     }
 
-    public OemCode getOemCode() {
-        return oemCode;
+    public Product getProduct() {
+        return product;
     }
 
     public int getUbeaVersion() {

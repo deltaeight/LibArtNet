@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -29,6 +29,7 @@ package de.deltaeight.libartnet.descriptors;
  */
 public class Product {
 
+    private final String oemCode;
     private final int productCode;
     private final String manufacturer;
     private final String name;
@@ -40,6 +41,7 @@ public class Product {
     private final String supportName;
 
     /**
+     * @param oemCode          The OEM code assigned by Artistic License Ltd.
      * @param productCode      The product code assigned by Artistic License Ltd.
      * @param manufacturer     The manufacturer of the product
      * @param name             The name of the product
@@ -50,7 +52,8 @@ public class Product {
      * @param supportEmail     The Email address of the customer support.
      * @param supportName      The name of the customer support.
      */
-    Product(int productCode,
+    Product(String oemCode,
+            int productCode,
             String manufacturer,
             String name,
             int dmxOutputs,
@@ -60,6 +63,7 @@ public class Product {
             String supportEmail,
             String supportName) {
 
+        this.oemCode = oemCode;
         this.productCode = productCode;
         this.manufacturer = manufacturer;
         this.name = name;
@@ -69,6 +73,10 @@ public class Product {
         this.supportsRdm = supportsRdm;
         this.supportEmail = supportEmail;
         this.supportName = supportName;
+    }
+
+    public String getOemCode() {
+        return oemCode;
     }
 
     public int getProductCode() {

@@ -7,3 +7,6 @@ build
 *.iml
 out
 gen
+
+# Misc
+/util/src/main/resources/de/deltaeight/libartnet/util/Art-NetOemCodes.h
