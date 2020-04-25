@@ -41,10 +41,6 @@ abstract class NetworkHandler {
      */
     NetworkHandler(DatagramSocket socket) {
 
-        if (socket.getLocalPort() != 0x1936) {
-            throw new IllegalArgumentException("Illegal socket port " + socket.getLocalPort() + "!");
-        }
-
         this.socket = socket;
 
         workerThread = new Thread() {

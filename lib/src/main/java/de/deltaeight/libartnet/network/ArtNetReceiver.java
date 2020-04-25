@@ -21,13 +21,6 @@
 
 package de.deltaeight.libartnet.network;
 
-import de.deltaeight.libartnet.builders.ArtDmxBuilder;
-import de.deltaeight.libartnet.builders.ArtPollBuilder;
-import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
-import de.deltaeight.libartnet.builders.ArtTimeCodeBuilder;
-import de.deltaeight.libartnet.descriptors.ArtNet;
-import de.deltaeight.libartnet.packets.*;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -36,6 +29,17 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+
+import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+import de.deltaeight.libartnet.builders.ArtPollBuilder;
+import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
+import de.deltaeight.libartnet.builders.ArtTimeCodeBuilder;
+import de.deltaeight.libartnet.descriptors.ArtNet;
+import de.deltaeight.libartnet.packets.ArtDmx;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
+import de.deltaeight.libartnet.packets.ArtPoll;
+import de.deltaeight.libartnet.packets.ArtPollReply;
+import de.deltaeight.libartnet.packets.ArtTimeCode;
 
 /**
  * Provides a multi-threaded receiver which listens to UDP network traffic and uses {@link PacketReceiveHandler}
@@ -62,6 +66,11 @@ public class ArtNetReceiver extends NetworkHandler {
      */
     public ArtNetReceiver(ExecutorService workingPool, DatagramSocket socket) {
         super(socket);
+
+        if (socket.getLocalPort() != 0x1936) {
+            throw new IllegalArgumentException("Illegal socket port " + socket.getLocalPort() + "!");
+        }
+
         this.workingPool = workingPool;
 
         buffer = new byte[530];
@@ -117,8 +126,7 @@ public class ArtNetReceiver extends NetworkHandler {
 
         workingPool.execute(() -> {
 
-            if (datagramPacket.getPort() == 0x1936
-                    && datagramPacket.getLength() > 10
+            if (datagramPacket.getLength() > 10
                     && Arrays.equals(ArtNet.HEADER.getBytes(), Arrays.copyOfRange(datagramPacket.getData(), 0, 8))) {
 
                 for (PacketReceiveDispatcher<? extends ArtNetPacket> dispatcher : packetReceiveDispatcher.values()) {
