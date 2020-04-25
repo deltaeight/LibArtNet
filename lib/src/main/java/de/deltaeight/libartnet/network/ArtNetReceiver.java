@@ -124,19 +124,16 @@ public class ArtNetReceiver extends NetworkHandler {
         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
         socket.receive(datagramPacket);
 
-        workingPool.execute(() -> {
+        if (datagramPacket.getLength() > 10
+                && Arrays.equals(ArtNet.HEADER.getBytes(), Arrays.copyOfRange(datagramPacket.getData(), 0, 8))) {
 
-            if (datagramPacket.getLength() > 10
-                    && Arrays.equals(ArtNet.HEADER.getBytes(), Arrays.copyOfRange(datagramPacket.getData(), 0, 8))) {
+            for (PacketReceiveDispatcher<? extends ArtNetPacket> dispatcher : packetReceiveDispatcher.values()) {
 
-                for (PacketReceiveDispatcher<? extends ArtNetPacket> dispatcher : packetReceiveDispatcher.values()) {
-
-                    if (dispatcher.handleReceive(datagramPacket.getData().clone())) {
-                        break;
-                    }
+                if (dispatcher.handleReceive(datagramPacket.getData().clone())) {
+                    break;
                 }
             }
-        });
+        }
     }
 
     /**
