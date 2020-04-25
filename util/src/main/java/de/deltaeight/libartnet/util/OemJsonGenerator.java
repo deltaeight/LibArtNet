@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -25,8 +25,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,7 @@ import java.util.regex.Pattern;
  *
  * @author Julian Rabe
  */
-public class OemEnumGenerator {
+public class OemJsonGenerator {
 
     private static final Pattern pattern = Pattern.compile("#define (Oem[a-zA-Z0-9_]+)[ \\xA0]+" +
             "0x([a-fA-F0-9]{4})[ \\xA0]+" +
@@ -55,10 +56,7 @@ public class OemEnumGenerator {
 
     public static void main(String... args) throws IOException, URISyntaxException {
 
-        String template = new String(Files.readAllBytes(Paths.get(OemEnumGenerator.class
-                .getResource("OemCodeTemplate.java").toURI())));
-
-        List<String> lines = Files.readAllLines(Paths.get(OemEnumGenerator.class
+        List<String> lines = Files.readAllLines(Paths.get(OemJsonGenerator.class
                 .getResource("Art-NetOemCodes.h").toURI()));
 
         StringJoiner parsedLines = new StringJoiner(",\n");
@@ -68,26 +66,20 @@ public class OemEnumGenerator {
 
         for (String line : lines) {
 
-            String enumEntry = createEnumEntry(line);
+            String codeEntry = createCodeEntry(line);
 
-            if (enumEntry != null) {
-                parsedLines.add(enumEntry);
+            if (codeEntry != null) {
+                parsedLines.add(codeEntry);
                 productCounter++;
             } else {
                 unparsedLines.add(line);
             }
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Files.write(Paths.get("lib/src/main/resources/de/deltaeight/libartnet/descriptors/OemCodes.json"),
+                ("[\n" + parsedLines.toString() + "\n]").getBytes());
 
-        Files.write(Paths.get("lib/src/main/java/de/deltaeight/libartnet/descriptors/OemCode.java"),
-                template.replace("$ENTRIES$", parsedLines.toString())
-                        .replace("$PRODUCT_COUNTER$", "" + productCounter)
-                        .replace("$DATE$", dateFormat.format(new Date()))
-                        .getBytes());
-
-        System.out.println("Result written to OemCode.java!");
+        System.out.println("Result written to OemCodes.json!");
         System.out.println("Products parsed: " + productCounter);
         System.out.println("Unparsed lines:  " + unparsedLines.size());
         System.out.println();
@@ -95,11 +87,13 @@ public class OemEnumGenerator {
         System.out.println("######################");
 
         for (String line : unparsedLines) {
-            System.out.println(line);
+            if (!line.replaceAll("\\s", "").isEmpty()) {
+                System.out.println(line);
+            }
         }
     }
 
-    private static String createEnumEntry(String line) {
+    private static String createCodeEntry(String line) {
 
         Matcher matcher = pattern.matcher(line);
         if (matcher.matches()) {
@@ -117,11 +111,18 @@ public class OemEnumGenerator {
                     || matcher.group(8).equalsIgnoreCase("yes")
                     || matcher.group(8).equalsIgnoreCase("rdm");
 
-            return matcher.group(1) + "(new Product(0x"
-                    + String.format("%04X", Integer.parseInt(matcher.group(2), 16)) + ", \""
-                    + matcher.group(3) + "\", \"" + matcher.group(4) + "\", " + Integer.parseInt(matcher.group(5)) + ", "
-                    + Integer.parseInt(matcher.group(6)) + ", " + dmxPortsPhysical + ", " + supportsRdm + ", \""
-                    + matcher.group(9) + "\", \"" + matcher.group(10) + "\"))";
+            return "    { " +
+                    "\"oemCode\": \"" + matcher.group(1) + "\", " +
+                    "\"productCode\": " + Integer.parseInt(matcher.group(2), 16) + ", " +
+                    "\"manufacturer\": \"" + matcher.group(3) + "\", " +
+                    "\"name\": \"" + matcher.group(4) + "\", " +
+                    "\"dmxOutputs\": " + Integer.parseInt(matcher.group(5)) + ", " +
+                    "\"dmxInputs\": " + Integer.parseInt(matcher.group(6)) + ", " +
+                    "\"dmxPortsPhysical\": \"" + dmxPortsPhysical + "\", " +
+                    "\"supportsRdm\": \"" + supportsRdm + "\", " +
+                    "\"supportEmail\": \"" + matcher.group(9) + "\", " +
+                    "\"supportName\": \"" + matcher.group(10) + "\" " +
+                    "}";
         }
 
         return null;

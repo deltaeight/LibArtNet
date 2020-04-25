@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,10 +21,23 @@
 
 package de.deltaeight.libartnet.builders;
 
-import de.deltaeight.libartnet.descriptors.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import de.deltaeight.libartnet.descriptors.EquipmentStyle;
+import de.deltaeight.libartnet.descriptors.IndicatorState;
+import de.deltaeight.libartnet.descriptors.InputStatus;
+import de.deltaeight.libartnet.descriptors.OemCode;
+import de.deltaeight.libartnet.descriptors.OutputStatus;
+import de.deltaeight.libartnet.descriptors.PortAddressingAuthority;
+import de.deltaeight.libartnet.descriptors.PortType;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
@@ -264,7 +277,7 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
     }
 
     @Test
-    void oemCode() {
+    void product() {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 new int[]{0x00, 0x00}, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES,
@@ -274,22 +287,22 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
-        assertSame(OemCode.Unknown, builder.getOemCode());
+        assertSame(OemCode.getUnknownProduct(), builder.getProduct());
 
-        builder.setOemCode(OemCode.OemDMXHub);
-        assertSame(OemCode.OemDMXHub, builder.getOemCode());
+        builder.setProduct(OemCode.getProductByOemCode("OemDMXHub"));
+        assertSame(OemCode.getProductByOemCode("OemDMXHub"), builder.getProduct());
         assertPackets(expectedData, builder);
 
-        builder.setOemCode(null);
-        assertSame(OemCode.Unknown, builder.getOemCode());
+        builder.setProduct(null);
+        assertSame(OemCode.getUnknownProduct(), builder.getProduct());
         assertPackets(DEFAULT_PACKET, builder);
 
-        assertSame(builder, builder.withOemCode(OemCode.OemDMXHub));
-        assertSame(OemCode.OemDMXHub, builder.getOemCode());
+        assertSame(builder, builder.withProduct(OemCode.getProductByOemCode("OemDMXHub")));
+        assertSame(OemCode.getProductByOemCode("OemDMXHub"), builder.getProduct());
         assertPackets(expectedData, builder);
 
-        assertSame(builder, builder.withOemCode(null));
-        assertSame(OemCode.Unknown, builder.getOemCode());
+        assertSame(builder, builder.withProduct(null));
+        assertSame(OemCode.getUnknownProduct(), builder.getProduct());
         assertPackets(DEFAULT_PACKET, builder);
     }
 
