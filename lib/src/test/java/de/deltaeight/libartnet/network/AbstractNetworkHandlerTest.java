@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2019 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -40,11 +40,6 @@ abstract class AbstractNetworkHandlerTest<T extends NetworkHandler> {
     abstract T getNewInstance(DatagramSocket datagramSocket);
 
     abstract void provokeException(T networkHandler) throws Exception;
-
-    @Test
-    final void constructor() {
-        assertThrows(IllegalArgumentException.class, () -> getNewInstance(new DatagramSocketMockup(666)));
-    }
 
     @Test
     final void states() throws SocketException {

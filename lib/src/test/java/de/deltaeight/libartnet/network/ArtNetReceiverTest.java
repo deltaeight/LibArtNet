@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2019 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,8 +21,6 @@
 
 package de.deltaeight.libartnet.network;
 
-import de.deltaeight.libartnet.builders.*;
-import de.deltaeight.libartnet.packets.ArtNetPacket;
 import org.junit.jupiter.api.Test;
 
 import java.net.DatagramSocket;
@@ -31,9 +29,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import de.deltaeight.libartnet.builders.ArtDmxBuilder;
+import de.deltaeight.libartnet.builders.ArtNetPacketBuilder;
+import de.deltaeight.libartnet.builders.ArtPollBuilder;
+import de.deltaeight.libartnet.builders.ArtPollReplyBuilder;
+import de.deltaeight.libartnet.builders.ArtTimeCodeBuilder;
+import de.deltaeight.libartnet.packets.ArtNetPacket;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ArtNetReceiverTest extends AbstractNetworkHandlerTest<ArtNetReceiver> {
 
@@ -45,6 +51,11 @@ class ArtNetReceiverTest extends AbstractNetworkHandlerTest<ArtNetReceiver> {
     @Override
     void provokeException(ArtNetReceiver networkHandler) {
         // Do nothing
+    }
+
+    @Test
+    final void constructor() {
+        assertThrows(IllegalArgumentException.class, () -> getNewInstance(new DatagramSocketMockup(666)));
     }
 
     private <T extends ArtNetPacket> void testReceiveHandler(ArtNetReceiverPreparation<T> artNetReceiverPreparation,
