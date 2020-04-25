@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2020 Julian Rabe
+ * Copyright (c) 2018 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,13 +21,13 @@
 
 package de.deltaeight.libartnet.network;
 
+import de.deltaeight.libartnet.packets.ArtNetPacket;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import de.deltaeight.libartnet.packets.ArtNetPacket;
 
 /**
  * Provides a sender which queues packets to send.
@@ -61,7 +61,6 @@ public class ArtNetSender extends NetworkHandler {
     @Override
     void run() throws Exception {
         socket.send(packetQueue.take());
-        Thread.sleep(23);
     }
 
     /**

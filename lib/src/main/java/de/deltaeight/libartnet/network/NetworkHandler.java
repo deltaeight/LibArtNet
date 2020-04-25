@@ -178,8 +178,4 @@ abstract class NetworkHandler {
          */
         Stopped
     }
-
-    public DatagramSocket getSocket() {
-        return socket;
-    }
 }
