@@ -39,6 +39,9 @@ public enum OemCode {
 
     $ENTRIES$,
 
+    @Deprecated
+    OemFourPlay(OemArtFourPlay.product),
+
     Unknown(new Product(32767, "N/A", "N/A", 0, 0, false, false, "N/A", "N/A"));
 
     private static final HashMap<Integer, OemCode> products;
