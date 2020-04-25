@@ -3,7 +3,7 @@
  *
  * Art-Net(TM) Designed by and Copyright Artistic Licence Holdings Ltd
  *
- * Copyright (c) 2018 Julian Rabe
+ * Copyright (c) 2020 Julian Rabe
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,11 +21,11 @@
 
 package de.deltaeight.libartnet.builders;
 
+import java.util.Arrays;
+
 import de.deltaeight.libartnet.descriptors.ArtNet;
 import de.deltaeight.libartnet.descriptors.OpCode;
 import de.deltaeight.libartnet.packets.ArtDmx;
-
-import java.util.Arrays;
 
 /**
  * Builds instances of {@link ArtDmx}.
@@ -107,8 +107,9 @@ public class ArtDmxBuilder extends ArtNetPacketBuilder<ArtDmx> {
             byte[] data = new byte[packetData[16] << 8 | packetData[17]];
             System.arraycopy(packetData, 18, data, 0, data.length);
 
-            return new ArtDmx(packetData[12], packetData[13], packetData[15], packetData[14] >> 4,
-                    packetData[14] & 0b00001111, data.clone(), packetData.clone());
+            return new ArtDmx(packetData[12], packetData[13], packetData[15],
+                    ((int) packetData[14] & 0xFF) >> 4, packetData[14] & 0b00001111,
+                    data.clone(), packetData.clone());
         }
         return null;
     }
