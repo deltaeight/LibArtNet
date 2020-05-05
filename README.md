@@ -2,6 +2,7 @@
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
+![Art-Net logo](artnet.gif | width=50)
 
 **Please have in mind that LibArtNet is still in beta.**
 
@@ -25,7 +26,7 @@ information. If you feel there is something missing that is not listed there, fe
 * ArtPollReply
   * macros
   * remotes
-  * OEM codes (enum with all codes available)
+  * OEM codes (all OEM codes built in)
   * short/long names
   * equipment styles
   * much more
