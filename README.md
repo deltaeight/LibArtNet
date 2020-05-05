@@ -2,7 +2,7 @@
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
-![Art-Net logo](artnet.gif | width=50)
+<img src="artnet.gif" width="100" style="float:right">
 
 **Please have in mind that LibArtNet is still in beta.**
 
