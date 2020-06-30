@@ -109,7 +109,8 @@ The sender needs Art-Net packets to send, therefore we need a builder instance f
 
 ```java
 ArtPollReplyBuilder builder = new ArtPollReplyBuilder()
-        .withOemCode(OemCode.OemRobertJulDalis1)
+        // report as Robert Juliat Dalis Reference : 860
+        .withProduct(OemCode.getProductByOemCode("OemRobertJulDalis1"))
         .withBindIp(new byte[]{127, 0, 0, 1});
 
 ArtNetSender sender = new ArtNetSender();
