@@ -114,7 +114,7 @@ ArtPollReplyBuilder builder = new ArtPollReplyBuilder()
         .withBindIp(new byte[]{127, 0, 0, 1});
 
 ArtNetSender sender = new ArtNetSender();
-artNetSender.start();
+sender.start();
 
 sender.send(InetAddress.getByName("127.0.0.1"), builder.build());
 
