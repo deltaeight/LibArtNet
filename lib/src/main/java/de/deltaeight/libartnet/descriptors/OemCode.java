@@ -23,10 +23,8 @@ package de.deltaeight.libartnet.descriptors;
 
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 /**
@@ -52,13 +50,8 @@ public class OemCode {
 
         addProduct(unknownProduct);
 
-        Product[] products = null;
-        try {
-            products = new Gson().fromJson(new String(Files.readAllBytes(Paths.get(OemCode.class
-                    .getResource("OemCodes.json").toURI()))), Product[].class);
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
+        Product[] products = new Gson().fromJson(new BufferedReader(new InputStreamReader(
+                OemCode.class.getResourceAsStream("OemCodes.json"))), Product[].class);
 
         if (products != null) {
             for (Product product : products) {
