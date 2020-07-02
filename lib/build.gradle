@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'maven'
+    id 'maven-publish'
     id 'signing'
 }
 
@@ -31,64 +31,55 @@ test {
     }
 }
 
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
+            from components.java
 
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                name 'LibArtNet'
-                packaging 'jar'
-                description 'Art-Net 4 protocol implementation in Java'
-                url 'https://github.com/deltaeight/LibArtNet'
-
-                scm {
-                    connection 'scm:https://github.com/deltaeight/LibArtNet.git'
-                    developerConnection 'scm:https://github.com/deltaeight/LibArtNet.git'
-                    url 'https://github.com/deltaeight/LibArtNet'
-                }
+            pom {
+                name = 'LibArtNet'
+                description = 'Art-Net 4 protocol implementation in Java'
+                url = 'https://github.com/deltaeight/LibArtNet'
 
                 licenses {
                     license {
-                        name 'The MIT License'
-                        url 'https://opensource.org/licenses/mit-license.php'
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/mit-license.php'
                     }
                 }
 
                 developers {
                     developer {
-                        id 'schw4rzlicht'
-                        name 'Julian Rabe'
-                        email 'julian@deltaeight.de'
+                        id = 'schw4rzlicht'
+                        name = 'Julian Rabe'
+                        email = 'julian@deltaeight.de'
                     }
+                }
+
+                scm {
+                    connection = 'scm:https://github.com/deltaeight/LibArtNet.git'
+                    developerConnection = 'scm:https://github.com/deltaeight/LibArtNet.git'
+                    url = 'https://github.com/deltaeight/LibArtNet'
                 }
             }
         }
     }
+
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
