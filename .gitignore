@@ -8,5 +8,12 @@ build
 out
 gen
 
+# VSCode project files
+bin/
+.settings
+.classpath
+.project
+
+
 # Misc
 /util/src/main/resources/de/deltaeight/libartnet/util/Art-NetOemCodes.h

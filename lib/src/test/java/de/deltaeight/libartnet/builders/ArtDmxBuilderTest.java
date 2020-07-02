@@ -64,7 +64,8 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void sequence() {
 
-        byte[] expectedData = getExpectedData(0x01, 0x00, 0x00, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataSequence1 = getExpectedData(0x01, 0x00, 0x00, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataSequence255 = getExpectedData(0xff, 0x00, 0x00, 0x00, 0x00, new byte[0]);
 
         ArtDmxBuilder builder = new ArtDmxBuilder();
 
@@ -72,19 +73,27 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setSequence(1);
         assertEquals(1, builder.getSequence());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataSequence1, builder);
 
         builder.setSequence(0);
         assertEquals(0, builder.getSequence());
         assertPackets(DEFAULT_PACKET, builder);
 
+        builder.setSequence(255);
+        assertEquals(255, builder.getSequence());
+        assertPackets(expectedDataSequence255, builder);
+
         assertSame(builder, builder.withSequence(1));
         assertEquals(1, builder.getSequence());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataSequence1, builder);
 
         assertSame(builder, builder.withSequence(0));
         assertEquals(0, builder.getSequence());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withSequence(255));
+        assertEquals(255, builder.getSequence());
+        assertPackets(expectedDataSequence255, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSequence(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSequence(256));
@@ -93,7 +102,8 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void physical() {
 
-        byte[] expectedData = getExpectedData(0x00, 0x01, 0x00, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataPhysical1 = getExpectedData(0x00, 0x01, 0x00, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataPhysical255 = getExpectedData(0x00, 0xff, 0x00, 0x00, 0x00, new byte[0]);
 
         ArtDmxBuilder builder = new ArtDmxBuilder();
 
@@ -101,19 +111,27 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setPhysical(1);
         assertEquals(1, builder.getPhysical());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataPhysical1, builder);
 
         builder.setPhysical(0);
         assertEquals(0, builder.getPhysical());
         assertPackets(DEFAULT_PACKET, builder);
 
+        builder.setPhysical(255);
+        assertEquals(255, builder.getPhysical());
+        assertPackets(expectedDataPhysical255, builder);
+
         assertSame(builder, builder.withPhysical(1));
         assertEquals(1, builder.getPhysical());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataPhysical1, builder);
 
         assertSame(builder, builder.withPhysical(0));
         assertEquals(0, builder.getPhysical());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withPhysical(255));
+        assertEquals(255, builder.getPhysical());
+        assertPackets(expectedDataPhysical255, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setPhysical(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withPhysical(256));
@@ -122,7 +140,8 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void subnetAddress() {
 
-        byte[] expectedData = getExpectedData(0x00, 0x00, 0x00, 0x01, 0x00, new byte[0]);
+        byte[] expectedDataSubnet1 = getExpectedData(0x00, 0x00, 0x00, 0x01, 0x00, new byte[0]);
+        byte[] expectedDataSubnet15 = getExpectedData(0x00, 0x00, 0x00, 0x0f, 0x00, new byte[0]);
 
         ArtDmxBuilder builder = new ArtDmxBuilder();
 
@@ -130,19 +149,27 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setSubnetAddress(1);
         assertEquals(1, builder.getSubnetAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataSubnet1, builder);
 
         builder.setSubnetAddress(0);
         assertEquals(0, builder.getSubnetAddress());
         assertPackets(DEFAULT_PACKET, builder);
 
+        builder.setSubnetAddress(15);
+        assertEquals(15, builder.getSubnetAddress());
+        assertPackets(expectedDataSubnet15, builder);
+
         assertSame(builder, builder.withSubnetAddress(1));
         assertEquals(1, builder.getSubnetAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataSubnet1, builder);
 
         assertSame(builder, builder.withSubnetAddress(0));
         assertEquals(0, builder.getSubnetAddress());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withSubnetAddress(15));
+        assertEquals(15, builder.getSubnetAddress());
+        assertPackets(expectedDataSubnet15, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setSubnetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withSubnetAddress(16));
@@ -151,7 +178,8 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void universeAddress() {
 
-        byte[] expectedData = getExpectedData(0x00, 0x00, 0x00, 0x00, 0x01, new byte[0]);
+        byte[] expectedDataUniverse1 = getExpectedData(0x00, 0x00, 0x00, 0x00, 0x01, new byte[0]);
+        byte[] expectedDataUniverse15 = getExpectedData(0x00, 0x00, 0x00, 0x00, 0x0f, new byte[0]);
 
         ArtDmxBuilder builder = new ArtDmxBuilder();
 
@@ -159,19 +187,27 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setUniverseAddress(1);
         assertEquals(1, builder.getUniverseAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataUniverse1, builder);
 
         builder.setUniverseAddress(0);
         assertEquals(0, builder.getUniverseAddress());
         assertPackets(DEFAULT_PACKET, builder);
 
+        builder.setUniverseAddress(15);
+        assertEquals(15, builder.getUniverseAddress());
+        assertPackets(expectedDataUniverse15, builder);
+
         assertSame(builder, builder.withUniverseAddress(1));
         assertEquals(1, builder.getUniverseAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataUniverse1, builder);
 
         assertSame(builder, builder.withUniverseAddress(0));
         assertEquals(0, builder.getUniverseAddress());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withUniverseAddress(15));
+        assertEquals(15, builder.getUniverseAddress());
+        assertPackets(expectedDataUniverse15, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setUniverseAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withUniverseAddress(16));
@@ -180,7 +216,8 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void netAddress() {
 
-        byte[] expectedData = getExpectedData(0x00, 0x00, 0x01, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataNetAddress1 = getExpectedData(0x00, 0x00, 0x01, 0x00, 0x00, new byte[0]);
+        byte[] expectedDataNetAddress127 = getExpectedData(0x00, 0x00, 0x7f, 0x00, 0x00, new byte[0]);
 
         ArtDmxBuilder builder = new ArtDmxBuilder();
 
@@ -188,7 +225,15 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setNetAddress(1);
         assertEquals(1, builder.getNetAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataNetAddress1, builder);
+
+        builder.setNetAddress(0);
+        assertEquals(0, builder.getNetAddress());
+        assertPackets(DEFAULT_PACKET, builder);
+
+        builder.setNetAddress(127);
+        assertEquals(127, builder.getNetAddress());
+        assertPackets(expectedDataNetAddress127, builder);
 
         builder.setNetAddress(0);
         assertEquals(0, builder.getNetAddress());
@@ -196,11 +241,15 @@ class ArtDmxBuilderTest extends AbstractPacketBuilderTest {
 
         assertSame(builder, builder.withNetAddress(1));
         assertEquals(1, builder.getNetAddress());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataNetAddress1, builder);
 
         assertSame(builder, builder.withNetAddress(0));
         assertEquals(0, builder.getNetAddress());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withNetAddress(127));
+        assertEquals(127, builder.getNetAddress());
+        assertPackets(expectedDataNetAddress127, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setNetAddress(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withNetAddress(128));

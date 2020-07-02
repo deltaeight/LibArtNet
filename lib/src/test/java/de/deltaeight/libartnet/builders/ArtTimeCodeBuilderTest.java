@@ -79,9 +79,9 @@ class ArtTimeCodeBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getHours());
 
-        builder.setHours(1);
-        assertEquals(1, builder.getHours());
-        assertPackets(getExpectedData(0, 1, 0, 0, 0), builder);
+        builder.setHours(23);
+        assertEquals(23, builder.getHours());
+        assertPackets(getExpectedData(0, 23, 0, 0, 0), builder);
 
         assertSame(builder, builder.withHours(0));
         assertEquals(0, builder.getHours());
@@ -98,9 +98,9 @@ class ArtTimeCodeBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getMinutes());
 
-        builder.setMinutes(1);
-        assertEquals(1, builder.getMinutes());
-        assertPackets(getExpectedData(0, 0, 1, 0, 0), builder);
+        builder.setMinutes(59);
+        assertEquals(59, builder.getMinutes());
+        assertPackets(getExpectedData(0, 0, 59, 0, 0), builder);
 
         assertSame(builder, builder.withMinutes(0));
         assertEquals(0, builder.getMinutes());
@@ -117,9 +117,9 @@ class ArtTimeCodeBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getSeconds());
 
-        builder.setSeconds(1);
-        assertEquals(1, builder.getSeconds());
-        assertPackets(getExpectedData(0, 0, 0, 1, 0), builder);
+        builder.setSeconds(59);
+        assertEquals(59, builder.getSeconds());
+        assertPackets(getExpectedData(0, 0, 0, 59, 0), builder);
 
         assertSame(builder, builder.withSeconds(0));
         assertEquals(0, builder.getSeconds());
@@ -136,9 +136,9 @@ class ArtTimeCodeBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getFrames());
 
-        builder.setFrames(1);
-        assertEquals(1, builder.getFrames());
-        assertPackets(getExpectedData(0, 0, 0, 0, 1), builder);
+        builder.setFrames(23);
+        assertEquals(23, builder.getFrames());
+        assertPackets(getExpectedData(0, 0, 0, 0, 23), builder);
 
         assertSame(builder, builder.withFrames(0));
         assertEquals(0, builder.getFrames());

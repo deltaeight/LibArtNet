@@ -215,7 +215,7 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void netAddress() {
 
-        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x2A, 0x00,
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x7f, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                 new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0x00);
@@ -224,16 +224,16 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getNetAddress());
 
-        builder.setNetAddress(42);
-        assertEquals(42, builder.getNetAddress());
+        builder.setNetAddress(127);
+        assertEquals(127, builder.getNetAddress());
         assertPackets(expectedData, builder);
 
         builder.setNetAddress(0);
         assertEquals(0, builder.getNetAddress());
         assertPackets(DEFAULT_PACKET, builder);
 
-        assertSame(builder, builder.withNetAddress(42));
-        assertEquals(42, builder.getNetAddress());
+        assertSame(builder, builder.withNetAddress(127));
+        assertEquals(127, builder.getNetAddress());
         assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withNetAddress(0));
@@ -247,7 +247,7 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void subnetAddress() {
 
-        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x0D,
+        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x0f,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                 new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x00, 0x00);
@@ -256,16 +256,16 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getSubnetAddress());
 
-        builder.setSubnetAddress(13);
-        assertEquals(13, builder.getSubnetAddress());
+        builder.setSubnetAddress(15);
+        assertEquals(15, builder.getSubnetAddress());
         assertPackets(expectedData, builder);
 
         builder.setSubnetAddress(0);
         assertEquals(0, builder.getSubnetAddress());
         assertPackets(DEFAULT_PACKET, builder);
 
-        assertSame(builder, builder.withSubnetAddress(13));
-        assertEquals(13, builder.getSubnetAddress());
+        assertSame(builder, builder.withSubnetAddress(15));
+        assertEquals(15, builder.getSubnetAddress());
         assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withSubnetAddress(0));
@@ -310,7 +310,7 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
     void ubeaVersion() {
 
         byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
-                DEFAULT_OEM_BYTES, 0x2A, 0x00, DEFAULT_ESTA_MAN_BYTES,
+                DEFAULT_OEM_BYTES, 0xff, 0x00, DEFAULT_ESTA_MAN_BYTES,
                 DEFAULT_NAMES, DEFAULT_NAMES, new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4],
                 new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4],
                 0x00, 0x00);
@@ -319,16 +319,16 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
         assertEquals(0, builder.getUbeaVersion());
 
-        builder.setUbeaVersion(42);
-        assertEquals(42, builder.getUbeaVersion());
+        builder.setUbeaVersion(255);
+        assertEquals(255, builder.getUbeaVersion());
         assertPackets(expectedData, builder);
 
         builder.setUbeaVersion(0);
         assertEquals(0, builder.getUbeaVersion());
         assertPackets(DEFAULT_PACKET, builder);
 
-        assertSame(builder, builder.withUbeaVersion(42));
-        assertEquals(42, builder.getUbeaVersion());
+        assertSame(builder, builder.withUbeaVersion(255));
+        assertEquals(255, builder.getUbeaVersion());
         assertPackets(expectedData, builder);
 
         assertSame(builder, builder.withUbeaVersion(0));
@@ -1159,10 +1159,14 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
     @Test
     void bindIndex() {
 
-        byte[] expectedData = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
+        byte[] expectedDataBindIndex1 = getExpectedData(new byte[4], new int[2], 0x00, 0x00,
                 DEFAULT_OEM_BYTES, 0x00, 0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES,
                 new byte[0], 0x00, new int[4], new int[4], new int[4], new int[4], new int[4], 0x00,
                 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0x01, 0x00);
+        byte[] expectedDataBindIndex255 = getExpectedData(new byte[4], new int[2], 0x00, 0x00, DEFAULT_OEM_BYTES, 0x00,
+                0x00, DEFAULT_ESTA_MAN_BYTES, DEFAULT_NAMES, DEFAULT_NAMES, new byte[0], 0x00, new int[4], new int[4],
+                new int[4], new int[4], new int[4], 0x00, 0x00, DEFAULT_EQUIPMENT_STYLE, new byte[6], new byte[4], 0xff,
+                0x00);
 
         ArtPollReplyBuilder builder = new ArtPollReplyBuilder();
 
@@ -1170,19 +1174,27 @@ class ArtPollReplyBuilderTest extends AbstractPacketBuilderTest {
 
         builder.setBindIndex(1);
         assertEquals(1, builder.getBindIndex());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataBindIndex1, builder);
 
         builder.setBindIndex(0);
         assertEquals(0, builder.getBindIndex());
         assertPackets(DEFAULT_PACKET, builder);
 
+        builder.setBindIndex(255);
+        assertEquals(255, builder.getBindIndex());
+        assertPackets(expectedDataBindIndex255, builder);
+
         assertSame(builder, builder.withBindIndex(1));
         assertEquals(1, builder.getBindIndex());
-        assertPackets(expectedData, builder);
+        assertPackets(expectedDataBindIndex1, builder);
 
         assertSame(builder, builder.withBindIndex(0));
         assertEquals(0, builder.getBindIndex());
         assertPackets(DEFAULT_PACKET, builder);
+
+        assertSame(builder, builder.withBindIndex(255));
+        assertEquals(255, builder.getBindIndex());
+        assertPackets(expectedDataBindIndex255, builder);
 
         assertThrows(IllegalArgumentException.class, () -> builder.setBindIndex(-1));
         assertThrows(IllegalArgumentException.class, () -> builder.withBindIndex(256));
