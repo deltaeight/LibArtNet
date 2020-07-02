@@ -1,4 +1,4 @@
-# LibArtNet [![Maven Central](https://img.shields.io/maven-central/v/de.deltaeight/LibArtNet.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22) [![Javadocs](http://www.javadoc.io/badge/de.deltaeight/LibArtNet.svg?color=blue)](http://www.javadoc.io/doc/de.deltaeight/LibArtNet) [![Build Status](https://travis-ci.org/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.org/deltaeight/LibArtNet)
+# LibArtNet [![Maven Central](https://img.shields.io/maven-central/v/de.deltaeight/LibArtNet.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22de.deltaeight%22%20AND%20a:%22LibArtNet%22) [![Javadocs](http://www.javadoc.io/badge/de.deltaeight/LibArtNet.svg?color=blue)](http://www.javadoc.io/doc/de.deltaeight/LibArtNet) [![Build Status](https://travis-ci.com/deltaeight/LibArtNet.svg?branch=master)](https://travis-ci.com/deltaeight/LibArtNet)
 
 LibArtNet is a Java implementation of the [Art-Net 4](https://art-net.org.uk) protocol as maintained by 
 [Artistic License Ltd.](https://artisticlicence.com)
