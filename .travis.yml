@@ -7,7 +7,7 @@ jdk:
 stages:
 - test
 - name: deploy
-  if: branch = master AND tag IS present
+  if: type = push
 
 jobs:
   include:
@@ -17,3 +17,6 @@ jobs:
     script:
     - "openssl aes-256-cbc -K $encrypted_f183395f0c7d_key -iv $encrypted_f183395f0c7d_iv -in maven-key.gpg.enc -out maven-key.gpg -d"
     - "./gradlew publish"
+    on:
+      tags: true
+      branch: master
