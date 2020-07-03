@@ -1,4 +1,5 @@
-rootProject.name = 'LibArtNet'
-
 include 'lib'
 include 'util'
+
+rootProject.name = 'LibArtNet'
+project(':lib').name = 'LibArtNet'

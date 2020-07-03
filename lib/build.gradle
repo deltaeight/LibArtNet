@@ -7,8 +7,6 @@ plugins {
 group 'de.deltaeight'
 version '1.1.2-beta'
 
-archivesBaseName = 'LibArtNet'
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -43,7 +41,7 @@ publishing {
             from components.java
 
             pom {
-                name = 'LibArtNet'
+                name = project.getName()
                 description = 'Art-Net 4 protocol implementation in Java'
                 url = 'https://github.com/deltaeight/LibArtNet'
 
@@ -76,6 +74,10 @@ publishing {
             def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
             def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
         }
     }
 }
