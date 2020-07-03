@@ -64,7 +64,7 @@ Add this dependency to `pom.xml`:
 <dependency>
   <groupId>de.deltaeight</groupId>
   <artifactId>LibArtNet</artifactId>
-  <version>1.1.2-beta</version>
+  <version>1.1.1-beta</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ Add this to `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'de.deltaeight:LibArtNet:1.1.2-beta'
+    implementation 'de.deltaeight:LibArtNet:1.1.1-beta'
 }
 ```
 
