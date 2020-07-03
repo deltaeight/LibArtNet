@@ -1,3 +1,14 @@
 language: java
 install: true
-script: ./gradlew check
+
+stages:
+  - test
+  - name: deploy
+    if: branch = master
+
+jobs:
+  include:
+    - stage: test
+      script: ./gradlew check
+    - stage: deploy
+      script: ./gradlew publish
