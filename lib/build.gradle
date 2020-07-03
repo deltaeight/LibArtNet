@@ -82,8 +82,19 @@ publishing {
     }
 }
 
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+        allprojects { ext."signing.keyId" = System.getenv('MAVEN_SIGNING_KEY_ID') }
+        allprojects { ext."signing.secretKeyRingFile" = '../maven-key.gpg' }
+        allprojects { ext."signing.password" = System.getenv('MAVEN_SIGNING_KEY_PASSWORD') }
+    }
+    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
 signing {
-    useInMemoryPgpKeys(System.getenv('MAVEN_SIGNING_KEY_ID'),
-            System.getenv('MAVEN_SIGNING_KEY'), System.getenv('MAVEN_SIGNING_KEY_PASSWORD'))
     sign publishing.publications.mavenJava
 }
