@@ -75,13 +75,14 @@ publishing {
             def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             credentials {
-                username = ossrhUsername
-                password = ossrhPassword
+                username = System.getenv('MAVEN_REPO_USER')
+                password = System.getenv('MAVEN_REPO_PASSWORD')
             }
         }
     }
 }
 
 signing {
+    useInMemoryPgpKeys(System.getenv('MAVEN_SIGNING_KEY'), System.getenv('MAVEN_SIGNING_KEY_PASSWORD'))
     sign publishing.publications.mavenJava
 }
