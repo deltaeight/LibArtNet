@@ -7,7 +7,7 @@ jdk:
 stages:
 - test
 - name: deploy
-  if: branch = master
+  if: branch = master AND tag IS present
 
 jobs:
   include:
