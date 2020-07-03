@@ -2,16 +2,20 @@ language: java
 install: true
 
 jdk:
-  - openjdk8
+- openjdk8
 
 stages:
-  - test
-  - name: deploy
-    if: branch = master
+- test
+- name: deploy
+  if: branch = master
 
 jobs:
   include:
-    - stage: test
-      script: ./gradlew check
-    - stage: deploy
-      script: ./gradlew publish
+  - stage: test
+    script: "./gradlew check"
+  - stage: deploy
+    script:
+    - "openssl aes-256-cbc -K $encrypted_7e2ae14cc021_key -iv $encrypted_7e2ae14cc021_iv
+        -in maven-key.txt.enc -out maven-key.txt -d"
+    - "MAVEN_SIGNING_KEY=`cat maven-key.txt`"
+    - "./gradlew publish"
