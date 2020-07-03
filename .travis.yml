@@ -15,7 +15,7 @@ jobs:
     script: "./gradlew check"
   - stage: deploy
     script:
-    - "openssl aes-256-cbc -K $encrypted_f183395f0c7d_key -iv $encrypted_f183395f0c7d_iv -in maven-key.gpg.enc -out maven-key.gpg -d"
+    - "openssl aes-256-cbc -K $encrypted_0d982abece1d_key -iv $encrypted_0d982abece1d_iv -in maven-key.gpg.enc -out maven-key.gpg -d"
     - "./gradlew publish"
     on:
       branch: master
